@@ -1,0 +1,40 @@
+package dynamics.enemies 
+{
+	import dynamics.actions.IAction;
+	import dynamics.BaseSpriteControl;
+	import dynamics.Collision;
+	import dynamics.enemies.ai.ConditionList;
+	import dynamics.enemies.ai.Schedule;
+	import dynamics.GameCb;
+	import dynamics.interactions.IInteractive;
+	import dynamics.Walker;
+	import nape.geom.Vec2;
+	import nape.phys.Body;
+	import nape.phys.Material;
+	import nape.shape.Polygon;
+	/**
+	 * ...
+	 * @author DG
+	 */
+	public class Dummy extends Walker implements IInteractive
+	{
+		public const STATE_STAND:uint = 1;
+		public const STATE_WALK:uint = 2;
+		public const STATE_MELEE:uint = 3;
+		public const STATE_RANGED:uint = 4;
+		public const STATE_PURSUIT:uint = 5;
+		
+		public const CONDITION_SEE_ENEMY:uint = 1;
+		public const CONDITION_CAN_STAND:uint = 2;
+		public const CONDITION_CAN_WALK:uint = 3;
+		public const CONDITION_CAN_RANGED_ATTACK:uint = 4;
+		public const CONDITION_CAN_MELEE_ATTACK:uint = 5;		
+		
+		protected var _conditions:ConditionList = new ConditionList();
+		protected var _state:uint;
+		
+		protected var _currentShedule:Schedule;
+		
+		protected var stand:Schedule;
+		protected var move:Schedule;
+		p

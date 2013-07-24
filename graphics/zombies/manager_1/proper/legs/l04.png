@@ -1,0 +1,63 @@
+package dynamics.enemies.implement 
+{
+	import dynamics.actions.ActionTypes;
+	import dynamics.actions.IAction;
+	import dynamics.BaseSpriteControl;
+	import dynamics.Collision;
+	import dynamics.enemies.base.Ranged;
+	import dynamics.enemies.Dummy;
+	import dynamics.enemies.Projectile;
+	import dynamics.GameCb;
+	import dynamics.interactions.IInteractive;
+	import dynamics.Walker;
+	import flash.display.MovieClip;
+	import flash.events.Event;
+	import gui.Bars.HealthBarCache;
+	import gui.Bars.SimpleBar;
+	import nape.geom.Vec2;
+	import nape.phys.Material;
+	import nape.shape.Polygon;
+	import zombie.Spitter_mc;
+	
+	/**
+	 * ...
+	 * @author DG
+	 */
+	public class Spitter extends Ranged
+	{
+		
+		private var sprite:MovieClip;
+		
+		private var max_hp:int = 50;
+		private var hp:int = 50;
+		
+		private static var lj_pos:Vec2;
+		
+		private var ite:int = 0;
+		
+		
+		
+		
+		public function Spitter(alias:String) 
+		{
+			
+			super(alias);
+			
+			sprite = new MovieClip();			
+			sprite = _view.sprite;
+			
+			
+			
+			
+			
+		}
+		
+		
+		
+		
+		override protected function getConditions():void 
+		{
+			
+			_conditions.clear();
+			
+			var distance:Number = Vec2.distance
