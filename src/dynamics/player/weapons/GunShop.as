@@ -22,11 +22,7 @@ package dynamics.player.weapons
 		public var axe:ToolData = new ToolData();
 		public var axe_double:ToolData = new ToolData();
 		public var axe_fire:ToolData = new ToolData();
-		
-		public const GUN:uint = 0;
-		public const AXE:uint = 1;
-		public const SPECIAL:uint = 2;
-		
+	
 		public function loadXML(fileName:String):void {
 			
 			_xmlLoader = new URLLoader();
@@ -51,10 +47,36 @@ package dynamics.player.weapons
 		}
 		
 		private function getDataFromXML(name:String):WeaponData {
-			var type:uint = uint(_xmlData[name].type);
+			
+			var weapon:XML = _xmlData[name];
+			var type:uint = uint(weapon.type);
+			
 			var data:WeaponData;
 			
-			trace(type);
+			if (type == WeaponData.TYPE_GUN) {				
+				data = new GunData();
+				
+				data.ammo_max = pistol.ammo_current = int(weapon.ammo_max);
+				data.dispersion = Number(weapon.dispersion);
+				data.fragments = int(weapon.fragments);
+				data.mode = uint(weapon.mode);
+				data.rate = int(weapon.rate);
+				data.reload_time = int(weapon.reload_time);
+				data.damage_min = int(weapon.damage_min);
+				data.damage_max = int(weapon.damage_max);			
+				
+			}else if (type == WeaponData.TYPE_TOOL) {
+				data = new ToolData();
+				data.z_dmg = Number(weapon.z_dmg);
+				data.t_dmg = Number(weapon.t_dmg);
+				data.inc = Number(weapon.inc);
+			}else{
+				data = new GunData();
+			}
+			
+			data.price = int(weapon.price);
+			data.alias = weapon.alias;
+			data.type = type;			
 			return data;
 		}
 		
