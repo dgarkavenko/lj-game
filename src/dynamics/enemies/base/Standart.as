@@ -28,6 +28,7 @@ package dynamics.enemies.base
 		override protected function setParameters():void {
 			super.setParameters();
 			
+			
 		}
 		
 		protected function onInitMeleeAttack():Boolean 
