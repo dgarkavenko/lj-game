@@ -1,11 +1,18 @@
 package dynamics.player.weapons 
 {
+	import flash.events.Event;
+	import flash.net.URLLoader;
+	import flash.net.URLRequest;
 	/**
 	 * ...
 	 * @author DG
 	 */
 	public class GunShop 
 	{
+		private var _xmlLoader:URLLoader;
+		private var _xmlData:XML;
+		
+		private var _weapon:XML;
 		
 		public var list:Array;
 		
@@ -16,8 +23,46 @@ package dynamics.player.weapons
 		public var axe_double:ToolData = new ToolData();
 		public var axe_fire:ToolData = new ToolData();
 		
+		public const GUN:uint = 0;
+		public const AXE:uint = 1;
+		public const SPECIAL:uint = 2;
+		
+		public function loadXML(fileName:String):void {
+			
+			_xmlLoader = new URLLoader();
+			_xmlLoader.addEventListener(Event.COMPLETE, xmlLoadComplete);
+			_xmlLoader.load(new URLRequest(fileName));
+			
+		}
+		
+		private function xmlLoadComplete(e:Event):void 
+		{
+			_xmlData = new XML(e.target.data);
+			_xmlLoader.removeEventListener(Event.COMPLETE, xmlLoadComplete);
+			_xmlLoader = null;
+			
+			/*for each ( var title:String in ["pistol", "shotgun", "assault", "axe_fire", "axe_double", "axe"] ) 
+			{*/
+				list.push(getDataFromXML("pistol"));
+			//}
+			
+			
+			
+		}
+		
+		private function getDataFromXML(name:String):WeaponData {
+			var type:uint = uint(_xmlData[name].type);
+			var data:WeaponData;
+			
+			trace(type);
+			return data;
+		}
+		
 		public function GunShop() 
 		{
+			
+			loadXML("weapons.xml");
+			
 			pistol.ammo_max = pistol.ammo_current = 7;
 			pistol.dispersion = 0;
 			pistol.fragments = 1

@@ -41,8 +41,8 @@ package dynamics.player.weapons
 	{
 		
 		
-		public static const SEMI:String = "semimode";
-		public static const AUTO:String = "automode";	
+		public static const SEMI:uint = 0;
+		public static const AUTO:uint = 1;	
 		
 		
 		
