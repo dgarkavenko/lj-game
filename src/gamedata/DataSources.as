@@ -12,13 +12,18 @@ package gamedata
 		private static var _inst:DataSources;
 		private var lumber:LumberKeeper;
 	
-	
+		private var zData:XML;
 		
 		public function DataSources(e:SingletonEnforcer) 
 		{
 			trace("Sources on");
 			lumber = new LumberKeeper("ljack", 0);
 		}			
+		
+		public function getParameter(alias:String, param:String):Object 
+		{
+			return zData[alias][param];
+		}
 		
 		public static function get instance():DataSources
 		{		

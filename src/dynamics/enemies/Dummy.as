@@ -9,6 +9,7 @@ package dynamics.enemies
 	import dynamics.GameCb;
 	import dynamics.interactions.IInteractive;
 	import dynamics.Walker;
+	import gamedata.DataSources;
 	import nape.geom.Vec2;
 	import nape.phys.Body;
 	import nape.phys.Material;
@@ -51,7 +52,7 @@ package dynamics.enemies
 		protected var ljPos:Vec2;		
 		protected var _interval:int;
 		protected var _thinkIteration:int;
-		protected var _hp:int;
+		
 		
 		public function Dummy(alias:String) 
 		{
@@ -91,7 +92,7 @@ package dynamics.enemies
 					
 					$VFX.blood.at(params.x, params.y, -params.facing, 0, params.power * 4);
 					_body.applyImpulse(Vec2.get(params.facing * params.power * 2, 0));
-					_hp -= params.power * params.z_dmg;
+					currentHP -= params.power * params.z_dmg;
 					
 				break;
 				
@@ -123,9 +124,20 @@ package dynamics.enemies
 		protected function setParameters():void 
 		{
 			//_view = new BaseSpriteControl();
+			var z:DataSources = DataSources.instance;
 			
-			var w:int = _view.sprite.width;
-			var h:int = _view.sprite.height;
+			var w:int;
+			var h:int;
+			
+			if (int(z.getParameter(_alias, "override")) == 1)
+			{
+				w = z.getParameter(_alias, "w");
+				h = z.getParameter(_alias, "h");
+			}else {
+				
+				w = _view.sprite.width;
+				h= _view.sprite.height;
+			}		
 			
 			//_body = build(Vec2.get(X, Y), [Polygon.rect(0,0, 12, 42), [5,Vec2.get(6,46)]], Material.wood());			
 			_body.cbTypes.add(GameCb.INTERACTIVE);
@@ -140,8 +152,8 @@ package dynamics.enemies
 			Collision.setFilter(_body, Collision.DUMMIES, ~(Collision.LUMBER_IGNORE|Collision.DUMMIES) );			
 			ljPos = GameWorld.lumberbody.position;
 			
-			
-			movementSpeed = 10 + Math.random() * 5;
+			movementSpeed = int(z.getParameter(_alias, "ms"));
+			maximumHP = int(currentHP = z.getParameter(_alias, "hp"));
 		}
 		
 		

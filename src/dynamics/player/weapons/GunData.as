@@ -11,7 +11,7 @@ package dynamics.player.weapons
 		public var ammo_max:int;
 		public var ammo_current:int;
 		public var reload_time:int;
-		public var mode:String;
+		public var mode:uint;
 		public var rate:int;
 		public var dispersion:Number;
 		public var fragments:int = 1;

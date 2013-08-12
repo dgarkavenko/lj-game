@@ -38,17 +38,12 @@ package dynamics.enemies.implement
 		
 		
 		
-		public function Spitter(alias:String) 
-		{
-			
-			super(alias);
+		public function Spitter() 
+		{			
+			super("spitter");		
 			
 			sprite = new MovieClip();			
-			sprite = _view.sprite;
-			
-			
-			
-			
+			sprite = _view.sprite;			
 			
 		}
 		

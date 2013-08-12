@@ -1,11 +1,18 @@
 package dynamics.player.weapons 
 {
+	import flash.events.Event;
+	import flash.net.URLLoader;
+	import flash.net.URLRequest;
 	/**
 	 * ...
 	 * @author DG
 	 */
 	public class GunShop 
 	{
+		private var _xmlLoader:URLLoader;
+		private var _xmlData:XML;
+		
+		private var _weapon:XML;
 		
 		public var list:Array;
 		
@@ -15,9 +22,69 @@ package dynamics.player.weapons
 		public var axe:ToolData = new ToolData();
 		public var axe_double:ToolData = new ToolData();
 		public var axe_fire:ToolData = new ToolData();
+	
+		public function loadXML(fileName:String):void {
+			
+			_xmlLoader = new URLLoader();
+			_xmlLoader.addEventListener(Event.COMPLETE, xmlLoadComplete);
+			_xmlLoader.load(new URLRequest(fileName));
+			
+		}
+		
+		private function xmlLoadComplete(e:Event):void 
+		{
+			_xmlData = new XML(e.target.data);
+			_xmlLoader.removeEventListener(Event.COMPLETE, xmlLoadComplete);
+			_xmlLoader = null;
+			
+			/*for each ( var title:String in ["pistol", "shotgun", "assault", "axe_fire", "axe_double", "axe"] ) 
+			{*/
+				list.push(getDataFromXML("pistol"));
+			//}
+			
+			
+			
+		}
+		
+		private function getDataFromXML(name:String):WeaponData {
+			
+			var weapon:XML = _xmlData[name];
+			var type:uint = uint(weapon.type);
+			
+			var data:WeaponData;
+			
+			if (type == WeaponData.TYPE_GUN) {				
+				data = new GunData();
+				
+				data.ammo_max = pistol.ammo_current = int(weapon.ammo_max);
+				data.dispersion = Number(weapon.dispersion);
+				data.fragments = int(weapon.fragments);
+				data.mode = uint(weapon.mode);
+				data.rate = int(weapon.rate);
+				data.reload_time = int(weapon.reload_time);
+				data.damage_min = int(weapon.damage_min);
+				data.damage_max = int(weapon.damage_max);			
+				
+			}else if (type == WeaponData.TYPE_TOOL) {
+				data = new ToolData();
+				data.z_dmg = Number(weapon.z_dmg);
+				data.t_dmg = Number(weapon.t_dmg);
+				data.inc = Number(weapon.inc);
+			}else{
+				data = new GunData();
+			}
+			
+			data.price = int(weapon.price);
+			data.alias = weapon.alias;
+			data.type = type;			
+			return data;
+		}
 		
 		public function GunShop() 
 		{
+			
+			loadXML("weapons.xml");
+			
 			pistol.ammo_max = pistol.ammo_current = 7;
 			pistol.dispersion = 0;
 			pistol.fragments = 1
