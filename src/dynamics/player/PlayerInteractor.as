@@ -1,6 +1,7 @@
 package dynamics.player 
 {
 	import adobe.utils.CustomActions;
+	import dynamics.actions.ActionTypes;
 	import dynamics.Collision;
 	import dynamics.GameCb;
 	import dynamics.Walker;
@@ -23,7 +24,7 @@ package dynamics.player
 	{
 		
 		protected var _area:Body;
-		private var _subject:Walker;
+		private var _subject:*;
 		private var _subject_position:Vec2;
 		private var _subject_int:Interactor;
 		
@@ -52,7 +53,7 @@ package dynamics.player
 			
 		}	
 		
-		public function setup(subj:Walker, area:Body, offset:Vec2):void 
+		public function setup(subj:*, area:Body, offset:Vec2):void 
 		{
 			
 			if (_area) _area.space = null;

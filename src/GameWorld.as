@@ -3,7 +3,6 @@ package
 	import com.greensock.TweenLite;
 	import dynamics.actions.TreeHitAction;
 	import dynamics.Collision;
-	import dynamics.enemies.Dummie;
 	import dynamics.enemies.Dummy;
 	import dynamics.enemies.implement.Spitter;
 	import dynamics.GameCb;

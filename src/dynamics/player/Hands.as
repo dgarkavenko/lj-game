@@ -5,7 +5,6 @@ package dynamics.player
 	import dynamics.Collision;
 	import dynamics.player.weapons.GunData;
 	import dynamics.player.weapons.WeaponData;
-	import dynamics.Walker;
 	import flash.display.MovieClip;
 	import framework.input.Controls;
 	import framework.input.Keyboard;
@@ -37,7 +36,7 @@ package dynamics.player
 		protected static var AXE_RAY_FILTER:InteractionFilter = new InteractionFilter(Collision.LUMBER_RAY, Collision.LUMBER_IGNORE | Collision.DUMMIES);
 		
 		protected static var space:Space = GameWorld.space;
-		public static var carrier:Walker;
+		public static var carrier:*;
 		public static var carrier_view:Lumberskin;
 		public static var pivot:Vec2;
 		public var weaponType:int;

@@ -124,15 +124,17 @@ package dynamics.enemies
 		protected function setParameters():void 
 		{
 			//_view = new BaseSpriteControl();
-			var z:DataSources = DataSources.instance;
+			
 			
 			var w:int;
-			var h:int;
+			var h:int;			
+						
+			var ref:Object = DataSources.instance.getReference(_alias);
 			
-			if (int(z.getParameter(_alias, "override")) == 1)
+			if ("override" in ref)
 			{
-				w = z.getParameter(_alias, "w");
-				h = z.getParameter(_alias, "h");
+				w = ref.w;
+				h = ref.h;
 			}else {
 				
 				w = _view.sprite.width;
@@ -152,8 +154,8 @@ package dynamics.enemies
 			Collision.setFilter(_body, Collision.DUMMIES, ~(Collision.LUMBER_IGNORE|Collision.DUMMIES) );			
 			ljPos = GameWorld.lumberbody.position;
 			
-			movementSpeed = int(z.getParameter(_alias, "ms"));
-			maximumHP = int(currentHP = z.getParameter(_alias, "hp"));
+			movementSpeed = ref.ms;
+			maximumHP = ref.hp;
 		}
 		
 		
