@@ -18,37 +18,25 @@
       <name>CONFIG::timeStamp</name>
       <value>'19.08.2013'</value>
     </define>
-    <define append="true">
-      <name>CONFIG::air</name>
-      <value>false</value>
-    </define>
-    <define append="true">
-      <name>CONFIG::mobile</name>
-      <value>false</value>
-    </define>
-    <define append="true">
-      <name>CONFIG::desktop</name>
-      <value>false</value>
-    </define>
     <verbose-stacktraces>true</verbose-stacktraces>
     <source-path append="true">
-      <path-element>C:\lj-game\src</path-element>
+      <path-element>F:\lj-game\src</path-element>
       <path-element>C:\Program Files (x86)\FlashDevelop\Library\AS3\classes</path-element>
     </source-path>
     <library-path append="true">
-      <path-element>C:\lj-game\lib\trees.swc</path-element>
-      <path-element>C:\lj-game\lib\greensock.swc</path-element>
-      <path-element>C:\lj-game\lib\Emitter 2.1.58.swc</path-element>
-      <path-element>C:\lj-game\lib\lumberjack.swc</path-element>
-      <path-element>C:\lj-game\lib\zombies.swc</path-element>
-      <path-element>C:\lj-game\lib\hud.swc</path-element>
-      <path-element>C:\lj-game\lib\world.swc</path-element>
-      <path-element>C:\lj-game\lib\nape-debug.swc</path-element>
-      <path-element>C:\lj-game\lib\go.swc</path-element>
+      <path-element>F:\lj-game\lib\trees.swc</path-element>
+      <path-element>F:\lj-game\lib\greensock.swc</path-element>
+      <path-element>F:\lj-game\lib\Emitter 2.1.58.swc</path-element>
+      <path-element>F:\lj-game\lib\lumberjack.swc</path-element>
+      <path-element>F:\lj-game\lib\zombies.swc</path-element>
+      <path-element>F:\lj-game\lib\hud.swc</path-element>
+      <path-element>F:\lj-game\lib\world.swc</path-element>
+      <path-element>F:\lj-game\lib\nape-debug.swc</path-element>
+      <path-element>F:\lj-game\lib\go.swc</path-element>
     </library-path>
   </compiler>
   <file-specs>
-    <path-element>C:\lj-game\src\Game.as</path-element>
+    <path-element>F:\lj-game\src\Game.as</path-element>
   </file-specs>
   <default-background-color>#000000</default-background-color>
   <default-frame-rate>30</default-frame-rate>

@@ -49,6 +49,11 @@ package gamedata
 			return _JSONEncoded[alias];
 		}
 		
+		public function getList(alias:String):Array
+		{
+			return _JSONEncoded[alias];			
+		}
+		
 		public static function get instance():DataSources
 		{		
 			if (_inst == null) {

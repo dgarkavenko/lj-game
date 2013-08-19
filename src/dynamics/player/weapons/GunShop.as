@@ -66,47 +66,48 @@ package dynamics.player.weapons
 		
 		public function GunShop() 
 		{
+			var alias:String;			
+			var weapon:Object;
 			
-			list.push(getNewWeaponDataFromConfig("pistol"));
-			list.push(getNewWeaponDataFromConfig("shotgun"));
+			for each (alias in DataSources.instance.getList("guns")) 
+			{
+				var g:GunData = new GunData();
+				weapon = DataSources.instance.getReference(alias);
+				
+				g.ammo_max = g.ammo_current = weapon.ammo_max;
+				g.dispersion = weapon.dispersion;
+				g.fragments = weapon.fragments;
+				g.mode = weapon.mode;
+				g.rate = weapon.rate;
+				g.reload_time = weapon.reload_time;
+				g.damage_min = weapon.damage_min;
+				g.damage_max = weapon.damage_max;	
+				g.price = weapon.price;
+				
+				g.alias = alias;
+				g.type = WeaponData.TYPE_GUN;
+				g.bought = true; //TEMP TODO
+				
+				list.push(g);
+			}
+			
+			for each (alias in DataSources.instance.getList("tools")) 
+			{
+				var t:ToolData = new ToolData();
+				weapon = DataSources.instance.getReference(alias);
+				
+				t.z_dmg = weapon.z_dmg;
+				t.t_dmg = weapon.t_dmg;
+				t.inc = weapon.inc;
+				
+				t.alias = alias;
+				t.type = WeaponData.TYPE_TOOL;
+				t.bought = true; //TEMP TODO
+				
+				list.push(t);
+			}
 			
 			
-			assault.ammo_max = assault.ammo_current = 20;
-			assault.dispersion = 0;
-			assault.fragments = 1
-			assault.mode = Gun.AUTO;
-			assault.rate = 150;
-			assault.reload_time = 40;
-			assault.damage_min = 7;
-			assault.damage_max = 10;
-			assault.alias = "assault";
-			assault.bought = true;
-			
-			list.push(assault);
-			
-			axe.alias = "axe_rusty";
-			axe.inc = 0.1;
-			axe.bought = true;
-			axe.t_dmg = 2.5;
-			axe.z_dmg = 4;
-			
-			list.push(axe);
-			
-			axe_double.alias = "axe_double";
-			axe_double.inc = 0.15;
-			axe_double.bought = true;
-			axe_double.t_dmg = 4;
-			axe_double.z_dmg = 4;
-			
-			list.push(axe_double);
-			
-			axe_fire.alias = "axe_fire";
-			axe_fire.inc = 0.15;
-			axe_fire.bought = true;
-			axe_fire.t_dmg = 3;
-			axe_fire.z_dmg = 7;
-			
-			list.push(axe_fire);
 			
 				
 			

@@ -130,7 +130,7 @@ package dynamics.player.weapons
 			}			
 			
 			var x:Number = pivot.x;
-			var y:Number = pivot.y - 15;			
+			var y:Number = pivot.y - 10;			
 			var a:Number = Math.atan2(Controls.mouse.relativeY - y, Controls.mouse.relativeX - x);	
 			
 			
