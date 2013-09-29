@@ -14,5 +14,10 @@
 	"axe_double":{"inc":0.15 , "t_dmg":4, "z_dmg":4},
 	"axe_fire":{"inc":0.15 , "t_dmg":3, "z_dmg":6},
 	
-	"spitter":{"hp":100, "ms":12}
+	"spitter":{"hp":100, "ms":12},
+	
+	"lumberjack":{"ms":100,"hp":100},
+	
+	
+	"bg":{"count":2,"n1":"bg1.png","n2":"bg2.png","n3":"bg3.png","n4":"bg4.png", "n5":"bg5.png", "n6":"bg6.png"}
 }

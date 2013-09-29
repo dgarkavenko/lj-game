@@ -1,5 +1,6 @@
 package dynamics.player.weapons 
 {
+	import gamedata.DataSources;
 	/**
 	 * ...
 	 * @author DG
@@ -22,8 +23,29 @@ package dynamics.player.weapons
 		public var reload_counter:int = 0;
 		
 		
-		public function GunData(){
+		public function GunData(a:String){
 			type = TYPE_GUN;
+			super(a);
+		}
+		
+		override public function load(a:String):void 
+		{
+			
+			var weapon:Object = DataSources.instance.getReference(a);
+				
+			ammo_max = ammo_current = weapon.ammo_max;
+			dispersion = weapon.dispersion;
+			fragments = weapon.fragments;
+			mode = weapon.mode;
+			rate = weapon.rate;
+			reload_time = weapon.reload_time;
+			damage_min = weapon.damage_min;
+			damage_max = weapon.damage_max;	
+			price = weapon.price;
+			
+			alias = a;
+			
+			
 		}
 		
 	}

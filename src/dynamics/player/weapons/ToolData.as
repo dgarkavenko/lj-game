@@ -1,5 +1,6 @@
 package dynamics.player.weapons 
 {
+	import gamedata.DataSources;
 	/**
 	 * ...
 	 * @author DG
@@ -12,9 +13,21 @@ package dynamics.player.weapons
 		public var inc:Number;
 		
 		
-		public function ToolData() 
+		public function ToolData(a:String) 
 		{
 			type = TYPE_TOOL;
+			super(a);
+		}
+		
+		override public function load(a:String):void 
+		{
+			var weapon:Object = DataSources.instance.getReference(a);
+				
+			z_dmg = weapon.z_dmg;
+			t_dmg = weapon.t_dmg;
+			inc = weapon.inc;
+				
+			alias = a;				
 		}
 		
 	}

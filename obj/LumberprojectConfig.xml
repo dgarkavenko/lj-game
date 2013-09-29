@@ -4,6 +4,7 @@
 <flex-config>
   <target-player>11.1</target-player>
   <benchmark>false</benchmark>
+  <use-network>false</use-network>
   <static-link-runtime-shared-libraries>true</static-link-runtime-shared-libraries>
   <compiler>
     <define append="true">
@@ -16,7 +17,7 @@
     </define>
     <define append="true">
       <name>CONFIG::timeStamp</name>
-      <value>'19.08.2013'</value>
+      <value>'29.09.2013'</value>
     </define>
     <verbose-stacktraces>true</verbose-stacktraces>
     <source-path append="true">

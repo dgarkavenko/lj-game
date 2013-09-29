@@ -15,7 +15,12 @@ package dynamics.player.weapons
 		public var alias:String;	
 		public var type:int;
 		
-		public function WeaponData() 
+		public function WeaponData(a:String) 
+		{
+			if (a != "") load(a);
+		}
+		
+		public function load(a:String):void 
 		{
 			
 		}

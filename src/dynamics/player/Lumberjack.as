@@ -7,8 +7,10 @@ package dynamics.player
 	import dynamics.interactions.IInteractive;
 	import dynamics.interactions.PlayerInteractiveObject;
 	import dynamics.player.weapons.Gun;
-	import dynamics.player.weapons.GunShop;
+	import dynamics.player.weapons.GunData;
+
 	import dynamics.player.weapons.Tool;
+	import dynamics.player.weapons.ToolData;
 	import dynamics.player.weapons.WeaponData;
 	import dynamics.Walker;
 	import flash.events.Event;
@@ -41,8 +43,11 @@ package dynamics.player
 		
 		
 		private var hands:Hands;		
-		private var equip:Array = [new Gun(), new Tool()];
 		
+		
+		private var gunContainer:Gun = new Gun();
+		private var toolContainer:Tool = new Tool();
+		private var equip:Array = [new ToolData("axe_rusty"),new GunData("pistol"),null];
 		
 		public var hp:HP = new HP();
 		//private var max_hp:int = save.max_hp;
@@ -59,7 +64,7 @@ package dynamics.player
 		
 		
 		//TEMPORARY
-		private var gunshop:GunShop = new GunShop();
+
 		internal var lock_x:Number;
 		
 		private var normal_z_index:int;
@@ -120,9 +125,8 @@ package dynamics.player
 			Hands.carrier = this;
 			Hands.pivot = _body.position;
 			Hands.carrier_view = _view as Lumberskin;
-			hands = equip.shift();		
-			hands.init();			
-			hands.select(gunshop.list[0]);			
+					
+			selectWeapon(equip[0]);		
 			
 			interactor.setup(this, build(Vec2.get(0,0), [Polygon.rect( 0, 0, 50, 60)]), Vec2.get(15, 0));
 			movement = new Movement(this);
@@ -144,9 +148,10 @@ package dynamics.player
 			
 		}
 		
-		public function pick(io:PlayerInteractiveObject):void {
-			
+		public function pick(io:PlayerInteractiveObject):void {			
 			_luggage = io;
+			(_view as Lumberskin).weaponchange("wood");
+			
 		}
 		
 		public function drop(e:Boolean = false):void {			
@@ -178,14 +183,12 @@ package dynamics.player
 			
 			var i:int = 0;
 			
-			for each (var btn:String in ["ONE","TWO","THREE","FOUR","FIVE","SIX"]) 
+			for each (var btn:String in ["ONE","TWO","THREE"]) 
 			{		
 				if (keyboard.justPressed(btn)) {
 					
-					if (i >= gunshop.list.length) break;
-					if (!gunshop.list[i].bought) break;
-					
-					selectWeapon(gunshop.list[i]);					
+					if (equip[i] == null) break;					
+					selectWeapon(equip[i]);					
 					break;
 				}
 				
@@ -202,11 +205,20 @@ package dynamics.player
 		{	
 			drop(true);
 			
-			if (hands.weaponType == wData.type) {				
-				hands.select(wData);				
-			}else {				
-				hands.kill();
-				switchHands();
+			if (hands != null && hands.weaponType == wData.type) {	
+				
+				hands.select(wData);	
+				
+			}else {		
+				
+				if (hands != null) hands.kill();
+				
+				for each (var item:Hands in [gunContainer, toolContainer]) 
+				{
+					if (item.weaponType == wData.type) hands = item;
+				}
+				
+				hands.init();	
 				hands.select(wData);
 			}			
 			
@@ -214,15 +226,7 @@ package dynamics.player
 		
 		}
 		
-		private function switchHands():void 
-		{
-			
-			drop(true);
-			
-			equip.push(hands);
-			hands = equip.shift();
-			hands.init();			
-		}
+		
 		
 		private function onUse():void 
 		{

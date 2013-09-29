@@ -18,10 +18,13 @@ package
 	import flash.display.BlendMode;
 	import flash.display.DisplayObject;
 	import flash.display.GradientType;
+	import flash.display.Loader;
+	import flash.display.LoaderInfo;
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.geom.Matrix;
+	import flash.net.URLRequest;
 	import flash.ui.Mouse;
 	import flash.utils.setTimeout;
 	import framework.Camera;
@@ -93,8 +96,11 @@ package
 		private var fire:Fireplace_mc;
 		
 		
+		private var loadedBitmpas:Object = new Object();
+		
 		
 		private var projectile_listener:InteractionListener = new InteractionListener(CbEvent.BEGIN, InteractionType.COLLISION, GameCb.PROJECTILE, GameCb.GROUND.including(GameCb.INTERACTIVE), onProjectileHit);
+		
 		private function onProjectileHit(cb:InteractionCallback):void {
 			cb.int1.userData.onHit();
 		}
@@ -125,9 +131,6 @@ package
 			time = new WorldTime(container);
 			addChild(time.shade);
 			addChild(time.bar);
-			
-			
-			
 			
 			
 			camera = new Camera();			
@@ -240,8 +243,7 @@ package
 			var gradientmatrix:Matrix = new Matrix();
 			gradientmatrix.createGradientBox(Game.SCREEN_WIDTH, Game.SCREEN_HEIGHT, Math.PI / 2);			
 			//bg.graphics.beginGradientFill(GradientType.RADIAL, [0xcadaba, 0x9cad9d], [1, 1], [0, 255], gradientmatrix);
-			bg.graphics.beginGradientFill(GradientType.RADIAL, [0x9cad9d, 0x9cad9d], [1, 1], [0, 255], gradientmatrix);
-			
+			bg.graphics.beginGradientFill(GradientType.RADIAL, [0x9cad9d, 0x9cad9d], [1, 1], [0, 255], gradientmatrix);			
 			
 
 			bg.graphics.drawRect(0, 0, Game.SCREEN_WIDTH, Game.SCREEN_HEIGHT);
@@ -249,10 +251,23 @@ package
 			addChildAt(bg, 0);
 			
 			
-			camera.pan_H(lumberbody.worldCOM.x);
+			camera.pan_H(lumberbody.worldCOM.x);			
+			var skybg:MovieClip = new MovieClip();			
+			var bgdata:Object = DataSources.instance.getReference("bg");			
 			
-			var skybg:MovieClip = new MovieClip();		
+			for (var i:int = bgdata.count; i > 0; i--) 
+			{				
+				
+				
+				var loader:Loader = new Loader();
+				loader.contentLoaderInfo.addEventListener(Event.COMPLETE, lcomplete);
+				loader.load(new URLRequest(bgdata["n"+i.toString()]));
+			}
 			
+			setTimeout(addBgs, 1000);
+			//addBgs();
+			
+			/*
 			var	bg1:Bitmap = new Bitmap(new Bg1_bitmap());
 			bg1.y = Game.SCREEN_HEIGHT - bg1.height - 15;			
 			
@@ -260,9 +275,10 @@ package
 			var	bg2:Bitmap = new Bitmap(new Bg2_bitmap());
 			bg2.y = Game.SCREEN_HEIGHT - bg2.height - 15;
 			
-				
+			*/
 			
-			/*var bdate:BitmapData = new BitmapData(Game.SCREEN_WIDTH, Game.SCREEN_HEIGHT, false, 0xff717240);
+			/*
+			var bdate:BitmapData = new BitmapData(Game.SCREEN_WIDTH, Game.SCREEN_HEIGHT, false, 0xff717240);
 			var invert:Bitmap = new Bitmap(bdate);			
 			invert.blendMode = BlendMode.SUBTRACT;			
 			addChildAt(invert, 1);	*/	
@@ -271,13 +287,41 @@ package
 			//container.layer3.addChild(bg2);
 			//container.layer3.addChild(bg1);
 			
-			addChildAt(bg1, 1);
-			addChildAt(bg2, 1);	
+			//addChildAt(bg1, 1);
+			//addChildAt(bg2, 1);	
 			
-			camera.controlBgLayer(bg1);
-			camera.controlBgLayer(bg2);		
+			//camera.controlBgLayer(bg1);
+			//	camera.controlBgLayer(bg2);		
 			
 		}
+		
+		private function addBgs():void 
+		{			
+			for (var i:int = 0; i < 10; i++) 
+			{
+				if ("bg" + i + ".png" in loadedBitmpas) {
+				
+					addChildAt(loadedBitmpas["bg" + i + ".png"], 1);
+					camera.controlBgLayer(loadedBitmpas["bg" + i + ".png"]);
+				}
+			}			
+			
+		}
+		
+		private function lcomplete(e:Event):void 
+		{			
+			var bitmapData:BitmapData = Bitmap(LoaderInfo(e.target).content).bitmapData;
+			
+			var	bg:Bitmap = new Bitmap(bitmapData);
+			bg.y = Game.SCREEN_HEIGHT - bg.height;					
+			
+			var s:String = LoaderInfo(e.target).url;
+			loadedBitmpas[s.substr(s.length - 7, s.length)] = bg;
+			
+			
+		}
+		
+		
 		
 		private function dynamics_up():void 
 		{			

@@ -49,12 +49,10 @@ package gameplay.world
 		private var passes:int = 0;
 		
 		
-		
-		
-		
 		public var prepassComplete:Boolean = false;
 		
 		public var debug:Boolean = false;
+		//public var debug:Boolean = true;
 		
 		public function WorldTime(cont:Sprite) 
 		{
