@@ -55,11 +55,11 @@
     <element path="lib\greensock.swc" />
     <element path="lib\Emitter 2.1.58.swc" />
     <element path="lib\lumberjack.swc" />
-    <element path="lib\zombies.swc" />
     <element path="lib\hud.swc" />
     <element path="lib\world.swc" />
     <element path="lib\nape-debug.swc" />
     <element path="lib\go.swc" />
+    <element path="lib\z.swc" />
   </libraryPaths>
   <!-- External Libraries -->
   <externalLibraryPaths>

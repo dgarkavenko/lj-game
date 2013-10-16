@@ -1,10 +1,13 @@
 package  
 {
 	import com.greensock.TweenLite;
+	import dynamics.actions.PuddleBurnAction;
 	import dynamics.actions.TreeHitAction;
 	import dynamics.Collision;
-	import dynamics.enemies.Dummy;
+	import dynamics.DynamicWorldObject;
+	import dynamics.enemies.base.Dummy;
 	import dynamics.enemies.implement.Spitter;
+	import dynamics.enemies.implement.spitter.GooProjectile;
 	import dynamics.GameCb;
 	import dynamics.interactions.PlayerInteractiveObject;
 	import dynamics.interactive.Boat;
@@ -51,6 +54,8 @@ package
 	import nape.callbacks.InteractionType;
 	import nape.geom.Vec2;
 	import nape.phys.Body;
+	import nape.phys.BodyType;
+	import nape.shape.Polygon;
 	import nape.space.Space;
 	import gameplay.world.Light;
 	import gameplay.world.WorldTime;
@@ -88,6 +93,10 @@ package
 		
 		private var mouse_sprite:Bitmap;		
 		private var dummies:Vector.<Dummy> = new Vector.<Dummy>();
+		private static var dynamicsVec:Vector.<DynamicWorldObject> = new Vector.<DynamicWorldObject>();
+		
+		
+		
 		public static var playerInteractors:Vector.<PlayerInteractiveObject> = new Vector.<PlayerInteractiveObject>();
 		
 		private var time:WorldTime;
@@ -99,11 +108,26 @@ package
 		private var loadedBitmpas:Object = new Object();
 		
 		
-		private var projectile_listener:InteractionListener = new InteractionListener(CbEvent.BEGIN, InteractionType.COLLISION, GameCb.PROJECTILE, GameCb.GROUND.including(GameCb.INTERACTIVE), onProjectileHit);
+		private var projectile_listener:InteractionListener = new InteractionListener(CbEvent.BEGIN, InteractionType.SENSOR, GameCb.PROJECTILE, GameCb.GROUND.including(GameCb.LUMBERJACK), onProjectileHit);
+		private var puddle_b_listener:InteractionListener = new InteractionListener(CbEvent.BEGIN, InteractionType.SENSOR, GameCb.PUDDLE, GameCb.LEGS, onPuddleBegin);
+		private var puddle_e_listener:InteractionListener = new InteractionListener(CbEvent.END, InteractionType.SENSOR, GameCb.PUDDLE, GameCb.LEGS, onPuddleEnd);
+
 		
 		private function onProjectileHit(cb:InteractionCallback):void {
 			cb.int1.userData.onHit();
 		}
+		
+		private function onPuddleBegin(cb:InteractionCallback):void {
+			
+			lumberjack.interact(new PuddleBurnAction(5));
+		}
+		
+		private function onPuddleEnd(cb:InteractionCallback):void {
+			
+			lumberjack.interact(new PuddleBurnAction(0));
+		}
+		
+		
 		
 		
 		public function GameWorld() 
@@ -126,7 +150,8 @@ package
 			
 			
 			projectile_listener.space = space;
-			
+			puddle_b_listener.space = space;
+			puddle_e_listener.space = space;
 			
 			time = new WorldTime(container);
 			addChild(time.shade);
@@ -162,6 +187,8 @@ package
 			//container.layer2.addChild(fire);
 			
 			fire.addEventListener("tick", onFire);
+			
+		
 			
 		}
 		
@@ -332,12 +359,14 @@ package
 			lumberbody = lumberjack.getPhysics();
 			lumberjack.onPlayerMoveCallback = onPlayerMove;
 			
+			var s:Spitter;
 			
-			/*for (var j:int = 0; j < 1; j++) 
+			for (var j:int = 0; j < 5; j++) 
 			{
-				dummies.push(new Spitter(1005 + Math.random() * 1000, 300));
-				//dummies.push(new Dummie(2005 + Math.random() * 1000, 300));
-			}*/
+				s = new Spitter();
+				s.at(900 + Math.random()*600, 200)
+				dummies.push(s);			
+			}
 			
 		}
 		
@@ -411,6 +440,10 @@ package
 				d.tick();
 			}
 			
+			for each (var o:DynamicWorldObject in dynamicsVec) {
+				o.tick();
+			}
+			
 			time.tick();
 			
 			fire.x = 550 + container.x;
@@ -421,6 +454,22 @@ package
 			
 			
 		}
+		
+		static public function regOnTick(object:DynamicWorldObject):void 
+		{
+			dynamicsVec.push(object);
+		}
+		static public function removeOnTick(object:DynamicWorldObject):void 
+		{
+			for (var i:int = 0; i < dynamicsVec.length; i++) 
+			{
+				if (object == dynamicsVec[i]) {
+					dynamicsVec.splice(i, 1);
+					break;
+				}
+			}
+		}
+		
 		
 	}
 

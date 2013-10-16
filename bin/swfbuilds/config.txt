@@ -1,0 +1,23 @@
+{	
+	"guns":["pistol", "shotgun", "assault"],
+	"tools":["axe_rusty"],	
+	
+	"pistol":{"ammo_max":7, "dispersion":0, "fragments":1, "mode":0, "rate":220, "reload_time":40, "damage_min":12, "damage_max":20},
+	"revolver":{"ammo_max":6, "dispersion":0, "fragments":1, "mode":0, "rate":150, "reload_time":70, "damage_min":20, "damage_max":45},
+	"shotgun":{"ammo_max":5, "dispersion":0.066, "fragments":6, "mode":0, "rate":200, "reload_time":70, "damage_min":5, "damage_max":9},
+	"uzi":{"ammo_max":15, "dispersion":0, "fragments":1, "mode":1, "rate":75, "reload_time":80, "damage_min":10, "damage_max":16},
+	"assault":{"ammo_max":20, "dispersion":0, "fragments":1, "mode":1, "rate":100, "reload_time":100, "damage_min":15, "damage_max":17},
+	"spas":{"ammo_max":8, "dispersion":0.056, "fragments":5, "mode":1, "rate":200, "reload_time":120, "damage_min":7, "damage_max":12},
+	"barret":{"ammo_max":5, "dispersion":0, "fragments":1, "mode":0, "rate":300, "reload_time":120, "damage_min":20, "damage_max":55},
+
+	"axe_rusty":{"inc":0.1 , "t_dmg":2.5, "z_dmg":10},
+	"axe_double":{"inc":0.15 , "t_dmg":4, "z_dmg":15},
+	"axe_fire":{"inc":0.15 , "t_dmg":3, "z_dmg":20},
+	
+	"spitter":{"hp":100, "ms":16, "w":10},
+	
+	"lumberjack":{"ms":100,"hp":100},
+	
+	
+	"bg":{"count":0,"n1":"bg1.png","n2":"bg2.png","n3":"bg3.png","n4":"bg4.png", "n5":"bg5.png", "n6":"bg6.png"}
+}

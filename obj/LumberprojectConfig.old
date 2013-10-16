@@ -17,7 +17,7 @@
     </define>
     <define append="true">
       <name>CONFIG::timeStamp</name>
-      <value>'29.09.2013'</value>
+      <value>'17.10.2013'</value>
     </define>
     <verbose-stacktraces>true</verbose-stacktraces>
     <source-path append="true">
@@ -29,11 +29,11 @@
       <path-element>F:\lj-game\lib\greensock.swc</path-element>
       <path-element>F:\lj-game\lib\Emitter 2.1.58.swc</path-element>
       <path-element>F:\lj-game\lib\lumberjack.swc</path-element>
-      <path-element>F:\lj-game\lib\zombies.swc</path-element>
       <path-element>F:\lj-game\lib\hud.swc</path-element>
       <path-element>F:\lj-game\lib\world.swc</path-element>
       <path-element>F:\lj-game\lib\nape-debug.swc</path-element>
       <path-element>F:\lj-game\lib\go.swc</path-element>
+      <path-element>F:\lj-game\lib\z.swc</path-element>
     </library-path>
   </compiler>
   <file-specs>

@@ -7,7 +7,7 @@ package dynamics.actions
 	public class ChopAction implements IAction
 	{
 		public var _params:Object = new Object();;
-		private var _type:String = ActionTypes.CHOP_ACTION;	
+		private var _type:int = ActionTypes.CHOP_ACTION;	
 		
 		
 		public function ChopAction() 
@@ -17,7 +17,7 @@ package dynamics.actions
 		
 		/* INTERFACE dynamics.actions.IAction */
 		
-		public function get type():String 
+		public function get type():int 
 		{
 			return _type;
 		}

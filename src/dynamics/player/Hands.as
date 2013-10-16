@@ -43,6 +43,7 @@ package dynamics.player
 		
 		public var alias:String = "pistol";
 		
+		
 		public function Hands() 
 		{			
 			
@@ -71,6 +72,11 @@ package dynamics.player
 		public function select(new_wd:WeaponData):void 
 		{
 			
+		}
+		
+		public function pull():WeaponData {
+		
+			return null;
 		}
 		
 		

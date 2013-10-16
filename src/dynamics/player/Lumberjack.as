@@ -6,6 +6,7 @@ package dynamics.player
 	import dynamics.GameCb;
 	import dynamics.interactions.IInteractive;
 	import dynamics.interactions.PlayerInteractiveObject;
+	import dynamics.player.weapons.Carry;
 	import dynamics.player.weapons.Gun;
 	import dynamics.player.weapons.GunData;
 
@@ -47,7 +48,22 @@ package dynamics.player
 		
 		private var gunContainer:Gun = new Gun();
 		private var toolContainer:Tool = new Tool();
-		private var equip:Array = [new ToolData("axe_rusty"),new GunData("pistol"),null];
+		private var miscContainer:Carry = new Carry();
+		
+		//private var equip:Array = [new GunData("spas"), new GunData("uzi"), new ToolData("axe_rusty")];
+		
+		
+		
+		private var currentCategory:int = -1;
+		
+		private var axes:Array = [new ToolData("axe_rusty"), new ToolData("axe_double"), new ToolData("axe_fire")];
+		private var pdws:Array = [new GunData("pistol"), new GunData("revolver")];
+		private var shotguns:Array = [new GunData("shotgun"), new GunData("spas")];
+		private var machineguns:Array = [new GunData("uzi"), new GunData("assault")];
+		private var rifles:Array = [new GunData("barret")];
+		
+		private var equip:Array = [axes, pdws, shotguns, machineguns, rifles];
+		private var lastEquipedInCategory:Array = [0,0,0,0,0];
 		
 		public var hp:HP = new HP();
 		//private var max_hp:int = save.max_hp;
@@ -73,6 +89,7 @@ package dynamics.player
 		private var isStuck:Boolean = false;
 		
 		private var keyboard:Keyboard = Controls.keys;
+		private var lastWeapon:WeaponData;
 		
 		
 		internal function stuck():void {
@@ -126,7 +143,7 @@ package dynamics.player
 			Hands.pivot = _body.position;
 			Hands.carrier_view = _view as Lumberskin;
 					
-			selectWeapon(equip[0]);		
+			selectWeapon(equip[1][0]);		
 			
 			interactor.setup(this, build(Vec2.get(0,0), [Polygon.rect( 0, 0, 50, 60)]), Vec2.get(15, 0));
 			movement = new Movement(this);
@@ -148,18 +165,16 @@ package dynamics.player
 			
 		}
 		
-		public function pick(io:PlayerInteractiveObject):void {			
-			_luggage = io;
-			(_view as Lumberskin).weaponchange("wood");
-			
-		}
+		
 		
 		public function drop(e:Boolean = false):void {			
 			
 			if (keyboard.justPressed("E") || e) {
 				if (_luggage == null) return;
+				
 				_luggage.drop(_body, facing);
 				_luggage = null;
+				selectWeapon(lastWeapon);
 			}
 		}
 		
@@ -183,7 +198,29 @@ package dynamics.player
 			
 			var i:int = 0;
 			
-			for each (var btn:String in ["ONE","TWO","THREE"]) 
+			for each (var btn:String in ["ONE","TWO","THREE","FOUR","FIVE"]) 
+			{
+				if (keyboard.justPressed(btn)) {
+					
+					if (i == currentCategory) {
+						
+						lastEquipedInCategory[i]++
+						if (lastEquipedInCategory[i] >= equip[i].length) lastEquipedInCategory[i] = 0;						
+						
+					}
+					
+					currentCategory = i;
+					
+					selectWeapon(equip[currentCategory][lastEquipedInCategory[currentCategory]]);
+					break;
+				}
+				
+				i++;
+				
+			}
+			//******************* OLD SYSTEM **************************
+			
+			/*for each (var btn:String in ["ONE","TWO","THREE"]) 
 			{		
 				if (keyboard.justPressed(btn)) {
 					
@@ -193,11 +230,21 @@ package dynamics.player
 				}
 				
 				i++;
-			}
+			}*/
+			//******************* OLD SYSTEM **************************
 			
-			hands.tick();
+			hands.tick();	
 			
+		}
+		
+		public function pick(io:PlayerInteractiveObject):void {	
 			
+			_luggage = io;	
+			lastWeapon = hands.pull();
+			if (hands != null) hands.kill();
+			hands = miscContainer;			
+			
+			(_view as Lumberskin).weaponchange("wood");	//TODO here are type
 			
 		}
 		
@@ -297,6 +344,12 @@ package dynamics.player
 					}
 					
 				break;
+				
+				case ActionTypes.PUDDLE_BURN:
+				
+					hp.dot = action.params.damage;
+					
+				break
 				
 				default:
 			}

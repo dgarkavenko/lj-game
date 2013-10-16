@@ -9,6 +9,7 @@ package dynamics.player.weapons
 		
 		static public const TYPE_GUN:int = 0;
 		static public const TYPE_TOOL:int = 1;
+		static public const TYPE_MISC:int = 2;
 		
 		public var price:int;
 		public var bought:Boolean = false;

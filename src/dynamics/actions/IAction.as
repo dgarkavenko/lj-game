@@ -7,7 +7,7 @@ package dynamics.actions
 	 */
 	public interface IAction 
 	{
-		function get type():String;
+		function get type():int;
 		function get params():Object;		
 	}
 	

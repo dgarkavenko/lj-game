@@ -17,8 +17,10 @@ package gameplay.player
 		
 		private var _current:int = 100;
 		public var max:int = 100;
+		public var dot:Number = 0;
 		
-		
+		private var regenToApply:Number = 0;
+		private var dotToApply:Number = 0;
 
 		private var aura:Boolean = false;
 		
@@ -36,17 +38,27 @@ package gameplay.player
 		public function tick():void {	
 			
 			
-			if (regen == 0 || _current >= max) return;
+			if (regen > 0 || _current >= max) {
+				regenToApply += regen / 30;
+				if (regenToApply > 1) {
+					
+					regenToApply--;
+					_current++;
+					_current = _current > max ? max : _current;
+				}				
+			}
+			
+			if (dot > 0) {
+				dotToApply += dot / 30;
+				if (dotToApply >= 1) {
+					_current--;
+					dotToApply--;
+				}
+			}
 			
 			tick_time--;
-			if (tick_time < 0) {		
-				
-				_current += regen;
-				_current = _current > max ? max : _current;
-				tick_time = 30;
-				GameScreen.HUD.update_hp(_current,max);
-				
-			}
+		
+			GameScreen.HUD.update_hp(_current,max);
 			
 		}
 		

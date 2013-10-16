@@ -23,6 +23,7 @@ package dynamics
 		static public const BULLET:CbType = new CbType();
 		static public const PLAYER_INTERACTIVE:CbType = new CbType();
 		static public const LEGS:CbType = new CbType();
+		static public const PUDDLE:CbType = new CbType();
 		
 		
 		

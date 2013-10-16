@@ -6,6 +6,7 @@ package
 	import flash.events.Event;
 	import flash.geom.Point;
 	import flash.net.registerClassAlias;
+	import flash.system.Security;
 	import flash.text.TextFormat;
 	import framework.input.Controls;
 	import framework.ScreenManager;
@@ -20,7 +21,7 @@ package
 	public class Game extends Sprite
 	{
 		
-		
+		Security.allowDomain("*.*");
 		[Embed(systemFont="Nokia Cellphone FC", 
 		fontName = "nokia", 
 		mimeType = "application/x-font", 

@@ -20,7 +20,7 @@ package dynamics.player.weapons
 		
 		
 		private var _power:Number = 0;	
-		private const MAX_POWER:Number = 5;
+		private const MAX_POWER:Number = 4;
 		
 		private var toolData:ToolData;
 		
@@ -164,6 +164,11 @@ package dynamics.player.weapons
 		override public function select(new_wd:WeaponData):void 
 		{
 			toolData = new_wd as ToolData;
+		}
+		
+		override public function pull():WeaponData {
+		
+			return toolData;
 		}
 		
 

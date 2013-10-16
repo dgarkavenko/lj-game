@@ -1,7 +1,7 @@
 package dynamics.enemies.base 
 {
 	import dynamics.enemies.ai.Schedule;
-	import dynamics.enemies.Dummy;
+	import dynamics.enemies.base.Dummy;
 	/**
 	 * ...
 	 * @author dg

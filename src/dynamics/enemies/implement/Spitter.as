@@ -5,8 +5,9 @@ package dynamics.enemies.implement
 	import dynamics.BaseSpriteControl;
 	import dynamics.Collision;
 	import dynamics.enemies.base.Ranged;
-	import dynamics.enemies.Dummy;
-	import dynamics.enemies.Projectile;
+	import dynamics.enemies.base.Dummy;
+	import dynamics.enemies.implement.spitter.GooProjectile;
+
 	import dynamics.GameCb;
 	import dynamics.interactions.IInteractive;
 	import dynamics.Walker;
@@ -17,6 +18,7 @@ package dynamics.enemies.implement
 	import nape.geom.Vec2;
 	import nape.phys.Material;
 	import nape.shape.Polygon;
+	import utils.SimpleCache;
 
 	
 	/**
@@ -34,16 +36,16 @@ package dynamics.enemies.implement
 		private static var lj_pos:Vec2;
 		
 		private var ite:int = 0;
-		
-		
+	
 		
 		
 		public function Spitter() 
 		{			
-			super("spitter");		
+			super("spitter");
 			
 			sprite = new MovieClip();			
-			sprite = _view.sprite;			
+			sprite = _view.sprite;	
+			lj_pos = GameWorld.lumberbody.position;
 			
 		}
 		
@@ -57,9 +59,13 @@ package dynamics.enemies.implement
 			
 			var distance:Number = Vec2.distance(_body.position, lj_pos);
 			
+			
+			
+			var dir:Boolean = (_facing == 1 && _body.position.x < lj_pos.x) || (_facing == -1 && _body.position.x > lj_pos.x);
+			
 			//if ( distance < meleeRange && meleeAttackCooldown <= 0) _conditions.set(CONDITION_CAN_MELEE_ATTACK);
-			if ( distance < 160) _conditions.set(CONDITION_CAN_RANGED_ATTACK);		
-			if (distance < 250) _conditions.set(CONDITION_SEE_ENEMY);
+			if ( distance < 200 && dir) _conditions.set(CONDITION_CAN_RANGED_ATTACK);		
+			if (distance < 270) _conditions.set(CONDITION_SEE_ENEMY);
 			
 			_conditions.set(CONDITION_CAN_STAND);
 			_conditions.set(CONDITION_CAN_WALK);
@@ -67,87 +73,12 @@ package dynamics.enemies.implement
 			
 		}
 		
-		override protected function selectNewSchedule():void 
-		{
-			switch (_state) 
-			{
-				case STATE_STAND:
-					if (_conditions.contains(CONDITION_CAN_MELEE_ATTACK)) {
-						
-						_state = STATE_MELEE;
-						_currentShedule = meleeAttack;
-						
-					}else if (_conditions.contains(CONDITION_CAN_RANGED_ATTACK)) {
-						
-						if ( rangedAttackCooldown > 0) {
-							_state = STATE_STAND;
-							_currentShedule = stand;
-							
-						}else {							
-							_state = STATE_RANGED;
-							_currentShedule = rangedAttack;
-						}
-						
-						
-					}else if (_conditions.contains(CONDITION_SEE_ENEMY)) {
-						
-						_state = STATE_PURSUIT;
-						_currentShedule = pursuit;
-						
-					}else if (_conditions.contains(CONDITION_CAN_WALK)) {
-						_state = STATE_WALK;
-						_currentShedule = move;
-					}
-				break;
-				
-				case STATE_WALK:				
-				case STATE_PURSUIT:				
-				case STATE_RANGED:				
-				case STATE_MELEE:
-					
-					if (_conditions.contains(CONDITION_CAN_MELEE_ATTACK))
-					{
-						_currentShedule = meleeAttack;
-						_state = STATE_MELEE;
-					}
-					else if (_conditions.contains(CONDITION_CAN_RANGED_ATTACK))
-					{
-						if ( rangedAttackCooldown > 0) {
-							_state = STATE_STAND;
-							_currentShedule = stand;
-							
-						}else {							
-							_state = STATE_RANGED;
-							_currentShedule = rangedAttack;
-						}
-						
-					}else if (_conditions.contains(CONDITION_SEE_ENEMY)) {
-						
-						_currentShedule = pursuit;
-						_state = STATE_PURSUIT;
-						
-					}				
-					else
-					{
-						_currentShedule = stand;
-						_state = STATE_STAND;
-					}
-					
-				break;	
-				
-			}
-			
-			_currentShedule.reset();
-		}
+		
 		
 		override protected function onInitRangedAttack():Boolean
-		{
-			
-			
-			view.attack();
-			sprite.body.addEventListener("onAttack", launchProjectile);
-
-			
+		{		
+			view.melee();
+			sprite.mc.addEventListener("onAttack", launchProjectile);			
 			return true;
 		}
 		
@@ -157,31 +88,38 @@ package dynamics.enemies.implement
 			var d:int = 1;
 			if (lj_pos.x < _body.position.x) d = -1;
 			
-			_view.face(d);
+			facing = d;
 			
 			
 			
-			sprite.body.removeEventListener("onAttack", launchProjectile);
-			var p:Projectile = new Projectile();
-			p.add();
+			
+			sprite.mc.removeEventListener("onAttack", launchProjectile);
+			
+			var p:GooProjectile = GooProjectile.cache.getInstance() as GooProjectile;	
+			
+			
+			var rot:Number = Math.PI / 2 - Math.PI / 2 * d;			
+			
+			
+			p.add(rot);			
 			p.getPhysics().position = _body.position.add(Vec2.get(10 * d, - 15));
+			p.getPhysics().velocity.setxy(2.7 * Vec2.distance(_body.position, lj_pos), 0);
+			p.getPhysics().velocity.angle = rot;
 			
 			
-			var imp:Vec2 = Vec2.get(Vec2.distance(_body.position, lj_pos) / 4 * d, -75 );
 			
-			p.getPhysics().applyImpulse(imp);
 		}
 		
 		override protected function onRangedAttack():Boolean 
 		{
 			
-			return (sprite.body.currentFrame == sprite.body.totalFrames) ? true : false;
+			return (sprite.mc.currentFrame == sprite.mc.totalFrames) ? true : false;
 			
 		}
 		
 		override protected function onEndRangedAttack():Boolean 
 		{			
-			rangedAttackCooldown = 100;			
+			rangedAttackCooldown = 120;			
 			view.idle();
 			return true;
 		}
@@ -208,7 +146,7 @@ package dynamics.enemies.implement
 		
 		override protected function onInitMeleeAttack():Boolean
 		{
-			view.attack();
+			view.melee();
 			
 			return true;
 		}
@@ -248,9 +186,6 @@ package dynamics.enemies.implement
 		 */
 		override protected function onMove():Boolean
 		{
-			
-		
-			
 			_body.velocity.x = 0;
 			_body.applyImpulse(Vec2.get(_facing * movementSpeed, 0));
 	
@@ -281,7 +216,7 @@ package dynamics.enemies.implement
 		{
 			var d:int = 1;
 			if (lj_pos.x < _body.position.x) d = -1;			
-			_view.face(d);
+			facing = d;
 			
 			_body.velocity.x = 0;
 			_body.applyImpulse(Vec2.get(d * movementSpeed, 0));			
@@ -290,6 +225,8 @@ package dynamics.enemies.implement
 		}
 		
 		override public function tick():void {
+			
+			if (currentHP <= 0) return;
 			
 			if (++ite >= 10) {
 				

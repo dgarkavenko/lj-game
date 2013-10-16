@@ -24,8 +24,12 @@ package dynamics
 			_sprite.gotoAndStop("walk");
 		}
 		
-		public function attack():void {			
-			_sprite.gotoAndStop("attack");
+		public function melee():void {			
+			_sprite.gotoAndStop("melee");
+		}
+		
+		public function ranged():void {			
+			_sprite.gotoAndStop("ranged");
 		}
 		
 		public function death():void {

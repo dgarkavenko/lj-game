@@ -1,4 +1,4 @@
-package dynamics.enemies 
+package dynamics.enemies.base 
 {
 	import dynamics.actions.ActionTypes;
 	import dynamics.actions.IAction;
@@ -14,6 +14,7 @@ package dynamics.enemies
 	import nape.phys.Body;
 	import nape.phys.Material;
 	import nape.shape.Polygon;
+	import visual.z.Spitter;
 	/**
 	 * ...
 	 * @author DG
@@ -94,19 +95,31 @@ package dynamics.enemies
 					_body.applyImpulse(Vec2.get(params.facing * params.power * 2, 0));
 					currentHP -= params.power * params.z_dmg;
 					
+					
 				break;
 				
-				case ActionTypes.GUNSHOT_ACTION:
+			case ActionTypes.GUNSHOT_ACTION:
 				
-					/*var h:int = sprite.height;					
-					var c:int = _body.position.y;
-					var mod:int = 1;
+					var v:int = Math.sqrt(params.power);
+					_body.applyImpulse(Vec2.get(params.facing * v * 2, -params.power));	
+				
+					if (params.y < _body.position.y - view.sprite.height / 2 + 13) {
+					//headshot
 					
-					if (params.y < c - h / 2 + 10) mod = 2;
+						$VFX.blood.at(params.x, params.y, -params.facing, 0, v);
+						$VFX.blood.at(params.x, params.y, params.facing, 0, v);
+						$VFX.blood.at(params.x, params.y, 0, -1, v);
+						currentHP -= params.power * 2;
+						
+					trace("CRIT DAMAGE: " + params.power * 2);
+						
+					}else {
 					
-					$VFX.blood.at(params.x, params.y, -params.facing, 0, params.power * mod);
-					_body.applyImpulse(Vec2.get(params.facing * params.power * 2, -params.power));					
-					hp -= params.power * mod;*/
+						$VFX.blood.at(params.x, params.y, -params.facing, 0, v);
+						currentHP -= params.power;
+						trace("DAMAGE: " + params.power);
+						
+					}
 					
 					
 					
@@ -117,13 +130,26 @@ package dynamics.enemies
 			}
 			
 			
+				
+			if (currentHP <= 0) {
+				dead();
+							
+			}
+			
+			
 			
 			
 		}
 		
+		private function dead():void 
+		{
+			view.death();
+			_body.space = null;
+		}
+		
 		protected function setParameters():void 
 		{
-			//_view = new BaseSpriteControl();
+			_view = new BaseSpriteControl(Spitter);
 			
 			
 			var w:int;
@@ -131,22 +157,31 @@ package dynamics.enemies
 						
 			var ref:Object = DataSources.instance.getReference(_alias);
 			
-			if ("override" in ref)
+			if ("w" in ref)
 			{
-				w = ref.w;
-				h = ref.h;
+				w = ref.w;				
 			}else {
 				
+				//_view.sprite = new Spitter();
 				w = _view.sprite.width;
-				h= _view.sprite.height;
-			}		
+				
+			}	
 			
-			//_body = build(Vec2.get(X, Y), [Polygon.rect(0,0, 12, 42), [5,Vec2.get(6,46)]], Material.wood());			
+			if ("h" in ref) {
+			
+				h = ref.h;
+				
+			}else {
+			
+				h= _view.sprite.height;
+			}
+			
+			_body = build(Vec2.get(500, 300), [Polygon.rect(0,0, w, h)/*, [5,Vec2.get(6,46)]*/], Material.wood());			
 			_body.cbTypes.add(GameCb.INTERACTIVE);
 			_body.cbTypes.add(GameCb.ZOMBIE);
 			_body.allowRotation = false;			
 			_body.userData.graphic = _view.sprite;		
-			_body.userData.graphicOffset = new Vec2( 0, -_view.sprite.height / 2);			
+			_body.userData.graphicOffset = new Vec2( 0, h/2);			
 			container.layer2.addChild(_view.sprite);			
 			_body.userData.interact = interact;			
 			
@@ -155,10 +190,12 @@ package dynamics.enemies
 			ljPos = GameWorld.lumberbody.position;
 			
 			movementSpeed = ref.ms;
-			maximumHP = ref.hp;
+			maximumHP = currentHP = ref.hp;
 		}
 		
-		
+		public function at(X:int, Y:int):void {
+			_body.position.setxy(X, Y);
+		}
 		
 		protected function selectNewSchedule():void 
 		{

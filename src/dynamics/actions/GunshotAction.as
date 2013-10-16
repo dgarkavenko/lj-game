@@ -9,7 +9,7 @@ package dynamics.actions
 	public class GunshotAction implements IAction
 	{
 		
-		private var _type:String = ActionTypes.GUNSHOT_ACTION;
+		private var _type:int = ActionTypes.GUNSHOT_ACTION;
 		private var _params:Object = {};
 		
 		public function GunshotAction() 
@@ -20,7 +20,7 @@ package dynamics.actions
 		
 		/* INTERFACE dynamics.actions.IAction */
 		
-		public function get type():String 
+		public function get type():int 
 		{
 			return _type;
 		}

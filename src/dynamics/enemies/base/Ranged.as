@@ -1,8 +1,9 @@
 package dynamics.enemies.base 
 {
 	import dynamics.enemies.ai.Schedule;
-	import dynamics.enemies.Dummy;
-	import dynamics.enemies.Projectile;
+	import dynamics.enemies.base.Dummy;
+
+	
 	/**
 	 * ...
 	 * @author dg
@@ -14,7 +15,6 @@ package dynamics.enemies.base
 		protected var rangedAttack:Schedule;
 		protected var rangedAttackRange:int;
 		
-		protected var projetile:Projectile;
 		
 		public function Ranged(alias:String) 
 		{
@@ -44,6 +44,79 @@ package dynamics.enemies.base
 		protected function onEndRangedAttack():Boolean 
 		{
 			return true;
+		}
+		
+		override protected function selectNewSchedule():void 
+		{
+			switch (_state) 
+			{
+				case STATE_STAND:
+					if (_conditions.contains(CONDITION_CAN_MELEE_ATTACK)) {
+						
+						_state = STATE_MELEE;
+						_currentShedule = meleeAttack;
+						
+					}else if (_conditions.contains(CONDITION_CAN_RANGED_ATTACK)) {
+						
+						if ( rangedAttackCooldown > 0) {
+							_state = STATE_STAND;
+							_currentShedule = stand;
+							
+						}else {							
+							_state = STATE_RANGED;
+							_currentShedule = rangedAttack;
+						}
+						
+						
+					}else if (_conditions.contains(CONDITION_SEE_ENEMY)) {
+						
+						_state = STATE_PURSUIT;
+						_currentShedule = pursuit;
+						
+					}else if (_conditions.contains(CONDITION_CAN_WALK)) {
+						_state = STATE_WALK;
+						_currentShedule = move;
+					}
+				break;
+				
+				case STATE_WALK:				
+				case STATE_PURSUIT:				
+				case STATE_RANGED:				
+				case STATE_MELEE:
+					
+					if (_conditions.contains(CONDITION_CAN_MELEE_ATTACK))
+					{
+						_currentShedule = meleeAttack;
+						_state = STATE_MELEE;
+					}
+					else if (_conditions.contains(CONDITION_CAN_RANGED_ATTACK))
+					{
+						if ( rangedAttackCooldown > 0) {
+							_state = STATE_STAND;
+							_currentShedule = stand;
+							
+						}else {							
+							_state = STATE_RANGED;
+							_currentShedule = rangedAttack;
+						}
+						
+					}else if (_conditions.contains(CONDITION_SEE_ENEMY)) {
+						
+						_currentShedule = pursuit;
+						_state = STATE_PURSUIT;
+						
+					}				
+					else
+					{
+						_currentShedule = stand;
+						_state = STATE_STAND;
+					}
+					
+				break;	
+				
+			}
+			
+			_currentShedule.reset();
 		}
 		
 	}

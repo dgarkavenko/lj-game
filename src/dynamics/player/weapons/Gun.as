@@ -80,6 +80,11 @@ package dynamics.player.weapons
 			
 		}
 		
+		override public function pull():WeaponData {
+		
+			return gundata;
+		}
+		
 		public function force_reload():void {
 			
 			gundata.reload_counter = gundata.reload_time * reload_m;				
@@ -90,7 +95,7 @@ package dynamics.player.weapons
 			
 			//trace(reload);
 			
-			if (Controls.keys.justPressed("R")) {				
+			if (keys.justPressed("R")) {				
 				if (gundata.ammo_current < gundata.ammo_max) force_reload();
 			}
 			
@@ -102,9 +107,9 @@ package dynamics.player.weapons
 				
 			}			
 			
-			if (!Controls.mouse.pressed() || cooldown_timer.running || gundata.reload_counter > 0) return;
+			if (!mouse.pressed() || cooldown_timer.running || gundata.reload_counter > 0) return;
 			
-			if ((gundata.mode == SEMI && Controls.mouse.justPressed()) || gundata.mode == AUTO) act();			
+			if ((gundata.mode == SEMI && mouse.justPressed()) || gundata.mode == AUTO) act();			
 			
 		}	
 		
@@ -131,7 +136,7 @@ package dynamics.player.weapons
 			
 			var x:Number = pivot.x;
 			var y:Number = pivot.y - 10;			
-			var a:Number = Math.atan2(Controls.mouse.relativeY - y, Controls.mouse.relativeX - x);	
+			var a:Number = Math.atan2(mouse.relativeY - y, mouse.relativeX - x);	
 			
 			
 			
@@ -170,6 +175,10 @@ package dynamics.player.weapons
 			// 5.5 — половина координаты спрайта, в котором ганпоинт
 			var x:Number = pivot.x + carrier.facing *(carrier_view.gunpoint.x - 8 - .5);
 			var y:Number = pivot.y + carrier_view.gunpoint.y - 33 + 5.5;
+			
+			//var x:Number = pivot.x + carrier.facing *(carrier_view.gunpoint.x);
+			//var y:Number = pivot.y + carrier_view.gunpoint.y;
+			
 			ray.origin.setxy(x, y);
 			
 			
@@ -180,7 +189,7 @@ package dynamics.player.weapons
 			l.bitmap = new L01();			
 			WorldTime.addLight(l);
 			
-			var a:Number = Math.atan2(Controls.mouse.relativeY - y, Controls.mouse.relativeX - x);
+			var a:Number = Math.atan2(mouse.relativeY - y, mouse.relativeX - x);
 			var da:Number = a -skill_dispersion + 2 * Math.random() * skill_dispersion;
 			ray.direction = Vec2.fromPolar(ray.maxDistance, da);
 			
@@ -263,7 +272,6 @@ package dynamics.player.weapons
 		override protected function gatherAction():void {	
 			
 			gundata.ammo_current--;
-			trace(gundata.ammo_current);
 			var hit:Vec2;			
 			
 			if (rayResult) hit = ray.at(rayResult.distance);

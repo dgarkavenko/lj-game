@@ -1,6 +1,7 @@
 package fx.v 
 {
 	import gameplay.world.Ground;
+	import idv.cjcat.emitter.deflectors.DeflectorType;
 	import idv.cjcat.emitter.deflectors.LineDeflector;
 	import idv.cjcat.emitter.fields.UniformField;
 	/**
