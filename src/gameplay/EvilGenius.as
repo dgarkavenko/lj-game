@@ -1,0 +1,116 @@
+package gameplay 
+{
+	import dynamics.enemies.base.Dummy;
+	import dynamics.enemies.implement.Spitter;
+	import dynamics.player.Lumberjack;
+	import flash.events.TimerEvent;
+	import flash.utils.Dictionary;
+	import flash.utils.Timer;
+	import framework.SpriteContainer;
+	import nape.geom.Vec2;
+	import nape.phys.Body;
+	import nape.space.Space;
+	import utils.SimpleCache;
+	/**
+	 * ...
+	 * @author DG
+	 */
+	public class EvilGenius 
+	{
+		
+		private var spitters:SimpleCache = new SimpleCache(Spitter, 5);
+		private var cache:Dictionary = new Dictionary();
+		
+		private var space:Space;
+		private var container:SpriteContainer;		
+		private var lumberjack:Lumberjack;
+		private var lumberbody:Body;
+		private var lumbervec:Vec2;
+		
+		private var thinkTimer:Timer = new Timer(2000, 0);
+		
+		private var lj_initial_x_pos:int = -10000;
+		private var distance_traveled_treshold:int = Game.SCREEN_WIDTH;
+		
+		public function EvilGenius(space_:Space, container_:SpriteContainer, lumberjack_:Lumberjack) {
+			
+			thinkTimer.addEventListener(TimerEvent.TIMER, think);
+			thinkTimer.start();
+			
+			space = space_;
+			container = container_;		
+			
+			lumberjack = lumberjack_;
+			lumberbody = lumberjack.getBody();
+			lumbervec = lumberbody.position;
+			
+			lj_initial_x_pos = lumberbody.position.x;
+			
+			cache["spitter"] = spitters;
+		}
+		
+		private function think(e:TimerEvent):void 
+		{
+			
+			if (lj_initial_x_pos == -10000) {
+				lj_initial_x_pos = lumbervec.x;
+				return;
+			}
+			
+			if (Math.abs(lj_initial_x_pos - lumbervec.x) > distance_traveled_treshold) {				
+				lj_initial_x_pos = -10000;	
+				trace("Prepare to die!");
+				spawnZombies(1 + Math.random() * 3 / (1 + GameWorld.zombies.length));			
+			}
+			
+			//TODO Link an array?
+			for each (var z:Dummy in GameWorld.zombies ) 
+			{
+				if (Vec2.distance(z.getBody().position, lumbervec) > Game.SCREEN_WIDTH * 2) {
+					trace("This one gone too far");
+					z.remove();
+					spawnZombies(1);
+					
+				}
+			}
+		}
+		
+		private function spawnZombies(number:int):void 
+		{
+			for (var i:int = 0; i < number; i++) 
+			{
+				
+				var z:Dummy = alive();	
+				var dir:int = Math.random() > 0.4999 ? 1 : -1;
+				z.at(lumbervec.x + dir * (Game.SCREEN_HALF_WIDTH + 10 + Math.random() * 100), Game.SCREEN_HEIGHT - 100);	
+				//TODO Random direction view and random states (aggresive or chilin)
+			}		
+		}
+		
+		public function deadAgain(z:Dummy):void {
+			(cache[z.alias] as SimpleCache).setInstance(z);			
+			
+			//TODO MOVE TO GAMEWORLD?
+			var ln:int = GameWorld.zombies.length;
+			for (var i:int = 0; i < ln; i++) 
+			{
+				if (GameWorld.zombies[i] == z) {
+					GameWorld.zombies.splice(i, 1);
+					break;
+				}
+			}
+			
+		}
+		
+		public function alive():Dummy {
+			
+			var z:Dummy = spitters.getInstance() as Dummy;
+			GameWorld.zombies.push(z);
+			z.add();	
+			return z;
+		}
+		
+		
+	}
+
+}

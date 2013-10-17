@@ -311,7 +311,7 @@ package dynamics.player
 		
 		
 		
-		override public function getPhysics():Body {
+		override public function getBody():Body {
 			return _body;
 		}
 		

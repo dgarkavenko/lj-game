@@ -46,7 +46,7 @@ package dynamics.player
 		public function Movement(lj:Lumberjack) 
 		{
 			lumberjack = lj;
-			_carrier = lj.getPhysics().castBody;
+			_carrier = lj.getBody().castBody;
 			view = lumberjack.view as Lumberskin;
 			
 			var groundListener:InteractionListener = new InteractionListener(CbEvent.BEGIN, InteractionType.COLLISION, GameCb.LEGS, GameCb.GROUND.including(GameCb.TRUNK), groundHandler);

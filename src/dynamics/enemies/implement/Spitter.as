@@ -102,9 +102,9 @@ package dynamics.enemies.implement
 			
 			
 			p.add(rot);			
-			p.getPhysics().position = _body.position.add(Vec2.get(10 * d, - 15));
-			p.getPhysics().velocity.setxy(2.7 * Vec2.distance(_body.position, lj_pos), 0);
-			p.getPhysics().velocity.angle = rot;
+			p.getBody().position = _body.position.add(Vec2.get(10 * d, - 15));
+			p.getBody().velocity.setxy(2.7 * Vec2.distance(_body.position, lj_pos), 0);
+			p.getBody().velocity.angle = rot;
 			
 			
 			
@@ -225,7 +225,7 @@ package dynamics.enemies.implement
 		}
 		
 		override public function tick():void {
-			
+			super.tick();
 			if (currentHP <= 0) return;
 			
 			if (++ite >= 10) {

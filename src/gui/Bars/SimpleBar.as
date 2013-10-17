@@ -13,7 +13,7 @@ package gui.Bars
 		
 		private var bar:Bitmap;
 		
-		public function SimpleBar(w:int, h:int, color:uint, outline:Boolean = true) 
+		public function SimpleBar(w:int, h:int, color:uint, outline:Boolean = true, bgcolor:uint = 0x000000, bgalpha:Number = .5 ) 
 		{
 			bar = new Bitmap(new BitmapData(w, h, false, color));
 			bar.x = -w/2;
@@ -23,7 +23,7 @@ package gui.Bars
 			
 			if (outline) graphics.lineStyle(1, 0x202020);
 			
-			graphics.beginFill(0x000000, .5);
+			graphics.beginFill(bgcolor, bgalpha);
 			graphics.drawRect(-w/2, -h/2, w, h);
 			graphics.endFill();
 		}

@@ -24,6 +24,8 @@ package dynamics
 		static public const PLAYER_INTERACTIVE:CbType = new CbType();
 		static public const LEGS:CbType = new CbType();
 		static public const PUDDLE:CbType = new CbType();
+		static public const DEADBODY:CbType = new CbType();
+		
 		
 		
 		

@@ -40,6 +40,7 @@ package
 	import framework.screens.MenuScreen;
 	import framework.SpriteContainer;
 	import gamedata.DataSources;
+	import gameplay.EvilGenius;
 	import gameplay.player.SkillList;
 	import gameplay.TreeHandler;
 	import gameplay.world.Enviroment;
@@ -88,11 +89,14 @@ package
 		public static var lumberbody:Body;
 		public static var ground:Ground;
 		
+		public static var EG:EvilGenius;
+		
 		
 		static public var gunFlash:Vec2;
 		
-		private var mouse_sprite:Bitmap;		
-		private var dummies:Vector.<Dummy> = new Vector.<Dummy>();
+		private var mouse_sprite:Bitmap;	
+		
+		public static var zombies:Vector.<Dummy> = new Vector.<Dummy>();
 		private static var dynamicsVec:Vector.<DynamicWorldObject> = new Vector.<DynamicWorldObject>();
 		
 		
@@ -161,9 +165,10 @@ package
 			camera = new Camera();			
 			ground = new Ground(space, container);
 			
-			dynamics_up();	
 			
-			
+			lumberjack = new Lumberjack(500, Lumberjack.INITIAL_Y);			
+			lumberbody = lumberjack.getBody();
+			lumberjack.onPlayerMoveCallback = onPlayerMove;		
 			
 			//Enviroment.place_GasStation(2100);
 			Forest.grow(space, container, 1000, GameWorld.WORLD_SIZE_X - 750, 55);
@@ -188,7 +193,7 @@ package
 			
 			fire.addEventListener("tick", onFire);
 			
-		
+			EG = new EvilGenius(space, container, lumberjack);
 			
 		}
 		
@@ -212,8 +217,6 @@ package
 		}
 		
 		private function onPlayerMove():void {
-			
-			//TEMP
 			
 			if (Math.abs( lumberbody.position.x - 500) < 100) {
 				lumberjack.hp.auraEffect(true)
@@ -348,28 +351,7 @@ package
 			
 		}
 		
-		
-		
-		private function dynamics_up():void 
-		{			
-			
-			//playerInteractors.push(new Boat());			
-			
-			lumberjack = new Lumberjack(500, Lumberjack.INITIAL_Y);			
-			lumberbody = lumberjack.getPhysics();
-			lumberjack.onPlayerMoveCallback = onPlayerMove;
-			
-			var s:Spitter;
-			
-			for (var j:int = 0; j < 5; j++) 
-			{
-				s = new Spitter();
-				s.at(900 + Math.random()*600, 200)
-				dummies.push(s);			
-			}
-			
-		}
-		
+	
 		
 		public function tick():void {			
 			
@@ -435,9 +417,9 @@ package
 				ScreenManager.inst.showScreen(MenuScreen);
 			}
 			
-			for each (var d:Spitter in dummies) 
+			for each (var z:Dummy in zombies) 
 			{
-				d.tick();
+				z.tick();
 			}
 			
 			for each (var o:DynamicWorldObject in dynamicsVec) {

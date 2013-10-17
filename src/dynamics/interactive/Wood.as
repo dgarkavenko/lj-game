@@ -52,7 +52,7 @@ package dynamics.interactive
 			container.layer2.removeChild(_sprite);
 		}
 		
-		override public function getPhysics():Body {
+		override public function getBody():Body {
 			return _body;
 		}	
 		

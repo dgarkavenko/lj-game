@@ -54,7 +54,7 @@ package dynamics
 		 * For override
 		 * @return
 		 */
-		public function getPhysics():Body 
+		public function getBody():Body 
 		{
 			return null;
 		}

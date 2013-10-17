@@ -1,5 +1,6 @@
 package dynamics.enemies.base 
 {
+	import com.greensock.TweenLite;
 	import dynamics.actions.ActionTypes;
 	import dynamics.actions.IAction;
 	import dynamics.BaseSpriteControl;
@@ -9,9 +10,17 @@ package dynamics.enemies.base
 	import dynamics.GameCb;
 	import dynamics.interactions.IInteractive;
 	import dynamics.Walker;
+	import flash.utils.setTimeout;
 	import gamedata.DataSources;
+	import gui.Bars.HealthBarCache;
+	import gui.Bars.SimpleBar;
+	import nape.callbacks.CbEvent;
+	import nape.callbacks.InteractionCallback;
+	import nape.callbacks.InteractionListener;
+	import nape.callbacks.InteractionType;
 	import nape.geom.Vec2;
 	import nape.phys.Body;
+	import nape.phys.Interactor;
 	import nape.phys.Material;
 	import nape.shape.Polygon;
 	import visual.z.Spitter;
@@ -21,6 +30,8 @@ package dynamics.enemies.base
 	 */
 	public class Dummy extends Walker implements IInteractive
 	{
+		
+		private static var bodyhitthefloorlistener:InteractionListener = new InteractionListener(CbEvent.BEGIN, InteractionType.COLLISION, GameCb.DEADBODY, GameCb.GROUND, letthebodyhitthefloor);
 		
 		public const STATE_STAND:uint = 1;
 		public const STATE_WALK:uint = 2;
@@ -55,6 +66,33 @@ package dynamics.enemies.base
 		protected var _thinkIteration:int;
 		
 		
+		private static var healthBars:HealthBarCache = new HealthBarCache(5);
+		private var health_bar:SimpleBar;
+		
+		
+		private function show_hp():void 
+		{
+			if (currentHP <= 0) return;
+			//trace(hp);
+			
+			if (health_bar == null) {
+				health_bar = healthBars.getInstance() as SimpleBar;		
+				container.layer0.addChild(health_bar);
+			}
+			
+			health_bar.alpha = 1;
+			health_bar.scale(currentHP / maximumHP);				
+			TweenLite.killTweensOf(health_bar);			
+			TweenLite.to(health_bar, .2, {delay:2, alpha:0, onComplete:onHide } );
+			
+		}
+		
+		private function onHide():void {
+			healthBars.setInstance(health_bar);
+			container.layer0.removeChild(health_bar);
+			health_bar = null;
+		}
+		
 		public function Dummy(alias:String) 
 		{
 			//_view = new BaseSpriteControl(ZStore.GetMC(alias));
@@ -78,6 +116,18 @@ package dynamics.enemies.base
 			_state = STATE_STAND;
 		}
 		
+		override public function getBody():Body {
+			return _body;
+		}
+		
+		override public function tick():void {
+			
+			if (health_bar != null) {
+					health_bar.x = _body.position.x;
+					health_bar.y = _body.position.y - view.sprite.height / 2 - 10;
+				}	
+		}
+		
 		/* INTERFACE dynamics.interactions.IInteractive */
 		
 		public function interact(action:IAction):void 
@@ -95,7 +145,7 @@ package dynamics.enemies.base
 					_body.applyImpulse(Vec2.get(params.facing * params.power * 2, 0));
 					currentHP -= params.power * params.z_dmg;
 					
-					
+					show_hp();
 				break;
 				
 			case ActionTypes.GUNSHOT_ACTION:
@@ -121,6 +171,7 @@ package dynamics.enemies.base
 						
 					}
 					
+					show_hp();
 					
 					
 				break;				
@@ -143,8 +194,17 @@ package dynamics.enemies.base
 		
 		private function dead():void 
 		{
+			_body.cbTypes.add(GameCb.DEADBODY);
+			bodyhitthefloorlistener.space = space;
+			
+			if (health_bar != null) {
+				TweenLite.killTweensOf(health_bar);
+				TweenLite.to(health_bar, .2, { alpha:0, onComplete:onHide } );
+			}
+			
 			view.death();
-			_body.space = null;
+			
+			TweenLite.to(_view.sprite, 4, { y:_body.position.y + 50, delay:1.5, onComplete:remove } );
 		}
 		
 		protected function setParameters():void 
@@ -181,9 +241,9 @@ package dynamics.enemies.base
 			_body.cbTypes.add(GameCb.ZOMBIE);
 			_body.allowRotation = false;			
 			_body.userData.graphic = _view.sprite;		
-			_body.userData.graphicOffset = new Vec2( 0, h/2);			
-			container.layer2.addChild(_view.sprite);			
-			_body.userData.interact = interact;			
+			_body.userData.graphicOffset = new Vec2( 0, h / 2);					
+			_body.userData.interact = interact;		
+			_body.space = null;
 			
 			// Дамми, может встретиться только с «никем» и лучом
 			Collision.setFilter(_body, Collision.DUMMIES, ~(Collision.LUMBER_IGNORE|Collision.DUMMIES) );			
@@ -191,6 +251,41 @@ package dynamics.enemies.base
 			
 			movementSpeed = ref.ms;
 			maximumHP = currentHP = ref.hp;
+		}
+		
+		public function add():void {
+			reset();
+			
+			_body.space = space;
+			container.layer2.addChild(_view.sprite);
+		}
+		
+		private function reset():void 
+		{
+			if (_body.cbTypes.has(GameCb.DEADBODY)) _body.cbTypes.remove(GameCb.DEADBODY);
+			currentHP = maximumHP;
+			view.idle();
+		}
+		
+		public function remove():void {
+			
+			
+			if (health_bar != null) {
+				healthBars.setInstance(health_bar);
+				health_bar = null;
+			}
+			
+			_body.space = null;
+			container.layer2.removeChild(_view.sprite);
+			
+			
+			//TODO Link eg to zombies?
+			GameWorld.EG.deadAgain(this);
+			
+		}
+		
+		private static function letthebodyhitthefloor(cb:InteractionCallback):void {
+			cb.int1.castBody.space = null;
 		}
 		
 		public function at(X:int, Y:int):void {
@@ -309,6 +404,11 @@ package dynamics.enemies.base
 		protected function onPursuit():Boolean
 		{
 			return true;
+		}
+		
+		public function get alias():String 
+		{
+			return _alias;
 		}
 		
 	}
