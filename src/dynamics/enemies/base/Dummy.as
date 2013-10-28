@@ -12,6 +12,7 @@ package dynamics.enemies.base
 	import dynamics.Walker;
 	import flash.utils.setTimeout;
 	import gamedata.DataSources;
+	import gameplay.EvilGenius;
 	import gui.Bars.HealthBarCache;
 	import gui.Bars.SimpleBar;
 	import nape.callbacks.CbEvent;
@@ -52,22 +53,23 @@ package dynamics.enemies.base
 		
 		protected var stand:Schedule;
 		protected var move:Schedule;
-		protected var pursuit:Schedule;	
+		
 		
 		protected var _alias:String;
 		
 		protected var movementSpeed:int;
 		protected var maximumHP:int;
 		protected var currentHP:int;
-		protected var viewRange:int;		
+		protected var viewRange:int = 250;		
 		
-		protected var ljPos:Vec2;		
 		protected var _interval:int;
-		protected var _thinkIteration:int;
-		
+		protected var _thinkIteration:int;	
 		
 		private static var healthBars:HealthBarCache = new HealthBarCache(5);
 		private var health_bar:SimpleBar;
+		
+		protected var worried:Boolean = false;
+		public var daddy:EvilGenius;
 		
 		
 		private function show_hp():void 
@@ -107,13 +109,14 @@ package dynamics.enemies.base
 			move.addFewTasks([ onInitMove, onMove ]);
 			move.addFewInterrupts([ CONDITION_CAN_MELEE_ATTACK, CONDITION_CAN_RANGED_ATTACK, CONDITION_SEE_ENEMY ]);
 			
-			pursuit = new Schedule("Pursuit");
-			pursuit.addFewTasks([ onInitPursuit, onPursuit ]);
-			pursuit.addFewInterrupts([CONDITION_CAN_RANGED_ATTACK ]);						
+									
 			
 			
 			_currentShedule = stand;
 			_state = STATE_STAND;
+			
+			
+		
 		}
 		
 		override public function getBody():Body {
@@ -141,6 +144,8 @@ package dynamics.enemies.base
 				//TODO: Types to UINTS
 				case ActionTypes.CHOP_ACTION:
 					
+					worried = true;
+					
 					$VFX.blood.at(params.x, params.y, -params.facing, 0, params.power * 4);
 					_body.applyImpulse(Vec2.get(params.facing * params.power * 2, 0));
 					currentHP -= params.power * params.z_dmg;
@@ -150,6 +155,10 @@ package dynamics.enemies.base
 				
 			case ActionTypes.GUNSHOT_ACTION:
 				
+				
+					worried = true;
+					
+					if (params.power <= 0) return;
 					var v:int = Math.sqrt(params.power);
 					_body.applyImpulse(Vec2.get(params.facing * v * 2, -params.power));	
 				
@@ -157,24 +166,36 @@ package dynamics.enemies.base
 					//headshot
 					
 						$VFX.blood.at(params.x, params.y, -params.facing, 0, v);
-						$VFX.blood.at(params.x, params.y, params.facing, 0, v);
-						$VFX.blood.at(params.x, params.y, 0, -1, v);
+						//$VFX.blood.at(params.x, params.y, params.facing, 0, v);
+						$VFX.blood.at(params.x, params.y, 0, -1, v * 2);
 						currentHP -= params.power * 2;
 						
-					trace("CRIT DAMAGE: " + params.power * 2);
+						//trace("CRIT DAMAGE: " + params.power * 2);
 						
 					}else {
 					
-						$VFX.blood.at(params.x, params.y, -params.facing, 0, v);
+						$VFX.blood.at(params.x, params.y - 30, -params.facing, 0, v);						
 						currentHP -= params.power;
-						trace("DAMAGE: " + params.power);
+						//trace("DAMAGE: " + params.power);
 						
 					}
 					
 					show_hp();
 					
 					
-				break;				
+				break;			
+				
+			case ActionTypes.TREE_HIT:
+				
+				
+				
+				$VFX.blood.at(action.params.x, action.params.y, 0, -1, action.params.power / 30);
+				$VFX.blood.at(action.params.x, action.params.y + 10, 0, 1, action.params.power / 30);
+				
+				if (action.params.power < 80) return;
+				_body.space = null;
+				dead();
+				break;
 				
 				default:			
 				
@@ -194,6 +215,9 @@ package dynamics.enemies.base
 		
 		private function dead():void 
 		{
+			
+			currentHP = 0;
+			
 			_body.cbTypes.add(GameCb.DEADBODY);
 			bodyhitthefloorlistener.space = space;
 			
@@ -202,8 +226,7 @@ package dynamics.enemies.base
 				TweenLite.to(health_bar, .2, { alpha:0, onComplete:onHide } );
 			}
 			
-			view.death();
-			
+			view.death();			
 			TweenLite.to(_view.sprite, 4, { y:_body.position.y + 50, delay:1.5, onComplete:remove } );
 		}
 		
@@ -247,17 +270,19 @@ package dynamics.enemies.base
 			
 			// Дамми, может встретиться только с «никем» и лучом
 			Collision.setFilter(_body, Collision.DUMMIES, ~(Collision.LUMBER_IGNORE|Collision.DUMMIES) );			
-			ljPos = GameWorld.lumberbody.position;
+			
 			
 			movementSpeed = ref.ms;
 			maximumHP = currentHP = ref.hp;
 		}
 		
 		public function add():void {
-			reset();
 			
+			reset();			
 			_body.space = space;
 			container.layer2.addChild(_view.sprite);
+			selectNewSchedule();
+			
 		}
 		
 		private function reset():void 
@@ -265,6 +290,8 @@ package dynamics.enemies.base
 			if (_body.cbTypes.has(GameCb.DEADBODY)) _body.cbTypes.remove(GameCb.DEADBODY);
 			currentHP = maximumHP;
 			view.idle();
+			_conditions.clear();
+			
 		}
 		
 		public function remove():void {
@@ -363,6 +390,8 @@ package dynamics.enemies.base
 		
 		protected function onInitStand():Boolean
 		{
+			_view.idle();
+			_interval = 25 + Math.random() * 25;
 			return true;
 		}
 		
@@ -371,7 +400,12 @@ package dynamics.enemies.base
 		 */
 		protected function onStand():Boolean
 		{
-			return true;
+			_interval--;
+			if (_interval <= 0)
+			{
+				return true;
+			}
+			return false;
 		}
 		
 		/**
@@ -379,6 +413,14 @@ package dynamics.enemies.base
 		 */
 		protected function onInitMove():Boolean
 		{
+			var f:int = (Math.random() + 0.5);
+			f = f == 0? f = -1 : f = 1;
+			
+			facing = f;
+			
+			_view.walk();		
+			_interval =  25 + Math.random() * 25;
+			
 			return true;
 		}
 		
@@ -387,24 +429,20 @@ package dynamics.enemies.base
 		 */
 		protected function onMove():Boolean
 		{
-			return true;
+			_body.velocity.x = 0;
+			_body.applyImpulse(Vec2.get(_facing * movementSpeed, 0));
+	
+			
+			_interval--;
+			if (_interval <= 0)
+			{
+				return true;
+			}
+			
+			return false;
 		}
 		
-		/**
-		 * Инициализация действия преследования.
-		 */
-		protected function onInitPursuit():Boolean
-		{
-			return true;
-		}
 		
-		/**
-		 * Процесс действия преследования.
-		 */
-		protected function onPursuit():Boolean
-		{
-			return true;
-		}
 		
 		public function get alias():String 
 		{

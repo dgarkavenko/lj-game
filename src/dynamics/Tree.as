@@ -6,13 +6,19 @@ package dynamics
 	import Bmp.tree18;
 	import Bmp.tree28;
 	import Bmp.tree8;
+	import BMP.treetop14;
+	import Bmp.treetop18;
+	import Bmp.treetop28;
+	import Bmp.treetop8;
 	import com.greensock.TweenLite;
 	import dynamics.actions.ActionTypes;
 	import dynamics.actions.IAction;
 	import dynamics.actions.TreeHitAction;
 	import dynamics.interactions.IInteractive;
+	import dynamics.tree.TreeBulletCollider;
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
+	import flash.display.Sprite;
 	import flash.events.TimerEvent;
 	import flash.geom.Matrix;
 	import flash.geom.Point;
@@ -52,7 +58,8 @@ package dynamics
 		//private static const TREE_MATERIAL:Material = { elasticity: 0.4 dynamicFriction: 0.2 staticFriction: 0.38 density: 0.7 rollingFriction: 0.005 }
 
 		private static const CHOPS:BitmapData = new Chops();
-		private var sprite:Bitmap;
+		private var sprite:Sprite;
+		private var trunk_bmp:Bitmap;
 		private var _body:Body;
 		
 		private var hp_updates:Array = [];
@@ -65,7 +72,7 @@ package dynamics
 		protected var HP:Number = 0;
 		
 		private var L2R:Number = 0;
-		private var CUT_A:int = 14 + Math.random() * 9;
+		private var CUT_A:int = 12 + Math.random() * 9;
 		private var CUT_B:int = CUT_A + 4 + Math.random() * 3;
 		private var CUT_C:int = CUT_B + 5 + Math.random() * 3;	
 		
@@ -73,8 +80,11 @@ package dynamics
 		
 		private var trunk:Body;
 		private var stump:Body;
+		private var couldBeCutByGun:Boolean = false;
 		
-	
+		private var bCollider:TreeBulletCollider ;
+		private var treetop:BitmapData;
+		private var ttop:Bitmap;
 		
 		
 		public function Tree(x:int, h:int, w:int) 
@@ -83,7 +93,18 @@ package dynamics
 			
 			
 			W = w;
-			H = h;
+			
+			
+			if (W > 14) {
+				H = h;
+				
+			}else if (W == 14) {
+				
+				H = h > 200 ? 200 + Math.random() * 25 : h;
+				
+			}else {
+				H = h > 125 ? 125 + Math.random() * 15 : h;
+			}
 			
 			_body = build(new Vec2(x, Game.SCREEN_HEIGHT - Ground.HEIGHT + 6 - H), [Polygon.rect(0, 0, W, H)], TREE_MATERIAL);
 			_body.type = BodyType.STATIC;			
@@ -112,49 +133,66 @@ package dynamics
 		{
 			
 			var bdata:BitmapData;
+			treetop;
+			
+			var ttop_x_offset:int = 1;
 			
 			switch (W) 
 			{
 				case 28:
 					bdata = new tree28();
-					visual_stages = 7;
+					treetop = new treetop28();
+					visual_stages = 7 + 1;
 				break;
 				case 18:
 					bdata = new tree18();
-					visual_stages = 5;
+					treetop = new treetop18();
+					visual_stages = 5 + 1;
 				break;
 				case 14:
 					bdata = new tree14();
-					visual_stages = 4;
+					visual_stages = 4 + 1;
+					treetop = new treetop14();
 				break;
 				case 8:
 					bdata = new tree8();
-					visual_stages = 3;
+					visual_stages = 3 + 1;
+					treetop = new treetop8();
+					
 				break;
 				
 			}
 			
-			sprite = new Bitmap(new BitmapData(W, H, true, 0x0));
+			trunk_bmp = new Bitmap(new BitmapData(W, H, true, 0x0));
 			
 			var ite:int = H / bdata.height;			
 			
-			for (var i:int = 0; i < ite + 1; i++) 
+			for (var i:int = 0; i < ite; i++) 
 			{
-				var mt:Matrix = new Matrix(1, 0, 0, 1, 0, bdata.height * i);			
-				sprite.bitmapData.draw(bdata, mt);
+				var mt:Matrix = new Matrix(1, 0, 0, 1, 0, bdata.height * (ite - i));			
+				trunk_bmp.bitmapData.draw(bdata, mt);
 			}	
+			
+			sprite = new Sprite();
+			sprite.addChild(trunk_bmp);
+			
+			ttop = new Bitmap(treetop);
+			ttop.x = ttop_x_offset - ttop.width / 2 + W/2;
+			sprite.addChild(ttop);
+			
+			
 			
 			
 			_body.userData.graphic = sprite;
 			_body.userData.graphicOffset = new Vec2( -W / 2 + .5,  - H / 2);
 			VisualAlignment.apply(_body);
-			//_body.userData.graphic = sprite;
+			
 			
 			
 			var index:int = Math.random() > 0.4999 ? -1 : 1;
 			
 			container.layer3.addChildAt(sprite, 0);	
-			//container.addChild(sprite);
+			
 			
 			
 			
@@ -165,7 +203,7 @@ package dynamics
 			
 			// УБРАТЬ ЭТУ ПРОВЕРКУ
 			if (action == null) return;
-			
+			if (HP <= 0) return;
 			switch (action.type) 
 			{
 				case ActionTypes.CHOP_ACTION:
@@ -174,7 +212,7 @@ package dynamics
 				default: return;
 			}
 		}
-		
+				
 		private function chopActionHandler(power:Number, facing:int):void 
 		{
 			
@@ -198,10 +236,14 @@ package dynamics
 				DataSources.lumberkeeper.score++;
 				
 				//$AE.did(AchievementEngine.TREE_DOWN);				
-				DataSources.lumberkeeper.save();
-				
+				//DataSources.lumberkeeper.save();				
+			}else if (bCollider == null) {
+				bCollider = new TreeBulletCollider();
+				bCollider.add(this, _body.position.x, _body.position.y + H / 2 - CUT_B);	
 			}
 		}
+		
+	
 		
 		private function visualUpdate(facing:int):void 
 		{
@@ -231,9 +273,9 @@ package dynamics
 					if ( clr == 0xff000000) break; 
 					else {
 						if (facing == 1) {
-							sprite.bitmapData.setPixel32(j - cvs[facing] * w, H - CUT_B - i + h/2, clr)
+							trunk_bmp.bitmapData.setPixel32(j - cvs[facing] * w, H - CUT_B - i + h/2, clr)
 						}else {
-							sprite.bitmapData.setPixel32( W - (j - cvs[facing] * w), H - CUT_B - i + h/2, clr)
+							trunk_bmp.bitmapData.setPixel32( W - (j - cvs[facing] * w), H - CUT_B - i + h/2, clr)
 						}
 						
 					}
@@ -243,7 +285,7 @@ package dynamics
 			
 		}
 		
-		private function cut():void {
+		public function cut():void {
 			
 			
 			
@@ -268,9 +310,16 @@ package dynamics
 			Collision.setFilter(stump, Collision.LUMBER_IGNORE);
 			
 			//Графика для ствола
+			
+			var trunksprite:Sprite = new Sprite();
+			
 			var bdata:BitmapData = new BitmapData(W, H - CUT_B, true, 0x0);
-			bdata.draw(sprite.bitmapData);			
-			trunk.userData.graphic = new Bitmap(bdata);
+			bdata.draw(trunk_bmp.bitmapData);			
+			
+			trunksprite.addChild(new Bitmap(bdata));
+			trunksprite.addChild(ttop);
+			
+			trunk.userData.graphic = trunksprite;
 			trunk.userData.graphicOffset = new Vec2( -W / 2, -(H - CUT_B) / 2);	
 			trunk.cbTypes.add(GameCb.TRUNK);				
 			
@@ -280,7 +329,7 @@ package dynamics
 			
 			//Графика для пня
 			bdata = new BitmapData(W, CUT_B, true, 0x0);
-			bdata.copyPixels(sprite.bitmapData, new Rectangle(0, H - CUT_B, W, CUT_B), new Point(0, 0));			
+			bdata.copyPixels(trunk_bmp.bitmapData, new Rectangle(0, H - CUT_B, W, CUT_B), new Point(0, 0));			
 			stump.userData.graphicOffset = new Vec2(-W / 2, -CUT_B / 2 - 1);
 			stump.userData.graphic = new Bitmap(bdata);			
 			container.layer3.addChildAt(stump.userData.graphic, container.layer3.getChildIndex(sprite));
@@ -296,12 +345,27 @@ package dynamics
 		
 		private function parentalDestruction():void 
 		{			
-			container.layer3.removeChild(sprite);
+			
+			
+			//GRAPHICS
+			while (sprite.numChildren > 0) {
+				sprite.removeChildAt(0);
+			}
+			container.layer3.removeChild(sprite);			
+			sprite = null;
+			trunk_bmp = null;
+			
+			
+			//PHYS
 			_body.space = null;			
 			_body = null;			
-			sprite = null;
+			
 			hp_updates.length = 0;
 			cvs = null;
+			if (bCollider != null) {
+				bCollider.remove();
+				bCollider = null;
+			}
 			
 		}
 		

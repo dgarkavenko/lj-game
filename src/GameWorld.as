@@ -171,7 +171,7 @@ package
 			lumberjack.onPlayerMoveCallback = onPlayerMove;		
 			
 			//Enviroment.place_GasStation(2100);
-			Forest.grow(space, container, 1000, GameWorld.WORLD_SIZE_X - 750, 55);
+			Forest.grow(space, container, 1000, GameWorld.WORLD_SIZE_X - 750, 35);
 			
 		
 			

@@ -12,6 +12,7 @@ package dynamics.enemies.implement.spitter
 	import nape.phys.Body;
 	import nape.phys.BodyType;
 	import nape.shape.Polygon;
+	import utils.SimpleCache;
 	import utils.VisualAlignment;
 
 	import visual.z.Puddle_mc;
@@ -26,6 +27,7 @@ package dynamics.enemies.implement.spitter
 		private var _sprite:MovieClip;
 		private var lifetime:int = 100;
 		
+		public static var cache:SimpleCache = new SimpleCache(GooPuddle, 1);
 		
 		public function GooPuddle() 
 		{
@@ -73,10 +75,13 @@ package dynamics.enemies.implement.spitter
 		
 		private function destroy():void {
 			container.layer1.removeChild(_sprite);			
+			cache.setInstance(this);
 		}
 		
 		public function add(x:int, y:int):void {	
 			_sprite.gotoAndPlay(1);
+			_sprite.alpha = 1;
+			
 			GameWorld.regOnTick(this)
 			_body.position.setxy(x, Game.SCREEN_HEIGHT - 31);
 			_body.space = space;

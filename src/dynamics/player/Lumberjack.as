@@ -360,6 +360,14 @@ package dynamics.player
 			return container.getChildIndex(view.sprite);
 		}
 		
+		//TODO REMOVE
+		public function bite(facing_:int):void 
+		{
+			hp.decrease(10);
+			$VFX.blood.at(_body.position.x, _body.position.y, -facing_, 0, 15);
+			
+		}
+		
 		public function set luggage(value:PlayerInteractiveObject):void 
 		{
 			_luggage = value;

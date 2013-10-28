@@ -58,7 +58,7 @@ package dynamics.enemies.implement.spitter
 			
 			
 			$VFX.gooPuddle.at(_body.position.x, _body.position.y, 0, -1);
-			var p:GooPuddle = new GooPuddle();
+			var p:GooPuddle = GooPuddle.cache.getInstance() as GooPuddle;
 			p.add(_body.position.x, _body.position.y);
 			remove();
 		}

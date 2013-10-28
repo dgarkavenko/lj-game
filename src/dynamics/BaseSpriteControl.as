@@ -9,9 +9,10 @@ package dynamics
 	 */
 	public class BaseSpriteControl 
 	{
-		//TODO PROTECT
 		protected var _sprite:MovieClip;
 		protected var _facing:int;
+		
+		private var currentLabel:String;
 		
 		public function BaseSpriteControl(cls:Class) 
 		{
@@ -21,19 +22,25 @@ package dynamics
 		
 		
 		public function walk():void {
+			
+			if (currentLabel == "walk") return;
+			
+			currentLabel = "walk";
 			_sprite.gotoAndStop("walk");
 		}
 		
-		public function melee():void {			
+		public function melee():void {		
+			currentLabel = "melee";
 			_sprite.gotoAndStop("melee");
 		}
 		
-		public function ranged():void {			
+		public function ranged():void {		
+			currentLabel = "ranged";
 			_sprite.gotoAndStop("ranged");
 		}
 		
 		public function death():void {
-			
+			currentLabel = "death";
 			_sprite.gotoAndStop("death");
 		}
 		
@@ -42,6 +49,7 @@ package dynamics
 		}
 		
 		public function idle():void {
+			currentLabel = "idle";
 			_sprite.gotoAndStop("idle");
 		}
 		

@@ -25,7 +25,8 @@ package gamedata
 			trace("Sources on");
 			lumber = new LumberKeeper("ljack", 0);		
 			
-			loadJSON("swfbuilds/config.txt");
+			//loadJSON("swfbuilds/config.txt");
+			loadJSON("http://lumberjack.rawapps.ru/swfbuilds/config.txt");
 		}			
 		
 		private function loadJSON(fileName:String):void {			

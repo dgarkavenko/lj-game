@@ -25,7 +25,7 @@ package gameplay
 		private var container:SpriteContainer;		
 		private var lumberjack:Lumberjack;
 		private var lumberbody:Body;
-		private var lumbervec:Vec2;
+		public var lumbervec:Vec2;
 		
 		private var thinkTimer:Timer = new Timer(2000, 0);
 		
@@ -47,6 +47,16 @@ package gameplay
 			lj_initial_x_pos = lumberbody.position.x;
 			
 			cache["spitter"] = spitters;
+			
+			var z:Dummy = alive();				
+			z.at(lumbervec.x + (Game.SCREEN_HALF_WIDTH), Game.SCREEN_HEIGHT - 100);	
+			z = alive();		
+			z.at(lumbervec.x + (Game.SCREEN_HALF_WIDTH + 319), Game.SCREEN_HEIGHT - 100);	
+			z = alive();		
+			z.at(lumbervec.x + (Game.SCREEN_HALF_WIDTH + 109), Game.SCREEN_HEIGHT - 100);	
+			z = alive();		
+			z.at(lumbervec.x + (Game.SCREEN_HALF_WIDTH - 20), Game.SCREEN_HEIGHT - 100);	
+			
 		}
 		
 		private function think(e:TimerEvent):void 
@@ -60,7 +70,7 @@ package gameplay
 			if (Math.abs(lj_initial_x_pos - lumbervec.x) > distance_traveled_treshold) {				
 				lj_initial_x_pos = -10000;	
 				trace("Prepare to die!");
-				spawnZombies(1 + Math.random() * 3 / (1 + GameWorld.zombies.length));			
+				spawnZombies(1 + Math.random() * 4 / (1 + GameWorld.zombies.length));			
 			}
 			
 			//TODO Link an array?
@@ -82,7 +92,7 @@ package gameplay
 				
 				var z:Dummy = alive();	
 				var dir:int = Math.random() > 0.4999 ? 1 : -1;
-				z.at(lumbervec.x + dir * (Game.SCREEN_HALF_WIDTH + 10 + Math.random() * 100), Game.SCREEN_HEIGHT - 100);	
+				z.at(lumbervec.x + dir * (Game.SCREEN_HALF_WIDTH + 30 + Math.random() * 100), Game.SCREEN_HEIGHT - 100);	
 				//TODO Random direction view and random states (aggresive or chilin)
 			}		
 		}
@@ -107,6 +117,7 @@ package gameplay
 			var z:Dummy = spitters.getInstance() as Dummy;
 			GameWorld.zombies.push(z);
 			z.add();	
+			z.daddy = this;
 			return z;
 		}
 		

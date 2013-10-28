@@ -168,8 +168,7 @@ package dynamics.player.weapons
 		{
 			cooldown_timer.reset();
 			cooldown_timer.start();
-			
-			var subj:Body;
+			gundata.ammo_current--;
 			
 			// 8 и 27 — половина ширины и высоты физ тела.
 			// 5.5 — половина координаты спрайта, в котором ганпоинт
@@ -190,56 +189,81 @@ package dynamics.player.weapons
 			WorldTime.addLight(l);
 			
 			var a:Number = Math.atan2(mouse.relativeY - y, mouse.relativeX - x);
-			var da:Number = a -skill_dispersion + 2 * Math.random() * skill_dispersion;
-			ray.direction = Vec2.fromPolar(ray.maxDistance, da);
-			
+			var da:Number;
+						
 			carrier_view.shot();
-			
-			rayResult = space.rayCast(ray, false, BULLET_RAY_FILTER);
-			rayResultList.clear();
-			rayResultList.add(rayResult);
-			
 			clear_visual();
-			draw_visual(rayResult);
-			fade_visual();
 			
+				
 			if (gundata.fragments > 1) {
 				
-				var additional_result:RayResult;
 				
-				for (var i:int = 0; i < gundata.fragments - 1; i++) 
+				var temp_result:RayResult;
+				
+				for (var i:int = 0; i < gundata.fragments; i++) 
 				{
+					
 					da = a -gundata.dispersion + 2 * Math.random() * (gundata.dispersion);
 					ray.direction = Vec2.fromPolar(ray.maxDistance, da);
-					additional_result = space.rayCast(ray, false, BULLET_RAY_FILTER);
 					
-					rayResultList.add(additional_result);
-					draw_visual(additional_result);
+					
+					
+					rayResultList = space.rayMultiCast(ray, false, BULLET_RAY_FILTER);				
+					
+					var dist:int = 0;					
+					for (var j:int = 0; j < rayResultList.length; j++) 
+					{
+						temp_result = rayResultList.at(j);						
+						if (temp_result) {
+							
+							var power:Number = gundata.damage_min + (gundata.damage_max - gundata.damage_min) * Math.random();
+							power = power / (1 + j / 2);
+							
+							//1: 1 power
+							//2: 0.66 power
+							//3: 0.5 power
+							//4: 0.4 power
+							//5: 0.33 power
+							
+							power -= temp_result.distance / 75;							
+							
+							//QUESTION Show every shot?
+							if (power > 0) dist = temp_result.distance;
+							
+							interact(ray.at(temp_result.distance), temp_result.shape.body, power / (1 + j));
+						}
+					}				
+					
+					draw_visual(dist);
+					
 				}
-			}
-			
-			gatherAction();
-			
-			
-			
-			if (rayResultList.length == 0) {			
-				return;
-			}
-			else
-			{				
 				
-				var ite:RayResultIterator = rayResultList.iterator();
+			}else {
+			
+				da = a -skill_dispersion + 2 * Math.random() * skill_dispersion;
+				ray.direction = Vec2.fromPolar(ray.maxDistance, da);			
 				
-				while (ite.hasNext()) 
-				{
-					var result:RayResult = ite.next();
-					if (result == null) continue;
-					
-					subj = result.shape.body;
-					if (subj != null && subj.cbTypes.has(GameCb.INTERACTIVE)) subj.userData.interact(_action);
-				}	
+				rayResult = space.rayCast(ray, false, BULLET_RAY_FILTER);					
+				if (rayResult) {
+					interact(ray.at(rayResult.distance), rayResult.shape.body, gundata.damage_min + (gundata.damage_max - gundata.damage_min) * Math.random());
+				}			
+				
+				draw_visual(rayResult != null? rayResult.distance : -1);
 				
 			}
+			
+			fade_visual();
+			
+			
+		}
+		
+		private function interact(at:Vec2, subj:Body, power:Number):void 
+		{
+			_action.params.power = power > 0 ? power : 0;
+			_action.params.facing = carrier.facing
+			_action.params.x = at.x
+			_action.params.y = at.y;
+			subj.userData.interact(_action);
 		}
 		
 		private function fade_visual():void 
@@ -253,13 +277,13 @@ package dynamics.player.weapons
 			g.clear();
 		}
 		
-		private function draw_visual(result:RayResult):void 
+		private function draw_visual(resultDistance:Number = -1):void 
 		{
 			
 			var origin:Vec2 = ray.at(50);
 			var hit:Vec2;
 			
-			if (result) hit = ray.at(result.distance + Math.random() * 10);
+			if (resultDistance > 0) hit = ray.at(resultDistance + Math.random() * 10);
 			else hit = ray.at(ray.maxDistance);
 			
 			
@@ -272,19 +296,11 @@ package dynamics.player.weapons
 		override protected function gatherAction():void {	
 			
 			gundata.ammo_current--;
-			var hit:Vec2;			
-			
-			if (rayResult) hit = ray.at(rayResult.distance);
-			else hit = ray.at(ray.maxDistance);			
-			
-			_action.params.power = gundata.damage_min + (gundata.damage_max - gundata.damage_min) * Math.random();
-			_action.params.facing = carrier.facing
-			_action.params.x = hit.x
-			_action.params.y = hit.y;				
+						
 		}
 		
 		override public function init():void {
-			ray.maxDistance = Game.SCREEN_WIDTH;
+			ray.maxDistance = Game.SCREEN_WIDTH * 3 / 4;
 			updateParams();
 			
 		}

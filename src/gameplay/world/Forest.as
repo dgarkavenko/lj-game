@@ -13,7 +13,9 @@ package gameplay.world
 	 */
 	public class Forest 
 	{
-		public static var TREEWIDTH_TEMP:Array = [8, 14, 18, 28];		
+		//public static var TREEWIDTH_TEMP:Array = [8, 14, 18, 28];		
+		
+		public static var TREEWIDTH_TEMP:Array = [18, 28];		
 		
 		public static var tree_hit_listener:InteractionListener;
 		
@@ -30,10 +32,11 @@ package gameplay.world
 			{								
 				
 				var width:int = TREEWIDTH_TEMP[Math.floor(Math.random() * TREEWIDTH_TEMP.length)];
+				trace(width);
 				var dx:int = (x_start + forest_width / amount * i);		
 				var noise:int = Math.random() * 20 - 10;
 				
-				new Tree(dx + noise, Math.random() * 10 * width + 200, width);				
+				new Tree(dx + noise, 230 + Math.random() * 200, width);				
 				
 			}
 		}
