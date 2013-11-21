@@ -26,6 +26,10 @@ package dynamics.interactions
 			
 		}
 		
+		public function destroy():void {
+				
+		}
+		
 		public function applySuperPreferences(body:Body):void {
 			body.cbTypes.add(GameCb.PLAYER_INTERACTIVE);
 			body.userData.onUse = onUse;

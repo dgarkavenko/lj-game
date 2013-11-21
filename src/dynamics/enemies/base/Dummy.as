@@ -49,6 +49,7 @@ package dynamics.enemies.base
 		protected var _conditions:ConditionList = new ConditionList();
 		protected var _state:uint;
 		
+		
 		protected var _currentShedule:Schedule;
 		
 		protected var stand:Schedule;
@@ -61,6 +62,7 @@ package dynamics.enemies.base
 		protected var maximumHP:int;
 		protected var currentHP:int;
 		protected var viewRange:int = 250;		
+		protected var senceRange:int = 20;
 		
 		protected var _interval:int;
 		protected var _thinkIteration:int;	
@@ -90,7 +92,7 @@ package dynamics.enemies.base
 		}
 		
 		private function onHide():void {
-			healthBars.setInstance(health_bar);
+			if (health_bar != null) healthBars.setInstance(health_bar);
 			container.layer0.removeChild(health_bar);
 			health_bar = null;
 		}
@@ -99,7 +101,9 @@ package dynamics.enemies.base
 		{
 			//_view = new BaseSpriteControl(ZStore.GetMC(alias));
 			_alias = alias;
-			setParameters();
+			
+			var ref:Object = DataSources.instance.getReference(_alias);
+			setParameters(ref);
 			
 			stand = new Schedule("Stand");
 			stand.addFewInterrupts([CONDITION_SEE_ENEMY, CONDITION_CAN_RANGED_ATTACK, CONDITION_CAN_MELEE_ATTACK]);
@@ -108,9 +112,6 @@ package dynamics.enemies.base
 			move = new Schedule("Move");
 			move.addFewTasks([ onInitMove, onMove ]);
 			move.addFewInterrupts([ CONDITION_CAN_MELEE_ATTACK, CONDITION_CAN_RANGED_ATTACK, CONDITION_SEE_ENEMY ]);
-			
-									
-			
 			
 			_currentShedule = stand;
 			_state = STATE_STAND;
@@ -230,7 +231,7 @@ package dynamics.enemies.base
 			TweenLite.to(_view.sprite, 4, { y:_body.position.y + 50, delay:1.5, onComplete:remove } );
 		}
 		
-		protected function setParameters():void 
+		protected function setParameters(ref:Object):void 
 		{
 			_view = new BaseSpriteControl(Spitter);
 			
@@ -238,7 +239,7 @@ package dynamics.enemies.base
 			var w:int;
 			var h:int;			
 						
-			var ref:Object = DataSources.instance.getReference(_alias);
+			
 			
 			if ("w" in ref)
 			{
@@ -264,7 +265,7 @@ package dynamics.enemies.base
 			_body.cbTypes.add(GameCb.ZOMBIE);
 			_body.allowRotation = false;			
 			_body.userData.graphic = _view.sprite;		
-			_body.userData.graphicOffset = new Vec2( 0, h / 2);					
+			_body.userData.graphicOffset = new Vec2( 0, h / 2 + 1);					
 			_body.userData.interact = interact;		
 			_body.space = null;
 			
@@ -273,7 +274,14 @@ package dynamics.enemies.base
 			
 			
 			movementSpeed = ref.ms;
+			
+			if ("ms_dispersion" in ref) movementSpeed += -ref.ms_dispersion + Math.random() * ref.ms_dispersion * 2;	
+			
 			maximumHP = currentHP = ref.hp;
+			
+			viewRange = ref.viewRange;
+			senceRange = ref.senceRange;
+			
 		}
 		
 		public function add():void {
@@ -285,32 +293,43 @@ package dynamics.enemies.base
 			
 		}
 		
-		private function reset():void 
+		protected function reset():void 
 		{
 			if (_body.cbTypes.has(GameCb.DEADBODY)) _body.cbTypes.remove(GameCb.DEADBODY);
 			currentHP = maximumHP;
 			view.idle();
 			_conditions.clear();
+			worried = false;
 			
 		}
 		
 		public function remove():void {
 			
 			
-			if (health_bar != null) {
-				healthBars.setInstance(health_bar);
-				health_bar = null;
-			}
-			
-			_body.space = null;
-			container.layer2.removeChild(_view.sprite);
-			
+			destroy();		
 			
 			//TODO Link eg to zombies?
 			GameWorld.EG.deadAgain(this);
 			
 		}
 		
+		public function destroy():void {
+		
+			if (health_bar != null) {
+				
+				TweenLite.killTweensOf(health_bar);
+				healthBars.setInstance(health_bar);
+				container.layer0.removeChild(health_bar);
+				health_bar = null;
+			}
+			
+			if (_body.space == null) return;
+			_body.space = null;
+			container.layer2.removeChild(_view.sprite);			
+		}
+		
+		
+		//TODO Check this shit
 		private static function letthebodyhitthefloor(cb:InteractionCallback):void {
 			cb.int1.castBody.space = null;
 		}

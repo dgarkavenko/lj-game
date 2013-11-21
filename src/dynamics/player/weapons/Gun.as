@@ -59,7 +59,7 @@ package dynamics.player.weapons
 		private var spinner:Spinner = new Spinner();
 		
 		//Skills
-		private var skill_dispersion:Number;
+		public var skill_dispersion:Number;
 		private var reload_m:Number;
 		
 		
@@ -68,6 +68,7 @@ package dynamics.player.weapons
 			weaponType = WeaponData.TYPE_GUN;
 			_action = new GunshotAction();
 			GameWorld.container.layer2.addChild(tracing);
+			
 			
 		}
 		
@@ -318,7 +319,7 @@ package dynamics.player.weapons
 		
 		override public function updateParams():void 
 		{
-			skill_dispersion = SkillList.dispersion;
+			//skill_dispersion = SkillList.dispersion;
 			reload_m = SkillList.reload_m;
 		}
 		

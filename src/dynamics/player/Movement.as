@@ -104,7 +104,7 @@ package dynamics.player
 				
 				if (keys.pressed("A") || keys.pressed("LEFT")) {
 					
-					_carrier.applyImpulse(new Vec2( lumberjack.facing == - 1 ? -walk * speed_m : -walk * speed_m, 0));
+					_carrier.applyImpulse(new Vec2( lumberjack.facing == - 1 ? -walk /** speed_m */: -walk /** speed_m*/, 0));
 					if (_grounded) {
 						view.walk();		
 						
@@ -114,7 +114,7 @@ package dynamics.player
 					view.turnLegs( -1);
 				
 				}else if (keys.pressed("D") || keys.pressed("RIGHT")) {
-					_carrier.applyImpulse(new Vec2(lumberjack.facing == 1 ? walk * speed_m  : walk * speed_m, 0));				
+					_carrier.applyImpulse(new Vec2(lumberjack.facing == 1 ? walk /** speed_m*/  : walk /** speed_m*/, 0));				
 					if (_grounded) {
 						view.walk();						
 						

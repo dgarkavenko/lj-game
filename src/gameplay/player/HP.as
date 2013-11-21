@@ -51,13 +51,13 @@ package gameplay.player
 			if (dot > 0) {
 				dotToApply += dot / 30;
 				if (dotToApply >= 1) {
-					_current--;
+					if (_current > 1) _current--;
 					dotToApply--;
 				}
 			}
 			
 			tick_time--;
-		
+			
 			GameScreen.HUD.update_hp(_current,max);
 			
 		}
@@ -79,6 +79,7 @@ package gameplay.player
 		
 		public function decrease(dmg:int):void {
 			_current -= dmg;
+			if (_current <= 0) GameWorld.protaganistIsDead();
 			GameScreen.HUD.update_hp(_current,max);
 		}
 		

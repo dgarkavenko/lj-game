@@ -19,8 +19,8 @@ package dynamics.enemies.base
 		protected var rangedAttack:Schedule;
 		protected var rangedAttackRange:int = 150;
 		
-		protected var numberOfProjectiles:int = Math.random() * 4;
-			
+		protected var numberOfProjectiles:int = 1 + Math.random() * 3;
+		protected var initalnumberOfProjectiles:int;
 		
 		public function Ranged(alias:String) 
 		{
@@ -29,6 +29,11 @@ package dynamics.enemies.base
 			rangedAttack = new Schedule("RangeAttack");
 			rangedAttack.addFewTasks([ onInitRangedAttack, onRangedAttack, onEndRangedAttack ]);
 			rangedAttack.addFewInterrupts([CONDITION_CAN_MELEE_ATTACK]);
+		}
+		
+		override protected function reset():void{
+			super.reset();
+			numberOfProjectiles = initalnumberOfProjectiles;
 		}
 		
 		override protected function getConditions():void 
@@ -48,7 +53,7 @@ package dynamics.enemies.base
 			}else if ( distance < rangedAttackRange && viewDirTowardsLj && numberOfProjectiles > 0 && distance > meleeAttackRange * 2 ) {
 				_conditions.set(CONDITION_CAN_RANGED_ATTACK);	
 				_conditions.set(CONDITION_SEE_ENEMY);
-			}else if (distance < viewRange && viewDirTowardsLj || worried) {
+			}else if ((distance < viewRange && viewDirTowardsLj) || worried || distance < senceRange) {
 				_conditions.set(CONDITION_SEE_ENEMY);
 			}
 			
@@ -58,9 +63,11 @@ package dynamics.enemies.base
 			
 		}
 		
-		override protected function setParameters():void {
-			super.setParameters();
-			rangedAttackCooldownSize = 75;
+		override protected function setParameters(ref:Object):void {
+			super.setParameters(ref);
+			rangedAttackCooldownSize = ref.rangedAttackCooldown * 30;
+			rangedAttackRange = ref.rangedAttackRange;
+			initalnumberOfProjectiles = numberOfProjectiles = ref.ammoCount;
 		}
 		
 		

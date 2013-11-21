@@ -2,6 +2,7 @@ package gameplay
 {
 	import dynamics.enemies.base.Dummy;
 	import dynamics.enemies.implement.Spitter;
+	import dynamics.enemies.implement.Stalker;
 	import dynamics.player.Lumberjack;
 	import flash.events.TimerEvent;
 	import flash.utils.Dictionary;
@@ -19,6 +20,7 @@ package gameplay
 	{
 		
 		private var spitters:SimpleCache = new SimpleCache(Spitter, 5);
+		private var stalkers:SimpleCache = new SimpleCache(Stalker, 3);
 		private var cache:Dictionary = new Dictionary();
 		
 		private var space:Space;
@@ -35,7 +37,7 @@ package gameplay
 		public function EvilGenius(space_:Space, container_:SpriteContainer, lumberjack_:Lumberjack) {
 			
 			thinkTimer.addEventListener(TimerEvent.TIMER, think);
-			thinkTimer.start();
+			
 			
 			space = space_;
 			container = container_;		
@@ -47,21 +49,23 @@ package gameplay
 			lj_initial_x_pos = lumberbody.position.x;
 			
 			cache["spitter"] = spitters;
+			cache["stalker"] = stalkers;
 			
 			var z:Dummy = alive();				
-			z.at(lumbervec.x + (Game.SCREEN_HALF_WIDTH), Game.SCREEN_HEIGHT - 100);	
+			z.at(lumbervec.x + (Game.SCREEN_HALF_WIDTH + 120), Game.SCREEN_HEIGHT - 100);	
+			z = alive("spitter");		
+			z.at(lumbervec.x + (Game.SCREEN_HALF_WIDTH + 19), Game.SCREEN_HEIGHT - 100);	
 			z = alive();		
-			z.at(lumbervec.x + (Game.SCREEN_HALF_WIDTH + 319), Game.SCREEN_HEIGHT - 100);	
-			z = alive();		
-			z.at(lumbervec.x + (Game.SCREEN_HALF_WIDTH + 109), Game.SCREEN_HEIGHT - 100);	
-			z = alive();		
-			z.at(lumbervec.x + (Game.SCREEN_HALF_WIDTH - 20), Game.SCREEN_HEIGHT - 100);	
+			z.at(lumbervec.x + (Game.SCREEN_HALF_WIDTH + 609), Game.SCREEN_HEIGHT - 100);	
+			/*z = alive();		
+			z.at(lumbervec.x + (Game.SCREEN_HALF_WIDTH - 20), Game.SCREEN_HEIGHT - 100);	*/
 			
 		}
 		
+		
+		
 		private function think(e:TimerEvent):void 
 		{
-			
 			if (lj_initial_x_pos == -10000) {
 				lj_initial_x_pos = lumbervec.x;
 				return;
@@ -90,7 +94,7 @@ package gameplay
 			for (var i:int = 0; i < number; i++) 
 			{
 				
-				var z:Dummy = alive();	
+				var z:Dummy = alive(Math.random() > 0.4999? "spitter" : "stalker");	
 				var dir:int = Math.random() > 0.4999 ? 1 : -1;
 				z.at(lumbervec.x + dir * (Game.SCREEN_HALF_WIDTH + 30 + Math.random() * 100), Game.SCREEN_HEIGHT - 100);	
 				//TODO Random direction view and random states (aggresive or chilin)
@@ -112,13 +116,29 @@ package gameplay
 			
 		}
 		
-		public function alive():Dummy {
+		public function alive(a:String = "stalker"):Dummy {
 			
-			var z:Dummy = spitters.getInstance() as Dummy;
+			var z:Dummy = cache[a].getInstance() as Dummy;
 			GameWorld.zombies.push(z);
 			z.add();	
 			z.daddy = this;
 			return z;
+			
+		}
+		
+		public function start():void {
+			thinkTimer.start();
+		}
+		
+		public function stop():void 
+		{
+			thinkTimer.reset();
+		}
+		
+		public function spawnAt(mpX:Number, mpY:Number):void 
+		{
+			var z:Dummy = alive(Math.random() > 0.4999? "spitter" : "stalker");				
+			z.at(mpX, mpY);	
 		}
 		
 		

@@ -24,6 +24,8 @@ import visual.Shore_mc;
 
 public class MenuScreen extends BaseScreen {
 	
+	private var option:uint = GameScreen.NEW_GAME;
+	
 	public function MenuScreen() {
 		
 		
@@ -35,10 +37,12 @@ public class MenuScreen extends BaseScreen {
 			graphics.endFill();
 		}
 		
-		addChild(bg);
-		
-		
+		addChild(bg);	
 		createStartGameButton();
+	}
+	
+	override public function init(...args):void {
+		if (args.length > 0) option = args[0];
 	}
 
 	private function createStartGameButton():void {
@@ -59,13 +63,13 @@ public class MenuScreen extends BaseScreen {
 		newgame.y = 200;
 		addChild(newgame);
 		
-		if (SharedObjectShell.instance.has()) {
+		/*if (SharedObjectShell.instance.has()) {
 			var continuegame:PixelButton = new PixelButton("Continue");
 			continuegame.addEventListener(MouseEvent.CLICK, continueGame);
 			continuegame.x  = Game.SCREEN_HALF_WIDTH - newgame.width * .5;
 			continuegame.y = 250;
 			addChild(continuegame);
-		}
+		}*/
 		
 		
 	}
@@ -77,10 +81,8 @@ public class MenuScreen extends BaseScreen {
 	}
 	
 	private function continueGame(e:MouseEvent):void 
-	{
-		
-		ScreenManager.inst.showScreen(DayScreen);
-		
+	{		
+		ScreenManager.inst.showScreen(DayScreen);		
 		$AE.build();
 	}
 
@@ -89,8 +91,8 @@ public class MenuScreen extends BaseScreen {
 		SharedObjectShell.instance.clear();
 		
 		
-		$AE.build();
-		ScreenManager.inst.showScreen(DayScreen);
+		$AE.build();		
+		ScreenManager.inst.showScreen(DayScreen, option);
 	}
 
 }

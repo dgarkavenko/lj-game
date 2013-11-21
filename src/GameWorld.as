@@ -21,6 +21,7 @@ package
 	import flash.display.BlendMode;
 	import flash.display.DisplayObject;
 	import flash.display.GradientType;
+	import flash.display.InteractiveObject;
 	import flash.display.Loader;
 	import flash.display.LoaderInfo;
 	import flash.display.MovieClip;
@@ -36,11 +37,14 @@ package
 	import framework.PhysDebug;
 	import framework.ScreenManager;
 	import framework.screens.DayScreen;
+	import framework.screens.GameOverScreen;
 	import framework.screens.GameScreen;
 	import framework.screens.MenuScreen;
 	import framework.SpriteContainer;
 	import gamedata.DataSources;
+	import gameplay.DeathReason;
 	import gameplay.EvilGenius;
+	import gameplay.player.HP;
 	import gameplay.player.SkillList;
 	import gameplay.TreeHandler;
 	import gameplay.world.Enviroment;
@@ -115,6 +119,10 @@ package
 		private var projectile_listener:InteractionListener = new InteractionListener(CbEvent.BEGIN, InteractionType.SENSOR, GameCb.PROJECTILE, GameCb.GROUND.including(GameCb.LUMBERJACK), onProjectileHit);
 		private var puddle_b_listener:InteractionListener = new InteractionListener(CbEvent.BEGIN, InteractionType.SENSOR, GameCb.PUDDLE, GameCb.LEGS, onPuddleBegin);
 		private var puddle_e_listener:InteractionListener = new InteractionListener(CbEvent.END, InteractionType.SENSOR, GameCb.PUDDLE, GameCb.LEGS, onPuddleEnd);
+		private var inhell_listener:InteractionListener = new InteractionListener(CbEvent.BEGIN, InteractionType.ANY, GameCb.HELL, GameCb.LUMBERJACK, inHell);
+		
+		
+		
 
 		
 		private function onProjectileHit(cb:InteractionCallback):void {
@@ -131,69 +139,76 @@ package
 			lumberjack.interact(new PuddleBurnAction(0));
 		}
 		
+		private function inHell(cb:InteractionCallback):void {
+			
+			lumberjack.lastDamage = DeathReason.DROWNED;
+			protaganistIsDead();
+		}
+		
 		
 		
 		
 		public function GameWorld() 
 		{
 			
-			if (stage) initialize();
-			else addEventListener(Event.ADDED_TO_STAGE, initialize);
+			if (stage) first_launch();
+			else addEventListener(Event.ADDED_TO_STAGE, first_launch);
 			
 			
 		}
 		
-		private function initialize(e:Event = null):void 
-		{
-			
-			removeEventListener(Event.ADDED_TO_STAGE, initialize);
-			
+		private function first_launch(e:Event = null):void {
+		
+			removeEventListener(Event.ADDED_TO_STAGE, first_launch);	
 			new Boot();
+			addChild(container);
+
 			space = new Space(gravity);
-			addChild(container);	
-			
-			
-			projectile_listener.space = space;
-			puddle_b_listener.space = space;
-			puddle_e_listener.space = space;
-			
+				
+			inhell_listener.space = projectile_listener.space = space;
+			puddle_b_listener.space = puddle_e_listener.space = space;
+				
 			time = new WorldTime(container);
 			addChild(time.shade);
 			addChild(time.bar);
-			
-			
+				
 			camera = new Camera();			
 			ground = new Ground(space, container);
-			
-			
+				
 			lumberjack = new Lumberjack(500, Lumberjack.INITIAL_Y);			
 			lumberbody = lumberjack.getBody();
-			lumberjack.onPlayerMoveCallback = onPlayerMove;		
+			lumberjack.onPlayerMoveCallback = onPlayerMove;	
+				
+			addBackground();
+				
+			container.layer1.addChild($VFX.emitter);
 			
-			//Enviroment.place_GasStation(2100);
-			Forest.grow(space, container, 1000, GameWorld.WORLD_SIZE_X - 750, 35);
-			
+			EG = new EvilGenius(space, container, lumberjack);			
+			initializeNewGame();
+		}
 		
+		public function initializeNewGame():void 
+		{
 			
-			//Бэкграунд
-			bg_up();
-			
-			//Добавление эффектов
-			container.layer1.addChild($VFX.emitter);			
+								
+			lumberjack.getBody().position.setxy(Lumberjack.INITIAL_X, Lumberjack.INITIAL_Y);
+						
+			//Enviroment.place_GasStation(2100);
+			var ref:Object = DataSources.instance.getReference("world");			
+			TreeHandler.inst.grow(space, container, 1000, GameWorld.WORLD_SIZE_X - 750, ref.trees);			
 			setUpMouseSprite();
 			
+			WorldTime.duration = ref.day_length * 30;
 			
-			fire = new Fireplace_mc();
+			//Добавление эффектов
+				
+			if (fire == null) {				
+				fire = new Fireplace_mc();
+				addChild(fire);
+				fire.addEventListener("tick", onFire);
+			}		
 			
-			
-			addChild(fire);
-			
-			
-			//container.layer2.addChild(fire);
-			
-			fire.addEventListener("tick", onFire);
-			
-			EG = new EvilGenius(space, container, lumberjack);
+			EG.start();
 			
 		}
 		
@@ -230,9 +245,15 @@ package
 		//Убрать отсюда
 		private function setUpMouseSprite():void 
 		{
-			mouse_sprite = new Bitmap(new EyeBitmap());			
-			addChild(mouse_sprite);			
-			Mouse.hide();
+			Mouse.hide();			
+			
+			if (mouse_sprite == null)
+			{
+				mouse_sprite = new Bitmap(new EyeBitmap());
+				addChild(mouse_sprite);			
+				
+			}
+			
 		}
 		
 		
@@ -262,7 +283,7 @@ package
 		
 		
 		
-		private function bg_up():void 
+		private function addBackground():void 
 		{
 			
 			
@@ -359,7 +380,6 @@ package
 			
 			PhysDebug.tick();		
 			
-			
 			TreeHandler.inst.tick();
 			
 			mouse_sprite.x = Controls.mouse.screenX - 25 / 2;
@@ -408,14 +428,19 @@ package
 				else PhysDebug.on();
 			}
 			
-			if (Controls.keys.justPressed("SPACE")) {				
-				//GameScreen.POP.show(PopupManager.SHOP);
-				lumberjack.skills.skill_up(3);
+			if (Controls.keys.justPressed("Z")) {
+			
+				EG.spawnAt(Controls.mouse.relativeX, Controls.mouse.relativeY);
 			}
 			
-			if (Controls.keys.justPressed("ESCAPE")) {
+			/*if (Controls.keys.justPressed("SPACE")) {				
+				//GameScreen.POP.show(PopupManager.SHOP);
+				lumberjack.skills.skill_up(3);
+			}*/
+			
+			/*if (Controls.keys.justPressed("ESCAPE")) {
 				ScreenManager.inst.showScreen(MenuScreen);
-			}
+			}*/
 			
 			for each (var z:Dummy in zombies) 
 			{
@@ -450,6 +475,54 @@ package
 					break;
 				}
 			}
+		}
+		
+		static public function protaganistIsDead():void 
+		{
+			ScreenManager.inst.showScreen(GameOverScreen);
+			EG.stop();
+		}
+		
+		public function reset():void 
+		{
+			
+			
+			
+			DataSources.lumberkeeper.day = 1;
+			lumberjack.hp.init(100);
+			
+			TreeHandler.inst.clear();
+			
+			for each (var item:DynamicWorldObject in dynamicsVec ) 
+			{
+				item.destroy();
+			}
+			
+			
+			for each (var z:Dummy in zombies) {
+				z.destroy();
+			}		 
+			
+			
+			for each (var io:PlayerInteractiveObject in playerInteractors) {
+				io.destroy();
+			}
+			
+			playerInteractors.length = zombies.length = dynamicsVec.length = 0;
+			
+			$VFX.clear();
+			
+					//zombies
+					//projectiles
+					//puddles
+
+					//treetrunks
+					//treestomps
+					//trees
+
+					//logs
+			
+					//particles
 		}
 		
 		

@@ -6,6 +6,7 @@ package dynamics.interactive
 	import flash.display.Bitmap;
 	import flash.display.Sprite;
 	import framework.input.Controls;
+	import gameplay.TreeHandler;
 	import gui.PopText;
 	import nape.geom.Vec2;
 	import nape.phys.Body;
@@ -50,6 +51,11 @@ package dynamics.interactive
 		public function remove():void {
 			_body.space = null;
 			container.layer2.removeChild(_sprite);
+		}
+		
+		override public function destroy():void {
+			remove();
+			TreeHandler.inst.woodCache.setInstance(this);
 		}
 		
 		override public function getBody():Body {

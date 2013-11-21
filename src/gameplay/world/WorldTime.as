@@ -29,7 +29,7 @@ package gameplay.world
 		public const NIGHT:int = 1;
 		private const NCOLOR:String = "303050";	
 		
-		public static var duration:int = 30 * 80;
+		public static var duration:int = 30 * 30;
 		
 		private static var scale:int = 2;
 		

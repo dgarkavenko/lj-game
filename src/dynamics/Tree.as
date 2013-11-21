@@ -86,11 +86,12 @@ package dynamics
 		private var treetop:BitmapData;
 		private var ttop:Bitmap;
 		
+		public var isForeground:Boolean = false;
 		
 		public function Tree(x:int, h:int, w:int) 
 		{	
 			
-			
+			isForeground = Math.random() > 0.55 ? true : false;
 			
 			W = w;
 			
@@ -187,12 +188,8 @@ package dynamics
 			_body.userData.graphicOffset = new Vec2( -W / 2 + .5,  - H / 2);
 			VisualAlignment.apply(_body);
 			
-			
-			
-			var index:int = Math.random() > 0.4999 ? -1 : 1;
-			
-			container.layer3.addChildAt(sprite, 0);	
-			
+			if(isForeground) container.layer1andhalf.addChildAt(sprite, 0);	
+			else container.layer3.addChildAt(sprite, 0);	
 			
 			
 			
@@ -243,6 +240,10 @@ package dynamics
 			}
 		}
 		
+		
+		override public function getBody():Body {
+			return _body;	
+		}
 	
 		
 		private function visualUpdate(facing:int):void 
@@ -316,6 +317,8 @@ package dynamics
 			var bdata:BitmapData = new BitmapData(W, H - CUT_B, true, 0x0);
 			bdata.draw(trunk_bmp.bitmapData);			
 			
+			
+			//TODO REMOVE PROPERLY
 			trunksprite.addChild(new Bitmap(bdata));
 			trunksprite.addChild(ttop);
 			
@@ -332,7 +335,8 @@ package dynamics
 			bdata.copyPixels(trunk_bmp.bitmapData, new Rectangle(0, H - CUT_B, W, CUT_B), new Point(0, 0));			
 			stump.userData.graphicOffset = new Vec2(-W / 2, -CUT_B / 2 - 1);
 			stump.userData.graphic = new Bitmap(bdata);			
-			container.layer3.addChildAt(stump.userData.graphic, container.layer3.getChildIndex(sprite));
+			//TODO Add stomps on different layers?
+			container.layer3.addChild(stump.userData.graphic);
 			VisualAlignment.apply(stump);
 			
 			trunk.userData.stump = stump;
@@ -341,17 +345,25 @@ package dynamics
 			parentalDestruction();	
 		}
 		
+		public function destroy():void 
+		{
+			parentalDestruction();
+		}
+		
 		
 		
 		private function parentalDestruction():void 
 		{			
-			
+			//TODO remove from array on cutl
 			
 			//GRAPHICS
 			while (sprite.numChildren > 0) {
 				sprite.removeChildAt(0);
 			}
-			container.layer3.removeChild(sprite);			
+			
+			if (isForeground)container.layer1andhalf.removeChild(sprite);	
+			else container.layer3.removeChild(sprite);	
+					
 			sprite = null;
 			trunk_bmp = null;
 			
@@ -366,6 +378,9 @@ package dynamics
 				bCollider.remove();
 				bCollider = null;
 			}
+			
+			//TODO listener?
+			TreeHandler.inst.destroyTree(this);
 			
 		}
 		

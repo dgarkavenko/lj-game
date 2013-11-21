@@ -60,7 +60,7 @@ package dynamics.enemies.implement.spitter
 			$VFX.gooPuddle.at(_body.position.x, _body.position.y, 0, -1);
 			var p:GooPuddle = GooPuddle.cache.getInstance() as GooPuddle;
 			p.add(_body.position.x, _body.position.y);
-			remove();
+			destroy();
 		}
 		
 		public function add(rot:Number):void {
@@ -82,7 +82,7 @@ package dynamics.enemies.implement.spitter
 		
 		
 		
-		public function remove():void {		
+		override public function destroy():void {		
 			
 			
 			if (_body.space == null) return;

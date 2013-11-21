@@ -38,6 +38,9 @@ package gameplay.world
 		private var shore_mc:MovieClip;
 		private var gmc:Bitmap;
 		private var gmc2:Bitmap;
+		
+		private var hell:Body;
+		
 		public static var HEIGHT:int = 32;
 		
 		public function Ground(space:Space, container:SpriteContainer){
@@ -134,9 +137,11 @@ package gameplay.world
 			bm = new Bitmap(new Ground_bg_west_bitmap());
 			container.layer4.addChild(bm);
 			bm.y = Game.SCREEN_HEIGHT - bm.height;
-			
-			
-			
+				
+			hell = new Body(BodyType.STATIC, new Vec2(0, Game.SCREEN_HEIGHT + 90));
+			hell.shapes.add(new Polygon(Polygon.rect(0, 0, GameWorld.WORLD_SIZE_X, 100)));
+			hell.space = space;
+			hell.cbTypes.add(GameCb.HELL);
 			
 		}
 		

@@ -12,6 +12,10 @@ package dynamics
 			
 		}
 		
+		public function destroy():void {
+			
+		}
+		
 	}
 
 }
