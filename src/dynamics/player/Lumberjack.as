@@ -9,6 +9,7 @@ package dynamics.player
 	import dynamics.player.weapons.Carry;
 	import dynamics.player.weapons.Gun;
 	import dynamics.player.weapons.GunData;
+	import gameplay.DeathReason;
 
 	import dynamics.player.weapons.Tool;
 	import dynamics.player.weapons.ToolData;
@@ -34,7 +35,10 @@ package dynamics.player
 	public class Lumberjack extends Walker implements IInteractive
 	{
 		
-		public static const INITIAL_X:int = 200;
+		
+		public var lastDamage:String = "";
+		
+		public static const INITIAL_X:int = 500;
 		public static const INITIAL_Y:int = 250;	
 		
 		
@@ -136,7 +140,9 @@ package dynamics.player
 			_body.userData.interact = interact;	
 			
 			//Здоровьишко		
-			hp.init(save.hp);
+			var ref:Object = DataSources.instance.getReference("lumberjack");
+			hp.init(ref.hp);
+			gunContainer.skill_dispersion = ref.aimDispersion;
 			
 			//Оружие настраиваем
 			Hands.carrier = this;
@@ -147,6 +153,8 @@ package dynamics.player
 			
 			interactor.setup(this, build(Vec2.get(0,0), [Polygon.rect( 0, 0, 50, 60)]), Vec2.get(15, 0));
 			movement = new Movement(this);
+			movement.jump = ref.jump;
+			movement.walk = ref.ms;
 			movement.addEventListener("onMove", onPlayerMove);
 		
 		}
@@ -311,7 +319,7 @@ package dynamics.player
 		
 		
 		
-		override public function getPhysics():Body {
+		override public function getBody():Body {
 			return _body;
 		}
 		
@@ -325,6 +333,8 @@ package dynamics.player
 			switch (action.type) 
 			{
 				case ActionTypes.TREE_HIT:
+					
+					lastDamage = DeathReason.TREE;
 					
 					var damage:int = action.params.power / 100;
 					hp.decrease(damage);
@@ -358,6 +368,15 @@ package dynamics.player
 		public function getSpriteIndex():int 
 		{
 			return container.getChildIndex(view.sprite);
+		}
+		
+		//TODO REMOVE
+		public function bite(facing_:int):void 
+		{
+			
+			hp.decrease(10);
+			$VFX.blood.at(_body.position.x, _body.position.y, -facing_, 0, 15);
+			
 		}
 		
 		public function set luggage(value:PlayerInteractiveObject):void 

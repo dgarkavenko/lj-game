@@ -15,7 +15,7 @@ package gui.Bars
 		
 		override protected function getNewInstance():Object {	
 			
-			return (new SimpleBar(22,4,0xd60000));			
+			return (new SimpleBar(22,4,0xd60000, false, 0x505050, 1));			
 			
 		}
 		

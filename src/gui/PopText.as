@@ -25,8 +25,11 @@ package gui
 			pop.alpha = 1;
 			
 			
+			
 			pop.x = x - pop.textWidth/2;
 			pop.y = y;
+			
+			pop.width = pop.textWidth + 20;
 			
 			container.addChild(pop);
 			

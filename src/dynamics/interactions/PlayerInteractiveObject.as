@@ -26,6 +26,10 @@ package dynamics.interactions
 			
 		}
 		
+		public function destroy():void {
+				
+		}
+		
 		public function applySuperPreferences(body:Body):void {
 			body.cbTypes.add(GameCb.PLAYER_INTERACTIVE);
 			body.userData.onUse = onUse;
@@ -54,8 +58,8 @@ package dynamics.interactions
 		public function tick():void {
 			
 			if (label.parent) {
-				label.x = getPhysics().position.x
-				label.y = getPhysics().position.y - 15;
+				label.x = getBody().position.x
+				label.y = getBody().position.y - 15;
 			}
 		}
 		

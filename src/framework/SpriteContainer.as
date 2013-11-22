@@ -19,6 +19,11 @@ package framework
 		public var layer1:Sprite;
 		
 		/**
+		 * Foreground trees
+		 */
+		public var layer1andhalf:Sprite;
+		
+		/**
 		 * Dynamics layer
 		 */
 		public var layer2:Sprite;
@@ -40,10 +45,12 @@ package framework
 			layer2 = new Sprite();
 			layer3 = new Sprite();
 			layer4 = new Sprite();
+			layer1andhalf = new Sprite();
 			
 			addChild(layer4);
 			addChild(layer3);
 			addChild(layer2);
+			addChild(layer1andhalf);
 			addChild(layer1);
 			addChild(layer0);
 			

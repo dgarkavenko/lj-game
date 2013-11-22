@@ -51,9 +51,9 @@ package dynamics.interactive
 					
 					_body.space = space;
 					container.layer2.addChild(_body.userData.graphic);
-					_body.position = lj.getPhysics().position;
+					_body.position = lj.getBody().position;
 					
-					_body.velocity = lj.getPhysics().velocity;
+					_body.velocity = lj.getBody().velocity;
 					_body.applyImpulse(Vec2.get(lj.facing * 10, -10));
 					
 					lj.luggage = null;

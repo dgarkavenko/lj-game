@@ -11,6 +11,7 @@ package
 	import framework.input.Controls;
 	import framework.ScreenManager;
 	import framework.screens.DayScreen;
+	import framework.screens.GameOverScreen;
 	import framework.screens.GameScreen;
 	import framework.screens.MenuScreen;
 	import gamedata.DataSources;
@@ -72,6 +73,7 @@ package
 			ScreenManager.inst.registerScreen(new GameScreen());
 			ScreenManager.inst.registerScreen(new MenuScreen());
 			ScreenManager.inst.registerScreen(new DayScreen());
+			ScreenManager.inst.registerScreen(new GameOverScreen());
 			ScreenManager.inst.showScreen(MenuScreen);			
 			
 		}

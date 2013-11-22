@@ -10,6 +10,7 @@ package dynamics.player.weapons
 	import nape.geom.RayResult;
 	import nape.geom.Vec2;
 	import nape.phys.Body;
+	import nape.phys.BodyType;
 
 	/**
 	 * ...
@@ -80,9 +81,7 @@ package dynamics.player.weapons
 				var ln:int = rayResultMulti.length;
 				
 				for (var i:int = ln - 1; i > -1; i--) 
-				{
-					
-					
+				{				
 					var rr:RayResult = rayResultMulti.at(i);
 					if (rr.shape.cbTypes.has(GameCb.ZOMBIE)) {
 						rayResult = rr;
@@ -94,14 +93,11 @@ package dynamics.player.weapons
 				if (subj == null) {
 					rayResult = rayResultMulti.at(0);
 					subj = rayResult.shape.body;					
-				}
+				}			
 			}
 				
-			if (subj != null && subj.cbTypes.has(GameCb.INTERACTIVE)) subj.userData.interact(action);
-			else nothing();		
-			
-			
-			
+			if (subj != null && subj.cbTypes.has(GameCb.INTERACTIVE)) subj.userData.interact(action);			
+			else nothing();					
 		}
 		
 		private function nothing():void 

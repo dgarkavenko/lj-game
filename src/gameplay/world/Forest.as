@@ -13,16 +13,18 @@ package gameplay.world
 	 */
 	public class Forest 
 	{
-		public static var TREEWIDTH_TEMP:Array = [8, 14, 18, 28];		
+		//public static var TREEWIDTH_TEMP:Array = [8, 14, 18, 28];		
 		
+		public static var TREEWIDTH_TEMP:Array = [18, 28];				
 		public static var tree_hit_listener:InteractionListener;
 		
 		
-		public static function grow(space:Space, container:Sprite, x_start:int, x_end:int, amount:int):void {
+		
+		public static function grow(space:Space, container:Sprite, x_start:int, x_end:int, amount:int):Vector.<Tree> {
 			
-			if (x_end <= x_start) return
+			if (x_end <= x_start) return new Vector.<Tree>();
 
-			
+			var trees:Vector.<Tree> = new Vector.<Tree>();
 			var forest_width:int = x_end - x_start;
 			
 			
@@ -33,9 +35,12 @@ package gameplay.world
 				var dx:int = (x_start + forest_width / amount * i);		
 				var noise:int = Math.random() * 20 - 10;
 				
-				new Tree(dx + noise, Math.random() * 10 * width + 200, width);				
+				trees.push(new Tree(dx + noise, 230 + Math.random() * 200, width));				
 				
 			}
+			
+			return trees;
+			
 		}
 		
 	}

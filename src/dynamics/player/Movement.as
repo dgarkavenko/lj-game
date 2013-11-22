@@ -31,7 +31,7 @@ package dynamics.player
 		private var mouse:Mouse = Controls.mouse;
 		private var lumberjack:Lumberjack;
 		private var locked_x:Number = NaN;
-		private var grounded:Boolean = true;
+		private var _grounded:Boolean = true;
 		
 		public var jump:int = 125;
 		public var walk:int = 90 * 1;
@@ -46,7 +46,7 @@ package dynamics.player
 		public function Movement(lj:Lumberjack) 
 		{
 			lumberjack = lj;
-			_carrier = lj.getPhysics().castBody;
+			_carrier = lj.getBody().castBody;
 			view = lumberjack.view as Lumberskin;
 			
 			var groundListener:InteractionListener = new InteractionListener(CbEvent.BEGIN, InteractionType.COLLISION, GameCb.LEGS, GameCb.GROUND.including(GameCb.TRUNK), groundHandler);
@@ -63,13 +63,13 @@ package dynamics.player
 		
 		private function groundHandler(cb:InteractionCallback):void 
 		{
-			if (!grounded) grounded = true;
+			if (!_grounded) _grounded = true;
 			_carrier.velocity.y = 0;
 		}	
 		
 		private function midAirHandler(cb:InteractionCallback):void 
 		{
-			if (grounded) grounded = false;
+			if (_grounded) _grounded = false;
 			//_carrier.velocity.y = 0;
 		}	
 		
@@ -104,8 +104,8 @@ package dynamics.player
 				
 				if (keys.pressed("A") || keys.pressed("LEFT")) {
 					
-					_carrier.applyImpulse(new Vec2( lumberjack.facing == - 1 ? -walk * speed_m : -walk * speed_m, 0));
-					if (grounded) {
+					_carrier.applyImpulse(new Vec2( lumberjack.facing == - 1 ? -walk /** speed_m */: -walk /** speed_m*/, 0));
+					if (_grounded) {
 						view.walk();		
 						
 					}
@@ -114,8 +114,8 @@ package dynamics.player
 					view.turnLegs( -1);
 				
 				}else if (keys.pressed("D") || keys.pressed("RIGHT")) {
-					_carrier.applyImpulse(new Vec2(lumberjack.facing == 1 ? walk * speed_m  : walk * speed_m, 0));				
-					if (grounded) {
+					_carrier.applyImpulse(new Vec2(lumberjack.facing == 1 ? walk /** speed_m*/  : walk /** speed_m*/, 0));				
+					if (_grounded) {
 						view.walk();						
 						
 					}
@@ -124,14 +124,14 @@ package dynamics.player
 					dispatchEvent(moveEvent);
 					
 				}else {
-					if (grounded) { lumberjack.view.idle();
+					if (_grounded) { lumberjack.view.idle();
 					}else {
 						lumberjack.view.jump();
 					}
 				}				
 				
 				if (keys.justPressed("W") || keys.justPressed("UP")) {				
-					if (grounded) {
+					if (_grounded) {
 						
 						//grounded = false;	
 						
@@ -159,7 +159,7 @@ package dynamics.player
 						lumberjack.unstuck();
 						
 						_carrier.applyImpulse(new Vec2(0, -jump));					
-						grounded = false;	
+						_grounded = false;	
 					}else {						
 						_carrier.applyImpulse(new Vec2(0, -jump/15));	
 					}
@@ -177,6 +177,16 @@ package dynamics.player
 		public function updateParams():void 
 		{
 			speed_m = SkillList.speed_m;
+		}
+		
+		public function get grounded():Boolean 
+		{
+			return _grounded;
+		}
+		
+		public function set grounded(value:Boolean):void 
+		{
+			_grounded = value;
 		}
 		
 	}

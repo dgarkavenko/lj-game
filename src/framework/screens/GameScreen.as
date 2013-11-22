@@ -14,16 +14,22 @@ package framework.screens {
 	 */
 	public class GameScreen extends BaseScreen {
 
+		
+		public static var NEW_GAME:uint = 0;
+		public static var CONTINUE_GAME:uint = 1;
+		public static var RESTART_GAME:uint = 2;
+		
 		public static var WORLD:GameWorld;
 		public static var HUD:HUDClass;
 		public static var POP:PopupManager;
 		
+	
 		
 
 		public function GameScreen() {			
 			
-			WORLD = new GameWorld();	
-			
+			WORLD = new GameWorld();
+				
 			HUD = new HUDClass();
 			
 			POP = new PopupManager(HUD);
@@ -56,16 +62,14 @@ package framework.screens {
 	
 		override public function init(...args):void {	
 			
-			setup.apply(this, args);			
+			if (args.length > 0) {
+				if (args[0] == RESTART_GAME) {
+					WORLD.initializeNewGame();		
+					trace("restarting");
+				}
+			}					
 		}
-		
-		private function setup(...args):void 
-		{
-			
-			
-			
-			
-		}
+	
 		
 		override protected function onReady():void {
 			world_simulation_ON();

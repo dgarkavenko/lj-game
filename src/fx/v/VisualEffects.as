@@ -1,6 +1,7 @@
 package fx.v 
 {
 	import idv.cjcat.emitter.Emitter;
+	import idv.cjcat.emitter.ParticleSource;
 	import utils.SimpleCache;
 	/**
 	 * ...
@@ -20,6 +21,11 @@ package fx.v
 		public function step():void 
 		{
 			emitter.step();
+		}
+		
+		public function clear():void 
+		{
+			emitter.clear();
 		}
 		
 	}

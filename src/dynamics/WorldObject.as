@@ -34,6 +34,7 @@ package dynamics
 			{
 				if (verts.length == 2) body.shapes.add(new Circle(verts[0], verts[1], material));
 				else body.shapes.add(new Polygon(verts, material));			
+
 			}
 			
 			body.space = space;		
@@ -54,7 +55,7 @@ package dynamics
 		 * For override
 		 * @return
 		 */
-		public function getPhysics():Body 
+		public function getBody():Body 
 		{
 			return null;
 		}

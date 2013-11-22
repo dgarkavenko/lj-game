@@ -1,5 +1,6 @@
 package dynamics.enemies.base 
 {
+	import com.greensock.TweenLite;
 	import dynamics.actions.ActionTypes;
 	import dynamics.actions.IAction;
 	import dynamics.BaseSpriteControl;
@@ -9,9 +10,18 @@ package dynamics.enemies.base
 	import dynamics.GameCb;
 	import dynamics.interactions.IInteractive;
 	import dynamics.Walker;
+	import flash.utils.setTimeout;
 	import gamedata.DataSources;
+	import gameplay.EvilGenius;
+	import gui.Bars.HealthBarCache;
+	import gui.Bars.SimpleBar;
+	import nape.callbacks.CbEvent;
+	import nape.callbacks.InteractionCallback;
+	import nape.callbacks.InteractionListener;
+	import nape.callbacks.InteractionType;
 	import nape.geom.Vec2;
 	import nape.phys.Body;
+	import nape.phys.Interactor;
 	import nape.phys.Material;
 	import nape.shape.Polygon;
 	import visual.z.Spitter;
@@ -21,6 +31,8 @@ package dynamics.enemies.base
 	 */
 	public class Dummy extends Walker implements IInteractive
 	{
+		
+		private static var bodyhitthefloorlistener:InteractionListener = new InteractionListener(CbEvent.BEGIN, InteractionType.COLLISION, GameCb.DEADBODY, GameCb.GROUND, letthebodyhitthefloor);
 		
 		public const STATE_STAND:uint = 1;
 		public const STATE_WALK:uint = 2;
@@ -37,29 +49,61 @@ package dynamics.enemies.base
 		protected var _conditions:ConditionList = new ConditionList();
 		protected var _state:uint;
 		
+		
 		protected var _currentShedule:Schedule;
 		
 		protected var stand:Schedule;
 		protected var move:Schedule;
-		protected var pursuit:Schedule;	
+		
 		
 		protected var _alias:String;
 		
 		protected var movementSpeed:int;
 		protected var maximumHP:int;
 		protected var currentHP:int;
-		protected var viewRange:int;		
+		protected var viewRange:int = 250;		
+		protected var senceRange:int = 20;
 		
-		protected var ljPos:Vec2;		
 		protected var _interval:int;
-		protected var _thinkIteration:int;
+		protected var _thinkIteration:int;	
 		
+		private static var healthBars:HealthBarCache = new HealthBarCache(5);
+		private var health_bar:SimpleBar;
+		
+		protected var worried:Boolean = false;
+		public var daddy:EvilGenius;
+		
+		
+		private function show_hp():void 
+		{
+			if (currentHP <= 0) return;
+			//trace(hp);
+			
+			if (health_bar == null) {
+				health_bar = healthBars.getInstance() as SimpleBar;		
+				container.layer0.addChild(health_bar);
+			}
+			
+			health_bar.alpha = 1;
+			health_bar.scale(currentHP / maximumHP);				
+			TweenLite.killTweensOf(health_bar);			
+			TweenLite.to(health_bar, .2, {delay:2, alpha:0, onComplete:onHide } );
+			
+		}
+		
+		private function onHide():void {
+			if (health_bar != null) healthBars.setInstance(health_bar);
+			container.layer0.removeChild(health_bar);
+			health_bar = null;
+		}
 		
 		public function Dummy(alias:String) 
 		{
 			//_view = new BaseSpriteControl(ZStore.GetMC(alias));
 			_alias = alias;
-			setParameters();
+			
+			var ref:Object = DataSources.instance.getReference(_alias);
+			setParameters(ref);
 			
 			stand = new Schedule("Stand");
 			stand.addFewInterrupts([CONDITION_SEE_ENEMY, CONDITION_CAN_RANGED_ATTACK, CONDITION_CAN_MELEE_ATTACK]);
@@ -69,13 +113,23 @@ package dynamics.enemies.base
 			move.addFewTasks([ onInitMove, onMove ]);
 			move.addFewInterrupts([ CONDITION_CAN_MELEE_ATTACK, CONDITION_CAN_RANGED_ATTACK, CONDITION_SEE_ENEMY ]);
 			
-			pursuit = new Schedule("Pursuit");
-			pursuit.addFewTasks([ onInitPursuit, onPursuit ]);
-			pursuit.addFewInterrupts([CONDITION_CAN_RANGED_ATTACK ]);						
-			
-			
 			_currentShedule = stand;
 			_state = STATE_STAND;
+			
+			
+		
+		}
+		
+		override public function getBody():Body {
+			return _body;
+		}
+		
+		override public function tick():void {
+			
+			if (health_bar != null) {
+					health_bar.x = _body.position.x;
+					health_bar.y = _body.position.y - view.sprite.height / 2 - 10;
+				}	
 		}
 		
 		/* INTERFACE dynamics.interactions.IInteractive */
@@ -91,15 +145,21 @@ package dynamics.enemies.base
 				//TODO: Types to UINTS
 				case ActionTypes.CHOP_ACTION:
 					
+					worried = true;
+					
 					$VFX.blood.at(params.x, params.y, -params.facing, 0, params.power * 4);
 					_body.applyImpulse(Vec2.get(params.facing * params.power * 2, 0));
 					currentHP -= params.power * params.z_dmg;
 					
-					
+					show_hp();
 				break;
 				
 			case ActionTypes.GUNSHOT_ACTION:
 				
+				
+					worried = true;
+					
+					if (params.power <= 0) return;
 					var v:int = Math.sqrt(params.power);
 					_body.applyImpulse(Vec2.get(params.facing * v * 2, -params.power));	
 				
@@ -107,23 +167,36 @@ package dynamics.enemies.base
 					//headshot
 					
 						$VFX.blood.at(params.x, params.y, -params.facing, 0, v);
-						$VFX.blood.at(params.x, params.y, params.facing, 0, v);
-						$VFX.blood.at(params.x, params.y, 0, -1, v);
+						//$VFX.blood.at(params.x, params.y, params.facing, 0, v);
+						$VFX.blood.at(params.x, params.y, 0, -1, v * 2);
 						currentHP -= params.power * 2;
 						
-					trace("CRIT DAMAGE: " + params.power * 2);
+						//trace("CRIT DAMAGE: " + params.power * 2);
 						
 					}else {
 					
-						$VFX.blood.at(params.x, params.y, -params.facing, 0, v);
+						$VFX.blood.at(params.x, params.y - 30, -params.facing, 0, v);						
 						currentHP -= params.power;
-						trace("DAMAGE: " + params.power);
+						//trace("DAMAGE: " + params.power);
 						
 					}
 					
+					show_hp();
 					
 					
-				break;				
+				break;			
+				
+			case ActionTypes.TREE_HIT:
+				
+				
+				
+				$VFX.blood.at(action.params.x, action.params.y, 0, -1, action.params.power / 30);
+				$VFX.blood.at(action.params.x, action.params.y + 10, 0, 1, action.params.power / 30);
+				
+				if (action.params.power < 80) return;
+				_body.space = null;
+				dead();
+				break;
 				
 				default:			
 				
@@ -143,11 +216,22 @@ package dynamics.enemies.base
 		
 		private function dead():void 
 		{
-			view.death();
-			_body.space = null;
+			
+			currentHP = 0;
+			
+			_body.cbTypes.add(GameCb.DEADBODY);
+			bodyhitthefloorlistener.space = space;
+			
+			if (health_bar != null) {
+				TweenLite.killTweensOf(health_bar);
+				TweenLite.to(health_bar, .2, { alpha:0, onComplete:onHide } );
+			}
+			
+			view.death();			
+			TweenLite.to(_view.sprite, 4, { y:_body.position.y + 50, delay:1.5, onComplete:remove } );
 		}
 		
-		protected function setParameters():void 
+		protected function setParameters(ref:Object):void 
 		{
 			_view = new BaseSpriteControl(Spitter);
 			
@@ -155,7 +239,7 @@ package dynamics.enemies.base
 			var w:int;
 			var h:int;			
 						
-			var ref:Object = DataSources.instance.getReference(_alias);
+			
 			
 			if ("w" in ref)
 			{
@@ -181,16 +265,73 @@ package dynamics.enemies.base
 			_body.cbTypes.add(GameCb.ZOMBIE);
 			_body.allowRotation = false;			
 			_body.userData.graphic = _view.sprite;		
-			_body.userData.graphicOffset = new Vec2( 0, h/2);			
-			container.layer2.addChild(_view.sprite);			
-			_body.userData.interact = interact;			
+			_body.userData.graphicOffset = new Vec2( 0, h / 2 + 1);					
+			_body.userData.interact = interact;		
+			_body.space = null;
 			
 			// Дамми, может встретиться только с «никем» и лучом
 			Collision.setFilter(_body, Collision.DUMMIES, ~(Collision.LUMBER_IGNORE|Collision.DUMMIES) );			
-			ljPos = GameWorld.lumberbody.position;
+			
 			
 			movementSpeed = ref.ms;
+			
+			if ("ms_dispersion" in ref) movementSpeed += -ref.ms_dispersion + Math.random() * ref.ms_dispersion * 2;	
+			
 			maximumHP = currentHP = ref.hp;
+			
+			viewRange = ref.viewRange;
+			senceRange = ref.senceRange;
+			
+		}
+		
+		public function add():void {
+			
+			reset();			
+			_body.space = space;
+			container.layer2.addChild(_view.sprite);
+			selectNewSchedule();
+			
+		}
+		
+		protected function reset():void 
+		{
+			if (_body.cbTypes.has(GameCb.DEADBODY)) _body.cbTypes.remove(GameCb.DEADBODY);
+			currentHP = maximumHP;
+			view.idle();
+			_conditions.clear();
+			worried = false;
+			
+		}
+		
+		public function remove():void {
+			
+			
+			destroy();		
+			
+			//TODO Link eg to zombies?
+			GameWorld.EG.deadAgain(this);
+			
+		}
+		
+		public function destroy():void {
+		
+			if (health_bar != null) {
+				
+				TweenLite.killTweensOf(health_bar);
+				healthBars.setInstance(health_bar);
+				container.layer0.removeChild(health_bar);
+				health_bar = null;
+			}
+			
+			if (_body.space == null) return;
+			_body.space = null;
+			container.layer2.removeChild(_view.sprite);			
+		}
+		
+		
+		//TODO Check this shit
+		private static function letthebodyhitthefloor(cb:InteractionCallback):void {
+			cb.int1.castBody.space = null;
 		}
 		
 		public function at(X:int, Y:int):void {
@@ -268,6 +409,8 @@ package dynamics.enemies.base
 		
 		protected function onInitStand():Boolean
 		{
+			_view.idle();
+			_interval = 25 + Math.random() * 25;
 			return true;
 		}
 		
@@ -276,7 +419,12 @@ package dynamics.enemies.base
 		 */
 		protected function onStand():Boolean
 		{
-			return true;
+			_interval--;
+			if (_interval <= 0)
+			{
+				return true;
+			}
+			return false;
 		}
 		
 		/**
@@ -284,6 +432,14 @@ package dynamics.enemies.base
 		 */
 		protected function onInitMove():Boolean
 		{
+			var f:int = (Math.random() + 0.5);
+			f = f == 0? f = -1 : f = 1;
+			
+			facing = f;
+			
+			_view.walk();		
+			_interval =  25 + Math.random() * 25;
+			
 			return true;
 		}
 		
@@ -292,23 +448,24 @@ package dynamics.enemies.base
 		 */
 		protected function onMove():Boolean
 		{
-			return true;
+			_body.velocity.x = 0;
+			_body.applyImpulse(Vec2.get(_facing * movementSpeed, 0));
+	
+			
+			_interval--;
+			if (_interval <= 0)
+			{
+				return true;
+			}
+			
+			return false;
 		}
 		
-		/**
-		 * Инициализация действия преследования.
-		 */
-		protected function onInitPursuit():Boolean
-		{
-			return true;
-		}
 		
-		/**
-		 * Процесс действия преследования.
-		 */
-		protected function onPursuit():Boolean
+		
+		public function get alias():String 
 		{
-			return true;
+			return _alias;
 		}
 		
 	}

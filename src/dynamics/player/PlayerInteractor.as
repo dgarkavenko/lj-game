@@ -65,7 +65,7 @@ package dynamics.player
 			_area.allowMovement = false;
 			
 			_subject = subj;
-			_subject_int = _subject.getPhysics();
+			_subject_int = _subject.getBody();
 			_subject_position = _subject_int.castBody.position;
 			
 			_offset = offset;			

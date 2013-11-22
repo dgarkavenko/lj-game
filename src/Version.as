@@ -4,9 +4,9 @@ package
   {
       public static const Major:int = 0;
       public static const Minor:int = 0;
-      public static const Build:int = 3777;
+      public static const Build:int = 4142;
       public static const Revision:int = 0;
-      public static const Timestamp:String = "17.10.2013 0:44:50";
+      public static const Timestamp:String = "14.11.2013 23:45:28";
       public static const Author:String = "DG";
   }
 }

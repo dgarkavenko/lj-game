@@ -5,6 +5,9 @@ package gameplay
 	import dynamics.Collision;
 	import dynamics.GameCb;
 	import dynamics.interactive.Wood;
+	import dynamics.Tree;
+	import flash.display.Sprite;
+	import gameplay.world.Forest;
 	import nape.geom.Vec2;
 	import nape.phys.Interactor;
 	import nape.shape.Shape;
@@ -13,6 +16,7 @@ package gameplay
 	import nape.callbacks.InteractionListener;
 	import nape.callbacks.InteractionType;
 	import nape.phys.Body;
+	import nape.space.Space;
 	import utils.SimpleCache;
 	/**
 	 * ...
@@ -23,18 +27,23 @@ package gameplay
 		
 		private var trunks:Vector.<Body>;
 		private var tree_hit_listener:InteractionListener;
+		private var trees:Vector.<Tree>;
 		private var ln:int = 0;
+		private var stumps:Vector.<Body>;
 		
 		static private var _inst:TreeHandler;
 		
 		
 		public var woodCache:SimpleCache = new SimpleCache(Wood, 5);
 		
-		
+		public function grow(space:Space, container:Sprite, x_start:int, x_end:int, amount:int):void {			
+			trees = Forest.grow(space, container, x_start, x_end, amount);
+		}
 		
 		public function TreeHandler() 
 		{
-			trunks = new Vector.<Body>();			
+			trunks = new Vector.<Body>();
+			stumps = new Vector.<Body>();
 			tree_hit_listener = new InteractionListener(CbEvent.BEGIN, InteractionType.COLLISION, GameCb.TRUNK, GameCb.GROUND.including(GameCb.INTERACTIVE), onTreeFall);
 			tree_hit_listener.space = GameWorld.space;
 			
@@ -72,15 +81,83 @@ package gameplay
 					break;
 				}
 				
+			}			
+		}
+		
+		public function getNearestForegroundTreeX(x:int):int {
+			
+			var dx:int = 9999999;
+			var probableX:int = x;
+			
+			
+			for each (var tree:Tree in trees ) 
+			{
+				if (tree.isForeground != true) continue;
+				
+				var diff:int = Math.abs(tree.getBody().position.x - x);
+				
+				if (diff < dx) {
+					probableX = tree.getBody().position.x;
+					dx = diff;
+				}
+			}
+			
+			trace("GOING TO " + probableX);
+			return probableX;
+		}
+		
+		public function clear():void {
+		
+			for (var i:int = 0; i < ln; i++) 
+			{
+				var tr:Body = trunks[i];
+				var st:Body = tr.userData.stump;
+				
+				
+				Collision.groups.setInstance(tr.group);
+				Collision.groups.setInstance(st.group);	
+				
+				TweenLite.killTweensOf(tr.userData.graphic);
+				GameWorld.container.layer2.removeChild(tr.userData.graphic);
+				GameWorld.container.layer3.removeChild(st.userData.graphic);
+				tr.userData.graphic = st.userData.graphic = null;
+				tr.space = st.space = null;
+				tr = null;
+				st = null;
+			}
+			
+			for each (var stump:Body in stumps) 
+			{
+				GameWorld.container.layer3.removeChild(stump.userData.graphic);
+				stump.userData.graphic = null;
+				stump.space = null;
+				stump = null;
+			}
+			
+			stumps.length = trunks.length = 0;
+			ln = 0;
+			
+			while (trees.length > 0) {
+				trees[0].destroy();
 			}
 			
 			
 		}
 		
+		public function destroyTree(t:Tree):void {
+			for (var i:int = 0; i < trees.length; i++) 
+			{
+				if (t == trees[i]) {
+					trees.splice(i, 1);
+					break;
+				}
+			}
+		}
+		
 		private function onTrunkLifetimeExpired(trunk:Body):void 
 		{				
 			trace("TREE TRUNK LIFETIME EXPIRED"); 
-			
+			stumps.push(trunk.userData.stump);
 			TreeHandler.inst.spawnWood(trunk.mass, trunk.position.add(Vec2.get(0, 0)));
 			
 			if (trunk.cbTypes.has(GameCb.TRUNK)) trunk.cbTypes.remove(GameCb.TRUNK);								
