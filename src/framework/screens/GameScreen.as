@@ -19,7 +19,7 @@ package framework.screens {
 		public static var CONTINUE_GAME:uint = 1;
 		public static var RESTART_GAME:uint = 2;
 		
-		public static var WORLD:GameWorld;
+		public var WORLD:GameWorld;
 		public static var HUD:HUDClass;
 		public static var POP:PopupManager;
 		
@@ -44,7 +44,7 @@ package framework.screens {
 			
 		}
 		
-		public static function world_simulation_ON():void {
+		public function world_simulation_ON():void {
 			//Запустить все таймеры
 			
 			Game.updateFunction = WORLD.tick;
@@ -55,7 +55,7 @@ package framework.screens {
 		/**
 		 * Поставить мир на паузу.
 		 */
-		public static function world_simulation_OFF():void {
+		public function world_simulation_OFF():void {
 			//Заморозить все таймеры
 			Game.updateFunction = Game.EMPTY_FUNCTION;
 		}
@@ -64,6 +64,7 @@ package framework.screens {
 			
 			if (args.length > 0) {
 				if (args[0] == RESTART_GAME) {
+					WORLD.reset();
 					WORLD.initializeNewGame();		
 					trace("restarting");
 				}

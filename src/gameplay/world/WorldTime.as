@@ -7,6 +7,8 @@ package gameplay.world
 	import flash.display.BlendMode;
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
+	import flash.events.Event;
+	import flash.events.EventDispatcher;
 	import flash.geom.Matrix;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
@@ -21,13 +23,18 @@ package gameplay.world
 	 * ...
 	 * @author DG
 	 */
-	public class WorldTime
+	public class WorldTime extends EventDispatcher
 	{
 		
+		public var time:int = 0;
+		public var dayTimeChangeEvent:Event = new Event(DayTimeChange);
 		
-		public const DAY:int = 0;
-		public const NIGHT:int = 1;
+		public static const DayTimeChange:String = "DayTimeChange";		
+		public static const DAY:int = 0;
+		public static const NIGHT:int = 1;
+		
 		private const NCOLOR:String = "303050";	
+		
 		
 		public static var duration:int = 30 * 30;
 		
@@ -53,6 +60,13 @@ package gameplay.world
 		
 		public var debug:Boolean = false;
 		//public var debug:Boolean = true;
+		
+		
+		public function getCurrentDay():int {
+			
+			return 1 + time / 2;
+			
+		}
 		
 		public function WorldTime(cont:Sprite) 
 		{
@@ -117,14 +131,15 @@ package gameplay.world
 			ticksToChange = duration;			
 			if (daytime == DAY) d2n();
 			else n2d();
+			
+			time++;
+			dispatchEvent(dayTimeChangeEvent);			
 		}
 		
 		private function n2d():void {
 			//shade.alp
+			//ScreenManager.inst.showScreen(DayScreen);
 			
-			DataSources.lumberkeeper.day++;
-			
-			ScreenManager.inst.showScreen(DayScreen);
 			if (!debug) TweenLite.to(shade, 3, { alpha:0 } );
 			daytime = DAY;
 		}

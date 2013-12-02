@@ -57,7 +57,7 @@ package framework.screens
 			
 			
 			
-			GameScreen.WORLD.reset();
+			
 			//TODO move to GameScreen					
 			setTimeout(function():void{ScreenManager.inst.showScreen(MenuScreen, GameScreen.RESTART_GAME)}, 6000);
 		}
