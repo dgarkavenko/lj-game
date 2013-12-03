@@ -1,7 +1,9 @@
 package framework 
 {
+	import flash.display.Sprite;
 	import framework.screens.GameScreen;
 	import nape.geom.Ray;
+	import nape.space.Space;
 	import nape.util.ShapeDebug;
 	/**
 	 * ...
@@ -13,6 +15,10 @@ package framework
 		static public var is_active:Boolean = false;
 		
 		static public var debug_rays:Vector.<Ray> = new Vector.<Ray>();
+		
+		
+		static public var container:SpriteContainer = GameWorld.container;
+		static public var space:Space = GameWorld.space;
 		
 		public function PhysDebug() 
 		{
@@ -29,11 +35,11 @@ package framework
 			}
 			
 			is_active = true;
-			GameWorld.container.addChild(debug.display);
+			container.addChild(debug.display);
 		}
 		
 		static public function off():void {
-			GameWorld.container.removeChild(debug.display);
+			container.removeChild(debug.display);
 			is_active = false;
 		}
 		
@@ -42,7 +48,7 @@ package framework
 			if (!is_active) return;
 			
 			debug.clear();
-			debug.draw(GameWorld.space);
+			debug.draw(space);
 			
 			for each (var r:Ray in debug_rays ) 
 			{

@@ -9,19 +9,17 @@
   <compiler>
     <define append="true">
       <name>CONFIG::debug</name>
-      <value>false</value>
-    </define>
-    <define append="true">
-      <name>CONFIG::release</name>
       <value>true</value>
     </define>
     <define append="true">
-      <name>CONFIG::timeStamp</name>
-      <value>'14.11.2013'</value>
+      <name>CONFIG::release</name>
+      <value>false</value>
     </define>
-    <optimize>true</optimize>
-    <omit-trace-statements>true</omit-trace-statements>
-    <verbose-stacktraces>false</verbose-stacktraces>
+    <define append="true">
+      <name>CONFIG::timeStamp</name>
+      <value>'01.12.2013'</value>
+    </define>
+    <verbose-stacktraces>true</verbose-stacktraces>
     <source-path append="true">
       <path-element>F:\lj-game\src</path-element>
       <path-element>C:\Program Files (x86)\FlashDevelop\Library\AS3\classes</path-element>
@@ -36,12 +34,13 @@
       <path-element>F:\lj-game\lib\nape-debug.swc</path-element>
       <path-element>F:\lj-game\lib\go.swc</path-element>
       <path-element>F:\lj-game\lib\z.swc</path-element>
+      <path-element>F:\lj-game\lib\majorchi.swc</path-element>
     </library-path>
   </compiler>
   <file-specs>
     <path-element>F:\lj-game\src\Game.as</path-element>
   </file-specs>
-  <default-background-color>#000000</default-background-color>
+  <default-background-color>#FFFAFF</default-background-color>
   <default-frame-rate>30</default-frame-rate>
   <default-size>
     <width>640</width>

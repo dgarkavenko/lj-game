@@ -171,6 +171,9 @@ package
 			addChild(container);
 
 			space = new Space(gravity);
+			
+			PhysDebug.space = space;
+			PhysDebug.container = container;
 				
 			inhell_listener.space = projectile_listener.space = space;
 			puddle_b_listener.space = puddle_e_listener.space = space;
