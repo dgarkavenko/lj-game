@@ -26,7 +26,7 @@ package gameplay.world
 	public class WorldTime extends EventDispatcher
 	{
 		
-		public var time:int = 0;
+		public var time:int = 1;
 		public var dayTimeChangeEvent:Event = new Event(DayTimeChange);
 		
 		public static const DayTimeChange:String = "DayTimeChange";		

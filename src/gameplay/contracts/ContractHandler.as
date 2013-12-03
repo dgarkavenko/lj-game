@@ -26,10 +26,13 @@ package gameplay.contracts
 			var a:Array = DataSources.instance.getList("contracts");
 			for each (var c:Object in a ) 
 			{
-				var contract:BaseContract = new BaseContract(a.starts, a.term, "constant" in a);
-				if ("location" in a) contract.location = a.location;
+				var contract:BaseContract = new BaseContract(c.starts, c.term, "constant" in c);
+				if ("location" in c) contract.location = a.location;				
+				contracts.push(contract);
 				
-				for each (var t:Object in a.tasks) 
+				var ts:Array = a.tasks;
+				
+				for each (var t:Object in ts) 
 				{
 					var task:Task = new Task(t.count, contract);
 					
@@ -58,6 +61,7 @@ package gameplay.contracts
 					
 					contract.tasks.push(task);
 				}
+				
 				
 			}
 		}
@@ -120,7 +124,7 @@ package gameplay.contracts
 		{
 			//NEW Contracts
 			var ln:int = contracts.length;			
-			for (var i:int = 0; i < ln; i++) 
+			for (var i:int = ln - 1; i >= 0; i--) 
 			{
 				if (contracts[i].startsFrom == time) {
 					for each (var item:Task in contracts[i].tasks) 
@@ -128,29 +132,26 @@ package gameplay.contracts
 						currentTasks.push(item);
 					}
 					
-					current.push(contracts.splice(i, 1));
-					ln--;
-					i--;
+					current.push(contracts.splice(i, 1)[0]);
+					
 				}
 			}
 			
+			trace(current);
 			//Expired contracts
 			var ln2:int = current.length;
-			for (var j:int = 0; j < ln2; j++) 
+			for (var j:int = ln2 - 1; j >= 0; j--) 
 			{
-				if (current[j].startsFrom + current[j].term >= time) {
-					if (current[j].isAchievement) {
-						current[j].startsFrom = time;
-						current[j].reset();
-					}
-					else {
-						current.splice(j, 1);
-						ln2--;
-						j--;
-					}
+				
+				if (current[j].expired(time)) {					
+					current.splice(j, 1);					
 				}
 			}
+			
+			trace(current);
 		}
+		
+		
 		
 		
 		

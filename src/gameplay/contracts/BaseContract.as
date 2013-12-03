@@ -18,7 +18,7 @@ package gameplay.contracts
 		public function BaseContract(initTime:int, term_:int, achievement:Boolean) 
 		{
 			startsFrom = initTime;
-			term = term;
+			term = term_;
 			isAchievement = achievement;			
 		}
 		
@@ -44,6 +44,11 @@ package gameplay.contracts
 		public function reward():void 
 		{
 			
+		}
+		
+		public function expired(time:int):Boolean 
+		{
+			return time >= startsFrom + term && !isAchievement;
 		}
 		
 	}
