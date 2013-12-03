@@ -1,6 +1,7 @@
 package gameplay.contracts 
 {
 	import flash.events.EventDispatcher;
+	import gamedata.DataSources;
 	/**
 	 * ...
 	 * @author dg
@@ -16,10 +17,52 @@ package gameplay.contracts
 		
 		public function ContractHandler() 
 		{
-			
+			parseContracts();
+			trace(contracts);
 		}
 		
-		public function progress(taskType:int, params:Object) {
+		private function parseContracts():void 
+		{
+			var a:Array = DataSources.instance.getList("contracts");
+			for each (var c:Object in a ) 
+			{
+				var contract:BaseContract = new BaseContract(a.starts, a.term, "constant" in a);
+				if ("location" in a) contract.location = a.location;
+				
+				for each (var t:Object in a.tasks) 
+				{
+					var task:Task = new Task(t.count, contract);
+					
+					switch (t.type) 
+					{
+						case "hunt":
+							task.type = TaskType.hunt;
+						break;
+						case "chop":
+							task.type = TaskType.chopping;
+						break;
+						default:
+					}
+					
+					if ("killedby" in t) {
+						task.killedBy = t.killedby;
+					}
+					
+					if ("targets" in t) {
+						task.targets = t.targets;
+					}
+					
+					if ("time" in t) {
+						
+					}
+					
+					contract.tasks.push(task);
+				}
+				
+			}
+		}
+		
+		public function progress(taskType:TaskType, params:Object):void {
 			if (taskType == TaskType.hunt) {
 				hunted(params);
 			}else if (taskType == TaskType.chopping) {
@@ -42,14 +85,7 @@ package gameplay.contracts
 			for each (var item:Task in currentTasks ) 
 			{
 				if (item.type != TaskType.hunt || item.isDone) continue;
-				if (item.targettype == -1 || item.targettype == who) {					
-					if (item.killedBy == -1 || item.killedBy == how) {
-						if (item.dayTime == -1 || item.dayTime == GameWorld.time.daytime) {
-							item.progress(1);
-							checkComplete();
-						}
-					}
-				}
+				
 			}
 			
 		}
@@ -61,7 +97,7 @@ package gameplay.contracts
 			for (var i:int = ln - 1; i >= 0; i--) 
 			{
 				if (current[i].isDone) {
-					var complete:BaseContract = current.splice(i, 1);
+					var complete:BaseContract = current.splice(i, 1)[0];
 					complete.reward();
 					for each (var item:Task in complete.tasks ) 
 					{

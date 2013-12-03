@@ -42,6 +42,7 @@ package
 	import framework.screens.MenuScreen;
 	import framework.SpriteContainer;
 	import gamedata.DataSources;
+	import gameplay.contracts.ContractHandler;
 	import gameplay.DeathReason;
 	import gameplay.EvilGenius;
 	import gameplay.player.HP;
@@ -107,7 +108,7 @@ package
 		
 		public static var playerInteractors:Vector.<PlayerInteractiveObject> = new Vector.<PlayerInteractiveObject>();
 		
-		private var time:WorldTime;
+		public static var time:WorldTime;
 		private var l:Light;
 		private var temp:Boolean;
 		private var fire:Fireplace_mc;
@@ -122,7 +123,13 @@ package
 		private var inhell_listener:InteractionListener = new InteractionListener(CbEvent.BEGIN, InteractionType.ANY, GameCb.HELL, GameCb.LUMBERJACK, inHell);
 		
 		
+		private var contracts:ContractHandler;
 		
+		
+		private function onDayTimeChanged(e:Event):void 
+		{
+			contracts.timeUpdate(time.time);
+		}
 
 		
 		private function onProjectileHit(cb:InteractionCallback):void {
@@ -169,6 +176,9 @@ package
 			puddle_b_listener.space = puddle_e_listener.space = space;
 				
 			time = new WorldTime(container);
+			time.addEventListener(WorldTime.DayTimeChange, onDayTimeChanged);
+			
+			
 			addChild(time.shade);
 			addChild(time.bar);
 				
@@ -190,7 +200,8 @@ package
 		public function initializeNewGame():void 
 		{
 			
-								
+			contracts = new ContractHandler();
+			contracts.timeUpdate(time.time);
 			lumberjack.getBody().position.setxy(Lumberjack.INITIAL_X, Lumberjack.INITIAL_Y);
 						
 			//Enviroment.place_GasStation(2100);

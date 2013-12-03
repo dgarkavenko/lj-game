@@ -11,30 +11,30 @@ package gameplay.contracts
 	
 		public var contract:BaseContract;
 		
-		public var type:uint = TaskType.hunt;
+		public var type:TaskType;
 		
-		public var targettype:int = 0;
+		public var targets:Array = [];		
 		public var killedBy:int = -1;		
-		public var orType:int = -1;
 		public var dayTime:int = -1;
 		
-		public var big:int = -1;
+		
 	
 		
-		public var target:int = 5;
+		public var targetCount:int = 5;
 		
 		public var count:int = 0;
 		public var sinceMorning:int = 0;
 		
 		public var isDone:Boolean = false;
 		
-		public function Task() 
+		public function Task(count_:int, contract_:BaseContract) 
 		{
-			
+			targetCount = count_;
+			contract = contract_
 		}
 		
 		public function progress(a:int = 1):void {
-			if (count == target) {
+			if (count == targetCount) {
 				isDone = true;
 				contract.progress();
 			}

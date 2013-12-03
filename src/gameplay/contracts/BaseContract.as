@@ -27,7 +27,7 @@ package gameplay.contracts
 			
 		}
 		
-		public function get isDone():void 
+		public function get isDone():Boolean 
 		{
 			for each (var item:Task in tasks ) 
 			{
