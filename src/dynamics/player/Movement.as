@@ -9,7 +9,6 @@ package dynamics.player
 	import framework.input.Keyboard;
 	import framework.input.Mouse;
 	import framework.screens.GameScreen;
-	import gamedata.achievement.AchievementEngine;
 	import gamedata.DataSources;
 	import gameplay.player.SkillList;
 	import gui.PopupManager;

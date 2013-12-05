@@ -36,11 +36,6 @@ package gameplay.contracts
 			return true;
 		}	
 		
-		public function progress():void 
-		{
-			
-		}
-		
 		public function reward():void 
 		{
 			

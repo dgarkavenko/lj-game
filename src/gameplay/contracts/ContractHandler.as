@@ -2,6 +2,8 @@ package gameplay.contracts
 {
 	import flash.events.EventDispatcher;
 	import gamedata.DataSources;
+	import utils.DataEvt;
+	import utils.GlobalEvents;
 	/**
 	 * ...
 	 * @author dg
@@ -13,12 +15,109 @@ package gameplay.contracts
 		private var current:Vector.<BaseContract> = new Vector.<BaseContract>();
 		
 		
-		private var currentTasks:Vector.<Task> = new Vector.<Task>();
+		
+		
+		
+		private var huntTasks:Vector.<Task> = new Vector.<Task>();
+		private var chopTasks:Vector.<Task> = new Vector.<Task>();
+		
+		private var temporaryComplete:Array = [];
+		
+		
+		private function AddContract(cntrct:BaseContract):void {
+			for each (var t:Task in cntrct.tasks ) 
+			{
+				if (t.type == TaskType.hunt) {
+					huntTasks.push(t);
+				}else if (t.type == TaskType.chopping) {
+					chopTasks.push(t);
+				}
+			}
+			
+			current.push(cntrct);
+		}
+		
+		private function RemoveContract(cntrct:BaseContract):void {
+			for each (var t:Task in cntrct.tasks ) 
+			{
+				if (t.type == TaskType.hunt) {
+					for (var i:int = huntTasks.length - 1; i >= 0 ; i--) 
+					{
+						if (huntTasks[i] == t) huntTasks.splice(i, 1);
+					}
+					
+				}else if (t.type == TaskType.chopping) {
+					for (var j:int = chopTasks.length - 1; j >= 0 ; j--) 
+					{
+						if (chopTasks[j] == t) chopTasks.splice(j, 1);
+					}
+				}
+			}
+		}
+		
+		
 		
 		public function ContractHandler() 
 		{
+			
+			$GLOBAL.listenTo(GlobalEvents.ZOMBIE_KILLED, onZombieKill);
+			$GLOBAL.listenTo(GlobalEvents.TREE_CUT, onTreeCut);			
+			
 			parseContracts();
 			trace(contracts);
+		}
+		
+		private function onTreeCut(e:DataEvt):void 
+		{
+			for each (var task:Task in chopTasks ) 
+			{
+				if (task.isDone) continue;
+				if (task.ProgressIfMatch(e.data) && task.contract.isDone) {
+					trace("Contract complete");
+					temporaryComplete.push(task.contract);
+				}
+			}
+			
+			reward();
+		}
+		
+		private function reward():void {
+			
+			for (var i:int = 0; i < temporaryComplete.length; i++) 
+			{
+				complete(temporaryComplete[i]);
+			}
+			
+			temporaryComplete.length = 0;
+		}
+		
+		private function onZombieKill(e:DataEvt):void 
+		{			
+			for each (var task:Task in huntTasks ) 
+			{
+				if (task.isDone) continue;
+				if (task.ProgressIfMatch(e.data) && task.contract.isDone) {
+					trace("Contract complete");
+					temporaryComplete.push(task.contract);
+				}
+			}
+			
+			reward();
+			
+		}
+		
+		private function complete(complete:BaseContract):void 
+		{
+			for (var i:int = current.length - 1; i >= 0; i--) 
+			{
+				if (complete == current[i]) {
+					current.splice(i, 1);
+					RemoveContract(complete);
+					complete.reward();	
+					trace("Contract removed");
+					return;
+				}						
+			}
 		}
 		
 		private function parseContracts():void 
@@ -30,10 +129,13 @@ package gameplay.contracts
 				if ("location" in c) contract.location = a.location;				
 				contracts.push(contract);
 				
-				var ts:Array = a.tasks;
-				
+				var ts:Array = c.tasks;
+			
 				for each (var t:Object in ts) 
 				{
+					
+					trace("Added task");
+					
 					var task:Task = new Task(t.count, contract);
 					
 					switch (t.type) 
@@ -56,7 +158,7 @@ package gameplay.contracts
 					}
 					
 					if ("time" in t) {
-						
+						task.dayTime = t.time;
 					}
 					
 					contract.tasks.push(task);
@@ -64,61 +166,7 @@ package gameplay.contracts
 				
 				
 			}
-		}
-		
-		public function progress(taskType:TaskType, params:Object):void {
-			if (taskType == TaskType.hunt) {
-				hunted(params);
-			}else if (taskType == TaskType.chopping) {
-				chopped(params);
-			}
-		}
-		
-		private function chopped(params:Object):void 
-		{
-			
-		}
-		
-		private function hunted(params:Object):void 
-		{
-			var who:int = params.type;
-			var how:int = params.weapon;
-			
-			
-			
-			for each (var item:Task in currentTasks ) 
-			{
-				if (item.type != TaskType.hunt || item.isDone) continue;
-				
-			}
-			
-		}
-		
-		private function checkComplete():void 
-		{
-			var ln:int = current.length;
-			
-			for (var i:int = ln - 1; i >= 0; i--) 
-			{
-				if (current[i].isDone) {
-					var complete:BaseContract = current.splice(i, 1)[0];
-					complete.reward();
-					for each (var item:Task in complete.tasks ) 
-					{
-						removeTask(item);
-					}
-				}
-			}
-		}
-		
-		public function removeTask(item:Task):void {
-			for (var i:int = 0; i < currentTasks.length - 1; i--) 
-			{
-				if (item == currentTasks[i]) currentTasks.splice(i, 1);
-			}
-		}
-		
-		
+		}		
 		
 		public function timeUpdate(time:int):void 
 		{
@@ -126,29 +174,24 @@ package gameplay.contracts
 			var ln:int = contracts.length;			
 			for (var i:int = ln - 1; i >= 0; i--) 
 			{
-				if (contracts[i].startsFrom == time) {
-					for each (var item:Task in contracts[i].tasks) 
-					{
-						currentTasks.push(item);
-					}
-					
-					current.push(contracts.splice(i, 1)[0]);
-					
+				if (contracts[i].startsFrom == time) {					
+					AddContract(contracts.splice(i, 1)[0]);				
 				}
-			}
+			}			
 			
-			trace(current);
+			
 			//Expired contracts
 			var ln2:int = current.length;
 			for (var j:int = ln2 - 1; j >= 0; j--) 
-			{
-				
-				if (current[j].expired(time)) {					
-					current.splice(j, 1);					
+			{				
+				if (current[j].expired(time)) {	
+					RemoveContract(current.splice(j, 1)[0]);					
 				}
 			}
 			
+			
 			trace(current);
+			
 		}
 		
 		

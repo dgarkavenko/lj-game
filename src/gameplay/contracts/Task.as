@@ -34,10 +34,20 @@ package gameplay.contracts
 		}
 		
 		public function progress(a:int = 1):void {
+			
+			
+			count += a;
+			
+			trace("Task progress: " + count + "/" + targetCount );
+			
+			
+			
 			if (count == targetCount) {
-				isDone = true;
-				contract.progress();
+				isDone = true;		
+				trace("Task complete");
 			}
+			
+			
 		}
 		
 		public function reset():void {
@@ -47,6 +57,30 @@ package gameplay.contracts
 		public function resetDaily():void {
 			count -= sinceMorning;
 			sinceMorning = 0;
+		}
+		
+		public function ProgressIfMatch(data:Object):Boolean 
+		{
+			
+			if (!MatchType(data.type)) return isDone;
+			if (killedBy != -1 && data.how != killedBy) return isDone;
+			if (dayTime != -1 && dayTime != GameWorld.time.daytime) return isDone;
+			
+			progress("val" in data? data.val : 1);			
+			return isDone;
+			
+		}
+		
+		public function MatchType(type:int):Boolean {
+			
+			if (targets.length == 0) return true;
+			
+			for each (var t:int in targets) 
+			{
+				if (t == type) return true;
+			}
+			
+			return false;
 		}
 		
 	}

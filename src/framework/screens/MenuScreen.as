@@ -83,15 +83,14 @@ public class MenuScreen extends BaseScreen {
 	private function continueGame(e:MouseEvent):void 
 	{		
 		ScreenManager.inst.showScreen(DayScreen);		
-		$AE.build();
+		
 	}
 
 	private function newGame(e:MouseEvent):void {
 		
 		SharedObjectShell.instance.clear();
 		
-		
-		$AE.build();		
+				
 		ScreenManager.inst.showScreen(DayScreen, option);
 	}
 

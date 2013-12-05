@@ -24,6 +24,7 @@ package dynamics.enemies.base
 	import nape.phys.Interactor;
 	import nape.phys.Material;
 	import nape.shape.Polygon;
+	import utils.GlobalEvents;
 	import visual.z.Spitter;
 	/**
 	 * ...
@@ -56,7 +57,7 @@ package dynamics.enemies.base
 		protected var move:Schedule;
 		
 		
-		protected var _alias:String;
+		protected var _alias:String;	
 		
 		protected var movementSpeed:int;
 		protected var maximumHP:int;
@@ -69,6 +70,7 @@ package dynamics.enemies.base
 		
 		private static var healthBars:HealthBarCache = new HealthBarCache(5);
 		private var health_bar:SimpleBar;
+		private var isDead:Boolean = false;
 		
 		protected var worried:Boolean = false;
 		public var daddy:EvilGenius;
@@ -76,7 +78,7 @@ package dynamics.enemies.base
 		
 		private function show_hp():void 
 		{
-			if (currentHP <= 0) return;
+			if (isDead) return;
 			//trace(hp);
 			
 			if (health_bar == null) {
@@ -100,7 +102,7 @@ package dynamics.enemies.base
 		public function Dummy(alias:String) 
 		{
 			//_view = new BaseSpriteControl(ZStore.GetMC(alias));
-			_alias = alias;
+			_alias = alias;			
 			
 			var ref:Object = DataSources.instance.getReference(_alias);
 			setParameters(ref);
@@ -118,6 +120,21 @@ package dynamics.enemies.base
 			
 			
 		
+		}
+		
+		private function get intType():int 
+		{
+			switch (_alias) 
+			{
+				case "spitter":
+					return 1;
+				break;
+				case "stalker":
+					return 2;
+				break;
+				default: return 0;
+			}
+			
 		}
 		
 		override public function getBody():Body {
@@ -145,20 +162,17 @@ package dynamics.enemies.base
 				//TODO: Types to UINTS
 				case ActionTypes.CHOP_ACTION:
 					
-					worried = true;
-					
+					worried = true;					
 					$VFX.blood.at(params.x, params.y, -params.facing, 0, params.power * 4);
 					_body.applyImpulse(Vec2.get(params.facing * params.power * 2, 0));
-					currentHP -= params.power * params.z_dmg;
-					
+					currentHP -= params.power * params.z_dmg;					
 					show_hp();
+					
 				break;
 				
-			case ActionTypes.GUNSHOT_ACTION:
+			case ActionTypes.GUNSHOT_ACTION:				
 				
-				
-					worried = true;
-					
+					worried = true;					
 					if (params.power <= 0) return;
 					var v:int = Math.sqrt(params.power);
 					_body.applyImpulse(Vec2.get(params.facing * v * 2, -params.power));	
@@ -166,19 +180,13 @@ package dynamics.enemies.base
 					if (params.y < _body.position.y - view.sprite.height / 2 + 13) {
 					//headshot
 					
-						$VFX.blood.at(params.x, params.y, -params.facing, 0, v);
-						//$VFX.blood.at(params.x, params.y, params.facing, 0, v);
+						$VFX.blood.at(params.x, params.y, -params.facing, 0, v);						
 						$VFX.blood.at(params.x, params.y, 0, -1, v * 2);
-						currentHP -= params.power * 2;
+						currentHP -= params.power * 2;			
 						
-						//trace("CRIT DAMAGE: " + params.power * 2);
-						
-					}else {
-					
+					}else {					
 						$VFX.blood.at(params.x, params.y - 30, -params.facing, 0, v);						
-						currentHP -= params.power;
-						//trace("DAMAGE: " + params.power);
-						
+						currentHP -= params.power;					
 					}
 					
 					show_hp();
@@ -188,25 +196,22 @@ package dynamics.enemies.base
 				
 			case ActionTypes.TREE_HIT:
 				
-				
-				
 				$VFX.blood.at(action.params.x, action.params.y, 0, -1, action.params.power / 30);
-				$VFX.blood.at(action.params.x, action.params.y + 10, 0, 1, action.params.power / 30);
-				
+				$VFX.blood.at(action.params.x, action.params.y + 10, 0, 1, action.params.power / 30);				
 				if (action.params.power < 80) return;
-				_body.space = null;
-				dead();
-				break;
 				
+				_body.space = null;
+				dead(action.type);
+				break;				
 				default:			
 				
-			}
-			
-			
+			}		
 				
 			if (currentHP <= 0) {
-				dead();
-							
+				
+				dead(action.type);
+				
+				
 			}
 			
 			
@@ -214,10 +219,17 @@ package dynamics.enemies.base
 			
 		}
 		
-		private function dead():void 
+		private function dead(by:int):void 
 		{
 			
+			if (isDead) return;
+			
+			isDead = true;
 			currentHP = 0;
+			
+			$GLOBAL.dispatch(GlobalEvents.ZOMBIE_KILLED, {type:intType, how:by} );
+			
+			
 			
 			_body.cbTypes.add(GameCb.DEADBODY);
 			bodyhitthefloorlistener.space = space;
@@ -297,6 +309,7 @@ package dynamics.enemies.base
 		{
 			if (_body.cbTypes.has(GameCb.DEADBODY)) _body.cbTypes.remove(GameCb.DEADBODY);
 			currentHP = maximumHP;
+			isDead = false;
 			view.idle();
 			_conditions.clear();
 			worried = false;

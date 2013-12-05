@@ -31,7 +31,7 @@
 	"bg":{"count":0,"n1":"bg1.png","n2":"bg2.png","n3":"bg3.png","n4":"bg4.png", "n5":"bg5.png", "n6":"bg6.png"},
 	
 	"contracts":[
-		{"tasks":[{"type":"hunt", "count":5}],
+		{"tasks":[{"type":"hunt", "count":2}],
 		"starts":1, "term":0, "constant":true},
 		
 		{"tasks":[{"type":"chop", "count":20}], 
@@ -46,8 +46,8 @@
 		{"tasks":[{"type":"chop", "count":20,"targets":[2]}], 
 		"starts":2, "term":1, "reward":250},
 		
-		{"tasks":[{"type":"chop", "count":20, "targets":[1]},{"type":"chop", "count":20, "targets":[2]}], 
-		"starts":2, "term":2, "reward":800},
+		{"tasks":[{"type":"hunt", "count":2, "targets":[2]},{"type":"chop", "count":2, "targets":[]}], 
+		"starts":1, "term":2, "reward":800},
 		
 		{"tasks":[{"type":"hunt", "count":5, "targets":[2]}], "starts":3, "term":1, "reward":500}
 	]

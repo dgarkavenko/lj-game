@@ -42,6 +42,7 @@ package dynamics
 	import nape.phys.BodyType;
 	import nape.phys.Material;
 	import nape.shape.Polygon;
+	import utils.GlobalEvents;
 	import utils.VisualAlignment;
 
 	/**
@@ -228,12 +229,10 @@ package dynamics
 				L2R = L2R > MAX_HP? MAX_HP : L2R;	
 				
 				
-				cut();			
-				
-				DataSources.lumberkeeper.score++;
+				cut();
 				
 				//$AE.did(AchievementEngine.TREE_DOWN);				
-				//DataSources.lumberkeeper.save();				
+							
 			}else if (bCollider == null) {
 				bCollider = new TreeBulletCollider();
 				bCollider.add(this, _body.position.x, _body.position.y + H / 2 - CUT_B);	
@@ -288,7 +287,7 @@ package dynamics
 		
 		public function cut():void {
 			
-			
+			$GLOBAL.dispatch(GlobalEvents.TREE_CUT, {type:0, how:0 } );
 			
 			var CUT_X:Number = L2R / MAX_HP * W / 2;			
 			var LX:int = W/2 - CUT_X < 1? 0 : 1;
