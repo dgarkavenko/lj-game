@@ -13,7 +13,7 @@ package gameplay.world
 	public class Enviroment 
 	{		
 		
-		public static function place_GasStation(x:int):void {
+		public static function place_GasStation(x:int, g:Ground):void {
 			
 			
 			return;
@@ -22,7 +22,7 @@ package gameplay.world
 			GameWorld.container.addChild(gs);
 			
 			
-			var gmc:Bitmap = GameWorld.ground.getGroundBitmap();			
+			var gmc:Bitmap = g.getGroundBitmap();			
 			gmc.bitmapData.draw(new Ground_w_road_bitmap(), new Matrix(1,0,0,1, x - gmc.x));
 			
 			gs.x = x + 260 + gs.width/2;

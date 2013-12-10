@@ -6,7 +6,7 @@ package framework.screens {
 	import framework.SharedObjectShell;
 	import gui.HUDClass;
 	import gui.PopupManager;
-	import gameplay.world.WorldTime;
+
 
 	/**
 	 * ...
@@ -28,20 +28,12 @@ package framework.screens {
 
 		public function GameScreen() {			
 			
-			WORLD = new GameWorld();
-				
-			HUD = new HUDClass();
-			
-			POP = new PopupManager(HUD);
-			
-			
+			WORLD = new GameWorld();				
+			HUD = new HUDClass();			
+			POP = new PopupManager(HUD);		
 			
 			addChild(WORLD);			
-			addChild(HUD);	
-			
-			
-			
-			
+			addChild(HUD);				
 		}
 		
 		public function world_simulation_ON():void {
@@ -64,7 +56,7 @@ package framework.screens {
 			
 			if (args.length > 0) {
 				if (args[0] == RESTART_GAME) {
-					WORLD.reset();
+					WORLD.softReset();
 					WORLD.initializeNewGame();		
 					trace("restarting");
 				}

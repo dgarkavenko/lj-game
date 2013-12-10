@@ -34,12 +34,12 @@ package gameplay.world
 		private static var MARGIN_LEFT:int = 305;
 		private static var MARGIN_RIGHT:int = 305;
 		
-		private var ground:Body;
+		public var ground:Body;
 		private var shore_mc:MovieClip;
 		private var gmc:Bitmap;
 		private var gmc2:Bitmap;
 		
-		private var hell:Body;
+		public var hell:Body;
 		
 		public static var HEIGHT:int = 32;
 		

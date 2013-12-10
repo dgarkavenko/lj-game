@@ -15,7 +15,7 @@ package gui
 		
 		public static var DEFAULT_COLOR:uint = 0x00ff00;		
 		private static  var cache:FTFCache = new FTFCache(FormatedTextField, 3, 14);
-		private static var container:Sprite = GameWorld.container.layer0;
+		private static var container:Sprite = GameWorld.container;
 		
 		public static function at(text:String, x:int, y:int, color:uint):void {
 			

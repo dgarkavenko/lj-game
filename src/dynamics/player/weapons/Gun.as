@@ -18,7 +18,7 @@ package dynamics.player.weapons
 	import framework.PhysDebug;
 	import gameplay.player.SkillList;
 	import gameplay.world.Light;
-	import gameplay.world.WorldTime;
+	import gameplay.world.TimeManager;
 	import hud.Spinner;
 	import nape.geom.Ray;
 	import nape.geom.RayResult;
@@ -187,7 +187,7 @@ package dynamics.player.weapons
 			l.x = pivot.x + carrier.facing *(carrier_view.gunpoint.x);
 			l.y = y;
 			l.bitmap = new L01();			
-			WorldTime.addLight(l);
+			TimeManager.addLight(l);
 			
 			var a:Number = Math.atan2(mouse.relativeY - y, mouse.relativeX - x);
 			var da:Number;

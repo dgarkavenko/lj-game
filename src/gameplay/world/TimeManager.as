@@ -23,7 +23,7 @@ package gameplay.world
 	 * ...
 	 * @author DG
 	 */
-	public class WorldTime extends EventDispatcher
+	public class TimeManager extends EventDispatcher
 	{
 		
 		public var time:int = 1;
@@ -36,7 +36,7 @@ package gameplay.world
 		private const NCOLOR:String = "303050";	
 		
 		
-		public static var duration:int = 30 * 30;
+		public static var duration:int = 60 * 30;
 		
 		private static var scale:int = 2;
 		
@@ -68,7 +68,7 @@ package gameplay.world
 			
 		}
 		
-		public function WorldTime(cont:Sprite) 
+		public function TimeManager(cont:Sprite) 
 		{
 			container = cont;
 			

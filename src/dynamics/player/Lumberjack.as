@@ -38,8 +38,7 @@ package dynamics.player
 		
 		public var lastDamage:String = "";
 		
-		public static const INITIAL_X:int = 500;
-		public static const INITIAL_Y:int = 250;	
+
 		
 		
 		public var onPlayerMoveCallback:Function;

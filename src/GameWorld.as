@@ -48,12 +48,15 @@ package
 	import gameplay.player.HP;
 	import gameplay.player.SkillList;
 	import gameplay.TreeHandler;
-	import gameplay.world.Enviroment;
-	import gameplay.world.Forest;
-	import gameplay.world.Ground;
+	import locations.HomeLocation;
+
+
+
+	import gameplay.world.TimeManager;
 	import gui.PopText;
 	import gui.PopupManager;
 	import hud.EyeBitmap;
+	import locations.LocationManager;
 	import nape.callbacks.CbEvent;
 	import nape.callbacks.InteractionCallback;
 	import nape.callbacks.InteractionListener;
@@ -64,7 +67,6 @@ package
 	import nape.shape.Polygon;
 	import nape.space.Space;
 	import gameplay.world.Light;
-	import gameplay.world.WorldTime;
 	import visaul.L04;
 	import visual.Bg1_bitmap;
 	import visual.Bg2_bitmap;
@@ -92,7 +94,7 @@ package
 		public static var WORLD_SIZE_X:int = 6000;
 		public static var lumberjack:Lumberjack;
 		public static var lumberbody:Body;
-		public static var ground:Ground;
+
 		
 		public static var EG:EvilGenius;
 		
@@ -108,13 +110,15 @@ package
 		
 		public static var playerInteractors:Vector.<PlayerInteractiveObject> = new Vector.<PlayerInteractiveObject>();
 		
-		public static var time:WorldTime;
-		private var l:Light;
+		public static var time:TimeManager;
+		private var contracts:ContractHandler;
+		private var locationManager:LocationManager;
+		
+		
 		private var temp:Boolean;
-		private var fire:Fireplace_mc;
 		
 		
-		private var loadedBitmpas:Object = new Object();
+		
 		
 		
 		private var projectile_listener:InteractionListener = new InteractionListener(CbEvent.BEGIN, InteractionType.SENSOR, GameCb.PROJECTILE, GameCb.GROUND.including(GameCb.LUMBERJACK), onProjectileHit);
@@ -123,7 +127,7 @@ package
 		private var inhell_listener:InteractionListener = new InteractionListener(CbEvent.BEGIN, InteractionType.ANY, GameCb.HELL, GameCb.LUMBERJACK, inHell);
 		
 		
-		private var contracts:ContractHandler;
+		
 		
 		
 		private function onDayTimeChanged(e:Event):void 
@@ -178,21 +182,22 @@ package
 			inhell_listener.space = projectile_listener.space = space;
 			puddle_b_listener.space = puddle_e_listener.space = space;
 				
-			time = new WorldTime(container);
-			time.addEventListener(WorldTime.DayTimeChange, onDayTimeChanged);
-			
+			time = new TimeManager(container);
+			time.addEventListener(TimeManager.DayTimeChange, onDayTimeChanged);		
 			
 			addChild(time.shade);
 			addChild(time.bar);
 				
 			camera = new Camera();			
-			ground = new Ground(space, container);
+			
+			locationManager = new LocationManager();
+			locationManager.current.build(this);
 				
-			lumberjack = new Lumberjack(500, Lumberjack.INITIAL_Y);			
+			lumberjack = new Lumberjack(500, 500);			
 			lumberbody = lumberjack.getBody();
 			lumberjack.onPlayerMoveCallback = onPlayerMove;	
 				
-			addBackground();
+			
 				
 			container.layer1.addChild($VFX.emitter);
 			
@@ -204,46 +209,15 @@ package
 		{
 			
 			contracts = new ContractHandler();
-			contracts.timeUpdate(time.time);
-			lumberjack.getBody().position.setxy(Lumberjack.INITIAL_X, Lumberjack.INITIAL_Y);
-						
-			//Enviroment.place_GasStation(2100);
-			var ref:Object = DataSources.instance.getReference("world");			
-			TreeHandler.inst.grow(space, container, 1000, GameWorld.WORLD_SIZE_X - 750, ref.trees);			
+			contracts.timeUpdate(time.time);			
+			lumberjack.getBody().position.setxy(locationManager.initial_X, locationManager.initial_Y);
+			lumberjack.hp.init(100);
+
 			setUpMouseSprite();
-			
-			WorldTime.duration = ref.day_length * 30;
-			
-			//Добавление эффектов
-				
-			if (fire == null) {				
-				fire = new Fireplace_mc();
-				addChild(fire);
-				fire.addEventListener("tick", onFire);
-			}		
-			
 			EG.start();
 			
-		}
+		}		
 		
-		private function onFire(e:Event):void 
-		{
-			
-			l = new Light("tick");
-			l.x = 590; l.y = 335;
-			
-			if (temp) {
-				l.bitmap = new L03();
-			
-			}else {
-				l.bitmap = new L04();
-			}
-			
-			temp = !temp;
-			
-			
-			
-		}
 		
 		private function onPlayerMove():void {
 			
@@ -253,8 +227,7 @@ package
 				lumberjack.hp.auraEffect(false)
 			}
 			
-		}
-		
+		}		
 		
 		//Убрать отсюда
 		private function setUpMouseSprite():void 
@@ -270,130 +243,9 @@ package
 			
 		}
 		
-		
-		private function nextDay():void {
+		public function tick():void {		
 			
-			DataSources.lumberkeeper.day++;
-			DataSources.lumberkeeper.save();
-			
-			lumberjack.disabled = false;
-			
-			if (!lumberbody.allowRotation) {
-				lumberbody.scaleShapes(.5, 2);
-				lumberjack.movement.unlock_x();
-			}else {
-				lumberbody.rotation = 0;
-				lumberbody.torque = 0;
-				lumberbody.angularVel = 0;
-				lumberbody.allowRotation = false;
-			}
-			
-			lumberjack.view.idle();			
-			lumberbody.position.setxy(Lumberjack.INITIAL_X, Lumberjack.INITIAL_Y);
-			tick();
-			
-			ScreenManager.inst.showScreen(DayScreen);
-		}
-		
-		
-		
-		private function addBackground():void 
-		{
-			
-			
-			/**
-			 * Статический бэкграунд
-			 */
-			var bg:Sprite = new Sprite();			
-			var gradientmatrix:Matrix = new Matrix();
-			gradientmatrix.createGradientBox(Game.SCREEN_WIDTH, Game.SCREEN_HEIGHT, Math.PI / 2);			
-			//bg.graphics.beginGradientFill(GradientType.RADIAL, [0xcadaba, 0x9cad9d], [1, 1], [0, 255], gradientmatrix);
-			bg.graphics.beginGradientFill(GradientType.RADIAL, [0x9cad9d, 0x9cad9d], [1, 1], [0, 255], gradientmatrix);			
-			
-
-			bg.graphics.drawRect(0, 0, Game.SCREEN_WIDTH, Game.SCREEN_HEIGHT);
-			bg.graphics.endFill();
-			addChildAt(bg, 0);
-			
-			
-			camera.pan_H(lumberbody.worldCOM.x);			
-			var skybg:MovieClip = new MovieClip();			
-			var bgdata:Object = DataSources.instance.getReference("bg");			
-			
-			for (var i:int = bgdata.count; i > 0; i--) 
-			{				
-				
-				
-				var loader:Loader = new Loader();
-				loader.contentLoaderInfo.addEventListener(Event.COMPLETE, lcomplete);
-				loader.load(new URLRequest(bgdata["n"+i.toString()]));
-			}
-			
-			setTimeout(addBgs, 1000);
-			//addBgs();
-			
-			/*
-			var	bg1:Bitmap = new Bitmap(new Bg1_bitmap());
-			bg1.y = Game.SCREEN_HEIGHT - bg1.height - 15;			
-			
-			
-			var	bg2:Bitmap = new Bitmap(new Bg2_bitmap());
-			bg2.y = Game.SCREEN_HEIGHT - bg2.height - 15;
-			
-			*/
-			
-			/*
-			var bdate:BitmapData = new BitmapData(Game.SCREEN_WIDTH, Game.SCREEN_HEIGHT, false, 0xff717240);
-			var invert:Bitmap = new Bitmap(bdate);			
-			invert.blendMode = BlendMode.SUBTRACT;			
-			addChildAt(invert, 1);	*/	
-			
-			
-			//container.layer3.addChild(bg2);
-			//container.layer3.addChild(bg1);
-			
-			//addChildAt(bg1, 1);
-			//addChildAt(bg2, 1);	
-			
-			//camera.controlBgLayer(bg1);
-			//	camera.controlBgLayer(bg2);		
-			
-		}
-		
-		private function addBgs():void 
-		{			
-			for (var i:int = 0; i < 10; i++) 
-			{
-				if ("bg" + i + ".png" in loadedBitmpas) {
-				
-					addChildAt(loadedBitmpas["bg" + i + ".png"], 1);
-					camera.controlBgLayer(loadedBitmpas["bg" + i + ".png"]);
-				}
-			}			
-			
-		}
-		
-		private function lcomplete(e:Event):void 
-		{			
-			var bitmapData:BitmapData = Bitmap(LoaderInfo(e.target).content).bitmapData;
-			
-			var	bg:Bitmap = new Bitmap(bitmapData);
-			bg.y = Game.SCREEN_HEIGHT - bg.height;					
-			
-			var s:String = LoaderInfo(e.target).url;
-			loadedBitmpas[s.substr(s.length - 7, s.length)] = bg;
-			
-			
-		}
-		
-	
-		
-		public function tick():void {			
-			
-			
-			
-			PhysDebug.tick();		
-			
+			PhysDebug.tick();					
 			TreeHandler.inst.tick();
 			
 			mouse_sprite.x = Controls.mouse.screenX - 25 / 2;
@@ -440,17 +292,14 @@ package
 				trace(lumberbody.position.toString());				
 				if (PhysDebug.is_active) PhysDebug.off();
 				else PhysDebug.on();
+				
+				locationManager.goto(HomeLocation, this);
 			}
 			
 			if (Controls.keys.justPressed("Z")) {
 			
 				EG.spawnAt(Controls.mouse.relativeX, Controls.mouse.relativeY);
-			}
-			
-			/*if (Controls.keys.justPressed("SPACE")) {				
-				//GameScreen.POP.show(PopupManager.SHOP);
-				lumberjack.skills.skill_up(3);
-			}*/
+			}			
 			
 			/*if (Controls.keys.justPressed("ESCAPE")) {
 				ScreenManager.inst.showScreen(MenuScreen);
@@ -465,15 +314,8 @@ package
 				o.tick();
 			}
 			
-			time.tick();
-			
-			fire.x = 550 + container.x;
-			fire.y = 281 + container.y;
-			
-			
-			WorldTime.addLight(l);
-			
-			
+			time.tick();		
+			locationManager.current.tick();
 		}
 		
 		static public function regOnTick(object:DynamicWorldObject):void 
@@ -497,13 +339,9 @@ package
 			EG.stop();
 		}
 		
-		public function reset():void 
+		public function softReset():void 
 		{
 			
-			
-			
-			DataSources.lumberkeeper.day = 1;
-			lumberjack.hp.init(100);
 			
 			TreeHandler.inst.clear();
 			
@@ -522,21 +360,9 @@ package
 				io.destroy();
 			}
 			
-			playerInteractors.length = zombies.length = dynamicsVec.length = 0;
-			
+			playerInteractors.length = zombies.length = dynamicsVec.length = 0;			
 			$VFX.clear();
 			
-					//zombies
-					//projectiles
-					//puddles
-
-					//treetrunks
-					//treestomps
-					//trees
-
-					//logs
-			
-					//particles
 		}
 		
 		

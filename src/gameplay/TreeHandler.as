@@ -27,7 +27,7 @@ package gameplay
 		
 		private var trunks:Vector.<Body>;
 		private var tree_hit_listener:InteractionListener;
-		private var trees:Vector.<Tree>;
+		private var trees:Vector.<Tree> = new Vector.<Tree>();
 		private var ln:int = 0;
 		private var stumps:Vector.<Body>;
 		
