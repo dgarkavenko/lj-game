@@ -18,6 +18,9 @@ package dynamics.player.weapons
 		public var fragments:int = 1;
 		public var damage_min:int;
 		public var damage_max:int;
+		public var force:Number;
+		public var recoilPerShoot:Number;
+		public var recoilReduction:Number;
 		
 		
 		public var reload_counter:int = 0;
@@ -42,6 +45,13 @@ package dynamics.player.weapons
 			damage_min = weapon.damage_min;
 			damage_max = weapon.damage_max;	
 			price = weapon.price;
+			force = weapon.force;
+			
+			if ("rps" in weapon) recoilPerShoot = weapon.rps;
+			else recoilPerShoot = 0;
+			if ("rrpf" in weapon) recoilReduction = weapon.rrpf;
+			else recoilReduction = 0;
+			
 			
 			alias = a;
 			

@@ -19,6 +19,7 @@ package dynamics.enemies.base
 	import nape.callbacks.InteractionCallback;
 	import nape.callbacks.InteractionListener;
 	import nape.callbacks.InteractionType;
+	import nape.dynamics.InteractionGroup;
 	import nape.geom.Vec2;
 	import nape.phys.Body;
 	import nape.phys.Interactor;
@@ -33,8 +34,7 @@ package dynamics.enemies.base
 	public class Dummy extends Walker implements IInteractive
 	{
 		
-		private static var bodyhitthefloorlistener:InteractionListener = new InteractionListener(CbEvent.BEGIN, InteractionType.COLLISION, GameCb.DEADBODY, GameCb.GROUND, letthebodyhitthefloor);
-		
+
 		public const STATE_STAND:uint = 1;
 		public const STATE_WALK:uint = 2;
 		public const STATE_MELEE:uint = 3;
@@ -175,7 +175,9 @@ package dynamics.enemies.base
 					worried = true;					
 					if (params.power <= 0) return;
 					var v:int = Math.sqrt(params.power);
-					_body.applyImpulse(Vec2.get(params.facing * v * 2, -params.power));	
+					
+					
+					_body.applyImpulse(Vec2.get(_state == STATE_PURSUIT ? params.facing * params.force : params.facing * params.force / 2, 0));	
 				
 					if (params.y < _body.position.y - view.sprite.height / 2 + 13) {
 					//headshot
@@ -222,24 +224,24 @@ package dynamics.enemies.base
 		private function dead(by:int):void 
 		{
 			
-			if (isDead) return;
+			if (isDead) return;			
+			isDead = true;			
 			
-			isDead = true;
-			currentHP = 0;
+			view.death();
 			
-			$GLOBAL.dispatch(GlobalEvents.ZOMBIE_KILLED, {type:intType, how:by} );
-			
-			
-			
-			_body.cbTypes.add(GameCb.DEADBODY);
-			bodyhitthefloorlistener.space = space;
+			$GLOBAL.dispatch(GlobalEvents.ZOMBIE_KILLED, {type:intType, how:by} );			
 			
 			if (health_bar != null) {
 				TweenLite.killTweensOf(health_bar);
 				TweenLite.to(health_bar, .2, { alpha:0, onComplete:onHide } );
-			}
+			}	
 			
-			view.death();			
+			//TODO Remove collisions with everything but ground
+			Collision.setFilter(_body, Collision.LUMBER_IGNORE, Collision.NULL_OBJECT);
+			
+			_body.cbTypes.remove(GameCb.INTERACTIVE);
+			_body.cbTypes.remove(GameCb.ZOMBIE);
+			
 			TweenLite.to(_view.sprite, 4, { y:_body.position.y + 50, delay:1.5, onComplete:remove } );
 		}
 		
@@ -307,21 +309,21 @@ package dynamics.enemies.base
 		
 		protected function reset():void 
 		{
-			if (_body.cbTypes.has(GameCb.DEADBODY)) _body.cbTypes.remove(GameCb.DEADBODY);
+			_body.velocity = new Vec2(0, 0);
+				
+			Collision.setFilter(_body, Collision.DUMMIES, ~(Collision.LUMBER_IGNORE|Collision.DUMMIES) );		
 			currentHP = maximumHP;
 			isDead = false;
 			view.idle();
 			_conditions.clear();
 			worried = false;
-			
+			if (!_body.cbTypes.has(GameCb.INTERACTIVE)) _body.cbTypes.add(GameCb.INTERACTIVE);
+			if (!_body.cbTypes.has(GameCb.ZOMBIE)) _body.cbTypes.add(GameCb.ZOMBIE);			
 		}
 		
-		public function remove():void {
+		public function remove():void {			
 			
-			
-			destroy();		
-			
-			//TODO Link eg to zombies?
+			destroy();	
 			GameWorld.EG.deadAgain(this);
 			
 		}

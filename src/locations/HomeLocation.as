@@ -17,7 +17,7 @@ package locations
 	 */
 	public class HomeLocation extends BaseLocation
 	{
-		private var ground:Ground;
+		private var ground:Body;
 		private var bg:Sprite;
 		private var ground_material:Material = Material.rubber();
 		
@@ -32,7 +32,7 @@ package locations
 			
 			var verts:Array = [new Vec2(0,36), new Vec2(9,0), new Vec2(900, 0), new Vec2(900,36) ];	
 			
-			var ground:Body = new Body(BodyType.STATIC, new Vec2(0, Game.SCREEN_HEIGHT - 32));
+			ground = new Body(BodyType.STATIC, new Vec2(0, Game.SCREEN_HEIGHT - 32));
 			ground.shapes.add(new Polygon(verts, ground_material));			
 			ground.cbTypes.add(GameCb.GROUND);
 			ground.space = GameWorld.space;
@@ -56,6 +56,12 @@ package locations
 			world.addChildAt(bg, 0);
 					
 			
+		}
+		
+		override public function destroy():void {
+			ground.space = null;
+			ground = null;
+			world.removeChild(bg);
 		}
 		
 	}

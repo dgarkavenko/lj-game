@@ -44,9 +44,7 @@ package dynamics.player.weapons
 		public static const SEMI:uint = 0;
 		public static const AUTO:uint = 1;	
 		
-		
-		
-		
+		private var recoil:Number = 0;
 		private var gundata:GunData;
 		
 		private var tracing:Sprite = new Sprite();	
@@ -60,7 +58,7 @@ package dynamics.player.weapons
 		
 		//Skills
 		public var skill_dispersion:Number;
-		private var reload_m:Number;
+		private var reload_m:Number = 1;
 		
 		
 		public function Gun() 
@@ -95,6 +93,12 @@ package dynamics.player.weapons
 		override public function tick():void {
 			
 			//trace(reload);
+			
+			trace(recoil);
+			
+			if (recoil > 0) {
+				recoil -= gundata.recoilReduction;				
+			}
 			
 			if (keys.justPressed("R")) {				
 				if (gundata.ammo_current < gundata.ammo_max) force_reload();
@@ -204,7 +208,7 @@ package dynamics.player.weapons
 				for (var i:int = 0; i < gundata.fragments; i++) 
 				{
 					
-					da = a -gundata.dispersion + 2 * Math.random() * (gundata.dispersion);
+					da = a + (gundata.dispersion + recoil)* (2 * Math.random() - 1)
 					ray.direction = Vec2.fromPolar(ray.maxDistance, da);
 					
 					
@@ -241,7 +245,7 @@ package dynamics.player.weapons
 				
 			}else {
 			
-				da = a -skill_dispersion + 2 * Math.random() * skill_dispersion;
+				da = a + (gundata.dispersion + recoil) * (2 * Math.random() - 1);
 				ray.direction = Vec2.fromPolar(ray.maxDistance, da);			
 				
 				rayResult = space.rayCast(ray, false, BULLET_RAY_FILTER);					
@@ -252,6 +256,9 @@ package dynamics.player.weapons
 				draw_visual(rayResult != null? rayResult.distance : -1);
 				
 			}
+			
+			recoil += gundata.recoilPerShoot;
+			if (recoil > 0.08) recoil = 0.08;
 			
 			fade_visual();
 			
@@ -264,6 +271,7 @@ package dynamics.player.weapons
 			_action.params.facing = carrier.facing
 			_action.params.x = at.x
 			_action.params.y = at.y;
+			_action.params.force = gundata.force;
 			subj.userData.interact(_action);
 		}
 		
@@ -315,6 +323,7 @@ package dynamics.player.weapons
 			
 			gundata = new_wd as GunData;
 			cooldown_timer.delay = gundata.rate;
+			recoil = 0;
 		}
 		
 		override public function updateParams():void 
