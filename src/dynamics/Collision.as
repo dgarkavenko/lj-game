@@ -13,6 +13,8 @@ package dynamics
 	{
 		
 		public static var rootgroup:InteractionGroup = new InteractionGroup(true);
+		public static var dead:InteractionGroup = new InteractionGroup();
+		public static var tree:InteractionGroup = new InteractionGroup();
 		public static var groups:SimpleCache = new SimpleCache(InteractionGroup, 6);
 		
 		public static const LUMBER_IGNORE:uint = 2; 
@@ -21,6 +23,8 @@ package dynamics
 		static public const TREE:uint = 7;
 		static public const DUMMIES:uint = 8;
 		static public const IO:uint = 6;
+		static public const TRUNK:uint = 5;
+		static public const PEN:uint = 9;
 		
 		
 		

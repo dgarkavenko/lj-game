@@ -158,6 +158,9 @@ package gameplay
 		{				
 			trace("TREE TRUNK LIFETIME EXPIRED"); 
 			stumps.push(trunk.userData.stump);
+			
+			Collision.setFilter(trunk.userData.stump, Collision.LUMBER_IGNORE, ~Collision.TRUNK);
+			
 			TreeHandler.inst.spawnWood(trunk.mass, trunk.position.add(Vec2.get(0, 0)));
 			
 			if (trunk.cbTypes.has(GameCb.TRUNK)) trunk.cbTypes.remove(GameCb.TRUNK);								

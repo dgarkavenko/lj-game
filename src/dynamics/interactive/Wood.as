@@ -37,7 +37,7 @@ package dynamics.interactive
 			_body.userData.graphic = _sprite;
 			_body.userData.graphicOffset = new Vec2( -14, -10);	
 			
-			Collision.setFilter(_body, Collision.LUMBER_IGNORE, Collision.TREE);	
+			Collision.setFilter(_body, Collision.LUMBER_IGNORE, Collision.NULL_OBJECT);	
 			
 			
 		}	

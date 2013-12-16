@@ -68,7 +68,9 @@ package dynamics.enemies.implement
 		
 		override public function tick():void {
 			super.tick();
-			if (currentHP <= 0) return;
+			
+			
+			if (isDead) return;
 			
 			if (++ite >= 10) {
 				

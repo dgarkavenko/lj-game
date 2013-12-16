@@ -69,7 +69,9 @@ package dynamics.player.weapons
 			ray.direction.setxy(GameWorld.lumberjack.facing, 0);
 			
 			//rayResult = space.rayCast(ray, false, AXE_RAY_FILTER);			
-			rayResultMulti = space.rayMultiCast(ray, false, AXE_RAY_FILTER);		
+			rayResultMulti = space.rayMultiCast(ray, false, AXE_RAY_FILTER);
+			
+			
 			
 			if (!rayResultMulti || rayResultMulti.length == 0 ) {
 				nothing();

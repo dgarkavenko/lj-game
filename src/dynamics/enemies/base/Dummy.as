@@ -11,6 +11,7 @@ package dynamics.enemies.base
 	import dynamics.interactions.IInteractive;
 	import dynamics.Walker;
 	import flash.utils.setTimeout;
+	import framework.input.Controls;
 	import gamedata.DataSources;
 	import gameplay.EvilGenius;
 	import gui.Bars.HealthBarCache;
@@ -70,7 +71,7 @@ package dynamics.enemies.base
 		
 		private static var healthBars:HealthBarCache = new HealthBarCache(5);
 		private var health_bar:SimpleBar;
-		private var isDead:Boolean = false;
+		protected var isDead:Boolean = false;
 		
 		protected var worried:Boolean = false;
 		public var daddy:EvilGenius;
@@ -140,6 +141,11 @@ package dynamics.enemies.base
 		override public function getBody():Body {
 			return _body;
 		}
+		
+		
+		private var f:uint = 1;
+		private var k:uint = 1;
+		
 		
 		override public function tick():void {
 			
@@ -221,6 +227,8 @@ package dynamics.enemies.base
 			
 		}
 		
+		
+		
 		private function dead(by:int):void 
 		{
 			
@@ -237,12 +245,16 @@ package dynamics.enemies.base
 			}	
 			
 			//TODO Remove collisions with everything but ground
-			Collision.setFilter(_body, Collision.LUMBER_IGNORE, Collision.NULL_OBJECT);
-			
+			//Collision.setFilter(_body, 0, 0);
+						
 			_body.cbTypes.remove(GameCb.INTERACTIVE);
 			_body.cbTypes.remove(GameCb.ZOMBIE);
 			
-			TweenLite.to(_view.sprite, 4, { y:_body.position.y + 50, delay:1.5, onComplete:remove } );
+			Collision.setFilter(_body, Collision.LUMBER_IGNORE);
+			_body.group = Collision.dead;
+			_body.group.group = Collision.rootgroup;
+			
+			TweenLite.to(_view.sprite, 4, { y:_body.position.y + 50, delay:2.5, onComplete:remove } );
 		}
 		
 		protected function setParameters(ref:Object):void 
@@ -311,7 +323,10 @@ package dynamics.enemies.base
 		{
 			_body.velocity = new Vec2(0, 0);
 				
-			Collision.setFilter(_body, Collision.DUMMIES, ~(Collision.LUMBER_IGNORE|Collision.DUMMIES) );		
+			Collision.setFilter(_body, Collision.DUMMIES, ~(Collision.LUMBER_IGNORE | Collision.DUMMIES) );		
+			if (_body.group != null) _body.group.group = null;
+			_body.group = null;
+			
 			currentHP = maximumHP;
 			isDead = false;
 			view.idle();

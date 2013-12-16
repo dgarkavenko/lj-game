@@ -36,7 +36,7 @@ package gameplay
 		
 		public function EvilGenius(space_:Space, container_:SpriteContainer, lumberjack_:Lumberjack) {
 			
-			thinkTimer.addEventListener(TimerEvent.TIMER, think);
+			//thinkTimer.addEventListener(TimerEvent.TIMER, think);
 			
 			
 			space = space_;

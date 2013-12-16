@@ -89,6 +89,7 @@ package dynamics
 		
 		public var isForeground:Boolean = false;
 		
+		
 		public function Tree(x:int, h:int, w:int) 
 		{	
 			
@@ -115,8 +116,9 @@ package dynamics
 			
 			
 			//Встречается только с лучом
+			_body.group = Collision.tree;
+			_body.group.group = Collision.rootgroup;
 			Collision.setFilter(_body, Collision.LUMBER_IGNORE, Collision.LUMBER_RAY);
-			
 			_body.userData.interact = interact;
 			
 			attachBitmap();	
@@ -285,6 +287,8 @@ package dynamics
 			
 		}
 		
+		static public var f:uint = 0;
+		
 		public function cut():void {
 			
 			$GLOBAL.dispatch(GlobalEvents.TREE_CUT, {type:0, how:0 } );
@@ -308,7 +312,8 @@ package dynamics
 			stump.group = trunk.group = Collision.groups.getInstance() as InteractionGroup;				
 			trunk.group.group = stump.group.group = Collision.rootgroup;			
 			Collision.setFilter(stump, Collision.LUMBER_IGNORE);
-			
+			Collision.setFilter(trunk, Collision.TRUNK);
+			f++;
 			//Графика для ствола
 			
 			var trunksprite:Sprite = new Sprite();
