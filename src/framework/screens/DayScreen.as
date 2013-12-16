@@ -41,9 +41,6 @@ package framework.screens
 			dayResultField.y = 50;
 			addChild(dayResultField);
 			
-			
-			
-			
 		}
 		
 		override public function init(...args):void {

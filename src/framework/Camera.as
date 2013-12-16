@@ -20,6 +20,9 @@ package framework
 		private var _maxX:Number = GameWorld.WORLD_SIZE_X - Game.SCREEN_HALF_WIDTH;
 		private var _maxY:Number = 0;
 		
+		
+		private var _locationWidth:int;
+		
 		private var _layers:Vector.<DisplayObject> = new Vector.<DisplayObject>();
 		private var _difference:Vector.<Number> = new Vector.<Number>();
 		
@@ -29,6 +32,10 @@ package framework
 		private var moveX:Boolean = false;
 		
 		private var container:Sprite;
+		
+		public function setMax(max:int):void {
+			_maxX = - Game.SCREEN_HALF_WIDTH + max;
+		}
 		
 		
 		
@@ -143,6 +150,17 @@ package framework
 		public function setBoundings(minX:int, maxX:int, minY:int, maxY:int):void 
 		{
 			_minX = minX; 	_minY = minY;	_maxX = maxX;	_maxY = maxY;
+		}
+		
+		public function get locationWidth():int 
+		{
+			return _locationWidth;
+		}
+		
+		public function set locationWidth(value:int):void 
+		{
+			_locationWidth = value;
+			_maxX = _locationWidth - Game.SCREEN_HALF_WIDTH;
 		}
 		
 	}

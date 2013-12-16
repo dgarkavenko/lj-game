@@ -10,6 +10,7 @@ package locations
 	{
 		public var initial_y:int = 250;
 		public var initial_x:int = 500;
+		public var location_w:int;
 		
 		protected var world:GameWorld;
 		
@@ -22,6 +23,7 @@ package locations
 			
 			world = world_;
 			world.softReset();
+			GameWorld.camera.locationWidth = location_w;
 			addBackground();
 			
 		}

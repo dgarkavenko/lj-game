@@ -48,6 +48,7 @@ package
 	import gameplay.player.HP;
 	import gameplay.player.SkillList;
 	import gameplay.TreeHandler;
+	import locations.ForestLocation;
 	import locations.HomeLocation;
 
 
@@ -293,7 +294,7 @@ package
 				if (PhysDebug.is_active) PhysDebug.off();
 				else PhysDebug.on();
 				
-				locationManager.goto(HomeLocation, this);
+				locationManager.goto(ForestLocation, this);
 			}
 			
 			if (Controls.keys.justPressed("Z")) {

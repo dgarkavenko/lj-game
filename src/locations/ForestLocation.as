@@ -29,7 +29,6 @@ package locations
 	public class ForestLocation extends BaseLocation
 	{
 		private var ground:Ground;
-		
 		private var loadedBitmpas:Object = new Object();
 		private var fire:Fireplace_mc;
 		private var l:Light;
@@ -37,7 +36,7 @@ package locations
 		
 		public function ForestLocation() 
 		{
-			
+			location_w = 6000;
 		}
 		
 		override public function build(world_:GameWorld):void {

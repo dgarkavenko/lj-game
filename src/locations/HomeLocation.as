@@ -24,7 +24,7 @@ package locations
 		
 		public function HomeLocation() 
 		{
-			
+			location_w = 900;
 		}
 		
 		override public function build(world_:GameWorld):void {
