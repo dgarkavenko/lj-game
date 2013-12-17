@@ -335,6 +335,7 @@ package dynamics.player
 					
 					lastDamage = DeathReason.TREE;
 					
+					if (action.params.power < 150) return;
 					var damage:int = action.params.power / 100;
 					hp.decrease(damage);
 					
