@@ -10,10 +10,12 @@ package
 	import flash.text.TextFormat;
 	import framework.input.Controls;
 	import framework.ScreenManager;
+	import framework.screens.BaseScreen;
 	import framework.screens.DayScreen;
 	import framework.screens.GameOverScreen;
 	import framework.screens.GameScreen;
 	import framework.screens.LoadingScreen;
+	import framework.screens.MapScreen;
 	import framework.screens.MenuScreen;
 	import gamedata.DataSources;
 	/**
@@ -76,6 +78,7 @@ package
 			ScreenManager.inst.registerScreen(new DayScreen());
 			ScreenManager.inst.registerScreen(new GameOverScreen());
 			ScreenManager.inst.registerScreen(new LoadingScreen());
+			ScreenManager.inst.registerScreen(new MapScreen());
 			ScreenManager.inst.showScreen(MenuScreen);
 			
 		}

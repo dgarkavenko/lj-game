@@ -7,6 +7,8 @@ package locations
 	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
+	import flash.display.DisplayObject;
+	import flash.display.DisplayObjectContainer;
 	import flash.display.GradientType;
 	import flash.display.Loader;
 	import flash.display.LoaderInfo;
@@ -37,6 +39,8 @@ package locations
 		public function ForestLocation() 
 		{
 			location_w = 6000;
+			initial_x = 783;
+			initial_y = 339;
 		}
 		
 		override public function build(world_:GameWorld):void {
@@ -54,19 +58,14 @@ package locations
 		}
 		
 		override public function destroy():void {
+			
+			super.destroy();
+			
 			ground.hell.space = null;
 			ground.ground.space = null;
-			
-			while (GameWorld.container.layer1.numChildren > 0) {
-				GameWorld.container.layer1.removeChildAt(0);
-			}
-			
-			while (GameWorld.container.layer0.numChildren > 0) {
-				GameWorld.container.layer0.removeChildAt(0);
-			}
-			
-			while (GameWorld.container.layer4.numChildren > 0) {
-				GameWorld.container.layer4.removeChildAt(0);
+			for each (var ch:DisplayObject in ground.groundSprites ) 
+			{
+				GameWorld.container.layer1.removeChild(ch);
 			}
 			
 			world.removeChild(bg);

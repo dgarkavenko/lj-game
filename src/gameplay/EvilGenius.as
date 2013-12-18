@@ -29,7 +29,7 @@ package gameplay
 		private var lumberbody:Body;
 		public var lumbervec:Vec2;
 		
-		private var thinkTimer:Timer = new Timer(2000, 0);
+		
 		
 		private var lj_initial_x_pos:int = -10000;
 		private var distance_traveled_treshold:int = Game.SCREEN_WIDTH;
@@ -51,14 +51,6 @@ package gameplay
 			cache["spitter"] = spitters;
 			cache["stalker"] = stalkers;
 			
-			var z:Dummy = alive();				
-			z.at(lumbervec.x + (Game.SCREEN_HALF_WIDTH + 120), Game.SCREEN_HEIGHT - 100);	
-			z = alive("spitter");		
-			z.at(lumbervec.x + (Game.SCREEN_HALF_WIDTH + 19), Game.SCREEN_HEIGHT - 100);	
-			z = alive();		
-			z.at(lumbervec.x + (Game.SCREEN_HALF_WIDTH + 609), Game.SCREEN_HEIGHT - 100);	
-			/*z = alive();		
-			z.at(lumbervec.x + (Game.SCREEN_HALF_WIDTH - 20), Game.SCREEN_HEIGHT - 100);	*/
 			
 		}
 		
@@ -101,11 +93,12 @@ package gameplay
 			}		
 		}
 		
-		public function deadAgain(z:Dummy):void {
+		public function returnToPool(z:Dummy):void {
+			
 			(cache[z.alias] as SimpleCache).setInstance(z);			
 			
-			//TODO MOVE TO GAMEWORLD?
 			var ln:int = GameWorld.zombies.length;
+			
 			for (var i:int = 0; i < ln; i++) 
 			{
 				if (GameWorld.zombies[i] == z) {
@@ -126,19 +119,27 @@ package gameplay
 			
 		}
 		
-		public function start():void {
-			thinkTimer.start();
-		}
+		public function clear():void {
+			
+			while (GameWorld.zombies.length > 0) {
+				var z:Dummy = GameWorld.zombies.pop();
+				z.destroy();						
+				(cache[z.alias] as SimpleCache).setInstance(z);
+			}
 		
-		public function stop():void 
-		{
-			thinkTimer.reset();
 		}
 		
 		public function spawnAt(mpX:Number, mpY:Number):void 
 		{
-			var z:Dummy = alive(Math.random() > 0.4999? "spitter" : "stalker");				
-			z.at(mpX, mpY);	
+			var a:String = Math.random() > 0.4999? "spitter" : "stalker";		
+			
+			var z:Dummy = cache[a].getInstance() as Dummy;
+			GameWorld.zombies.push(z);
+			z.at(mpX, mpY);
+			z.add();	
+			z.daddy = this;
+			
+			
 		}
 		
 		

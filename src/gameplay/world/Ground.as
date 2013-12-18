@@ -42,6 +42,7 @@ package gameplay.world
 		public var hell:Body;
 		
 		public static var HEIGHT:int = 32;
+		public var groundSprites:Array = [];
 		
 		public function Ground(space:Space, container:SpriteContainer){
 			
@@ -104,6 +105,8 @@ package gameplay.world
 			container.layer1.addChild(gmc);	
 			container.layer1.addChild(pier);
 			container.layer1.addChild(gmc2);
+			
+			groundSprites = [shore_mc, gmc, pier, gmc2];
 			
 			//VisualAlignment.apply(shore);
 			//VisualAlignment.apply(ground);

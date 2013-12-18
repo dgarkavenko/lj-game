@@ -39,6 +39,7 @@ package
 	import framework.screens.DayScreen;
 	import framework.screens.GameOverScreen;
 	import framework.screens.GameScreen;
+	import framework.screens.MapScreen;
 	import framework.screens.MenuScreen;
 	import framework.SpriteContainer;
 	import gamedata.DataSources;
@@ -113,7 +114,8 @@ package
 		
 		public static var time:TimeManager;
 		private var contracts:ContractHandler;
-		private var locationManager:LocationManager;
+		private var locationManager:LocationManager = LocationManager.inst;
+		
 		
 		
 		private var temp:Boolean;
@@ -191,9 +193,8 @@ package
 				
 			camera = new Camera();			
 			
-			locationManager = new LocationManager();
-			locationManager.current.build(this);
-				
+			locationManager.init(this);
+			
 			lumberjack = new Lumberjack(500, 500);			
 			lumberbody = lumberjack.getBody();
 			lumberjack.onPlayerMoveCallback = onPlayerMove;	
@@ -215,7 +216,7 @@ package
 			lumberjack.hp.init(100);
 
 			setUpMouseSprite();
-			EG.start();
+			
 			
 		}		
 		
@@ -294,7 +295,11 @@ package
 				if (PhysDebug.is_active) PhysDebug.off();
 				else PhysDebug.on();
 				
-				locationManager.goto(ForestLocation, this);
+				
+			}
+			
+			if (Controls.keys.justPressed("M")) {
+				ScreenManager.inst.showScreen(MapScreen);
 			}
 			
 			if (Controls.keys.justPressed("Z")) {
@@ -316,7 +321,6 @@ package
 			}
 			
 			time.tick();		
-			locationManager.current.tick();
 		}
 		
 		static public function regOnTick(object:DynamicWorldObject):void 
@@ -337,7 +341,7 @@ package
 		static public function protaganistIsDead():void 
 		{
 			ScreenManager.inst.showScreen(GameOverScreen);
-			EG.stop();
+			
 		}
 		
 		public function softReset():void 
@@ -349,21 +353,16 @@ package
 			for each (var item:DynamicWorldObject in dynamicsVec ) 
 			{
 				item.destroy();
-			}
+			}			
 			
-			
-			for each (var z:Dummy in zombies) {
-				z.destroy();
-			}		 
-			
+			if (EG != null) EG.clear();			
 			
 			for each (var io:PlayerInteractiveObject in playerInteractors) {
 				io.destroy();
 			}
 			
-			playerInteractors.length = zombies.length = dynamicsVec.length = 0;			
-			$VFX.clear();
-			
+			playerInteractors.length = dynamicsVec.length = 0;			
+			$VFX.clear();			
 		}
 		
 		

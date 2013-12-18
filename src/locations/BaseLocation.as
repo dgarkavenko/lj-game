@@ -33,13 +33,15 @@ package locations
 			
 		}
 		
-		public function tick():void 
-		{
-			
-		}
-		
 		public function destroy():void {
+				
+			while (GameWorld.container.layer0.numChildren > 0) {
+				GameWorld.container.layer0.removeChildAt(0);
+			}
 			
+			while (GameWorld.container.layer4.numChildren > 0) {
+				GameWorld.container.layer4.removeChildAt(0);
+			}
 		}
 		
 		

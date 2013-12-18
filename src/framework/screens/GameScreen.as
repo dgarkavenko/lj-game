@@ -28,7 +28,7 @@ package framework.screens {
 
 		public function GameScreen() {			
 			
-			WORLD = new GameWorld();				
+			WORLD = new GameWorld();			
 			HUD = new HUDClass();			
 			POP = new PopupManager(HUD);		
 			

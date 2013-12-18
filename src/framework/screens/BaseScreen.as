@@ -11,6 +11,21 @@ public class BaseScreen extends Sprite {
 	public function BaseScreen() {
 		super();
 	}
+	
+	protected function background(clr:uint):Sprite {
+		
+		var bg:Sprite = new Sprite();
+			with (bg) {
+			
+				graphics.beginFill(clr);
+				graphics.drawRect(0, 0, Game.SCREEN_WIDTH, Game.SCREEN_HEIGHT);
+				graphics.endFill();
+			}
+			
+			addChild(bg);	
+			
+			return bg;
+	}
 
 	public function show():void {
 		onStartShowing();

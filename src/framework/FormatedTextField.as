@@ -9,6 +9,9 @@ package framework
 	public class FormatedTextField extends TextField
 	{
 		
+		public static const HEADER:int = 24;
+		
+		
 		public static var NOKIA_WHITE:TextFormat = new TextFormat("nokia", 14, 0xffffff);
 		
 		public function FormatedTextField(size_:int = 0, color_:uint = 0xffffff, center:Boolean = false) 

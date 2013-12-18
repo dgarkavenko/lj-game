@@ -27,6 +27,7 @@ package dynamics.enemies.base
 	import nape.phys.Material;
 	import nape.shape.Polygon;
 	import utils.GlobalEvents;
+	import utils.VisualAlignment;
 	import visual.z.Spitter;
 	/**
 	 * ...
@@ -84,7 +85,7 @@ package dynamics.enemies.base
 			
 			if (health_bar == null) {
 				health_bar = healthBars.getInstance() as SimpleBar;		
-				container.layer0.addChild(health_bar);
+				container.layer2.addChild(health_bar);
 			}
 			
 			health_bar.alpha = 1;
@@ -96,7 +97,7 @@ package dynamics.enemies.base
 		
 		private function onHide():void {
 			if (health_bar != null) healthBars.setInstance(health_bar);
-			container.layer0.removeChild(health_bar);
+			container.layer2.removeChild(health_bar);
 			health_bar = null;
 		}
 		
@@ -315,6 +316,7 @@ package dynamics.enemies.base
 			reset();			
 			_body.space = space;
 			container.layer2.addChild(_view.sprite);
+			VisualAlignment.apply(_body);
 			selectNewSchedule();
 			
 		}
@@ -339,17 +341,17 @@ package dynamics.enemies.base
 		public function remove():void {			
 			
 			destroy();	
-			GameWorld.EG.deadAgain(this);
+			GameWorld.EG.returnToPool(this);
 			
 		}
 		
-		public function destroy():void {
-		
+		public function destroy():void {		
+			
 			if (health_bar != null) {
 				
 				TweenLite.killTweensOf(health_bar);
 				healthBars.setInstance(health_bar);
-				container.layer0.removeChild(health_bar);
+				container.layer2.removeChild(health_bar);
 				health_bar = null;
 			}
 			
