@@ -2,6 +2,7 @@ package dynamics.interactions
 {
 	import dynamics.GameCb;
 	import dynamics.WorldObject;
+	import flash.display.Bitmap;
 	import flash.display.MovieClip;
 	import hud.ArrowPointer_mc;
 	import nape.geom.Vec2;
@@ -12,8 +13,12 @@ package dynamics.interactions
 	 */
 	public class PlayerInteractiveObject extends WorldObject implements IPlayerInteractive
 	{
+		protected var label_offset_y:int = 15;
 		
 		protected var label:MovieClip = new ArrowPointer_mc();
+		protected var body:Body;
+		protected var bitmap:Bitmap;
+		
 		public var type:uint = 0;
 		
 		static protected const TYPE_GAS_CAN:uint = 1
@@ -26,8 +31,13 @@ package dynamics.interactions
 			
 		}
 		
+		public function returnToCache():void {
+			
+		}
+		
 		public function destroy():void {
-				
+			remove();
+			returnToCache();
 		}
 		
 		public function applySuperPreferences(body:Body):void {
@@ -36,6 +46,19 @@ package dynamics.interactions
 			body.userData.onFocus = onFocus;
 			body.userData.onLeaveFocus = onLeaveFocus;
 			body.userData.requires = requires;
+		}
+		
+		public function remove():void {
+			body.space = null;
+			if (bitmap.parent) bitmap.parent.removeChild(bitmap);
+		}
+		
+		public function add():void {
+			GameWorld.playerInteractors.push(this);
+		}
+		
+		public function pose(position:Vec2):void {
+			body.position.setxy(position.x, position.y);
 		}
 		
 		
@@ -47,6 +70,8 @@ package dynamics.interactions
 		public function onFocus():void 
 		{
 			container.layer2.addChild(label);
+			label.x = body.position.x;
+			label.y = body.position.y - label_offset_y;	
 			
 		}
 		
@@ -58,8 +83,8 @@ package dynamics.interactions
 		public function tick():void {
 			
 			if (label.parent) {
-				label.x = getBody().position.x
-				label.y = getBody().position.y - 15;
+				label.x = body.position.x
+				label.y = body.position.y - label_offset_y;
 			}
 		}
 		
@@ -70,6 +95,10 @@ package dynamics.interactions
 		public function drop(carry:Body, dir:int):void 
 		{
 			
+		}
+		
+		override public function getBody():Body {
+			return body;
 		}
 		
 	}

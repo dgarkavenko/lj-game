@@ -92,10 +92,6 @@ package dynamics.player.weapons
 		
 		override public function tick():void {
 			
-			//trace(reload);
-			
-			trace(recoil);
-			
 			if (recoil > 0) {
 				recoil -= gundata.recoilReduction;				
 			}

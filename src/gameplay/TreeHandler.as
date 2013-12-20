@@ -34,7 +34,7 @@ package gameplay
 		static private var _inst:TreeHandler;
 		
 		
-		public var woodCache:SimpleCache = new SimpleCache(Wood, 5);
+		//public var woodCache:SimpleCache = new SimpleCache(Wood, 5);
 		
 		public function grow(space:Space, container:Sprite, x_start:int, x_end:int, amount:int):void {			
 			trees = Forest.grow(space, container, x_start, x_end, amount);
@@ -161,7 +161,7 @@ package gameplay
 			
 			Collision.setFilter(trunk.userData.stump, Collision.LUMBER_IGNORE, ~Collision.TRUNK);
 			
-			TreeHandler.inst.spawnWood(trunk.mass, trunk.position.add(Vec2.get(0, 0)));
+			
 			
 			if (trunk.cbTypes.has(GameCb.TRUNK)) trunk.cbTypes.remove(GameCb.TRUNK);								
 			Collision.setFilter(trunk, Collision.LUMBER_IGNORE, ~Collision.LUMBER_IGNORE);
@@ -212,8 +212,7 @@ package gameplay
 			
 		}
 		
-		public function spawnWood(mass:int, at:Vec2):void {
-			
+		/*public function spawnWood(mass:int, at:Vec2):void {			
 		
 			var a:int = 1 + Math.sqrt(mass);
 			var v:int = mass / a;
@@ -232,14 +231,10 @@ package gameplay
 				}
 				
 				w.spawnImpulse();
-				GameWorld.playerInteractors.push(w);
-				
-				trace("WOOD WITH VALUE OF:" + w.value);
-				
-			}
-			
-			
-		}
+				GameWorld.playerInteractors.push(w);				
+				trace("WOOD WITH VALUE OF:" + w.value);				
+			}			
+		}*/
 		
 	}
 

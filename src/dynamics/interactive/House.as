@@ -17,29 +17,49 @@ package dynamics.interactive
 	public class House extends PlayerInteractiveObject
 	{
 		
-		private var _body:Body;
+	
+	
 		
 		public function House() 
 		{
 			
-			var b:Bitmap = new Bitmap(new HomeHouse());
-			_body = build(new Vec2(200, 192), [Polygon.rect(0, 0, b.width, b.height)], Material.wood());
-			_body.userData.graphic = b;
-			GameWorld.container.layer4.addChild(b);
+			bitmap = new Bitmap(new HomeHouse());
+			//body = build(new Vec2(140, 167), [Polygon.rect(0, 0, bitmap.width, bitmap.height)], Material.wood());
+			body = build(new Vec2(140, 167), [[new Vec2(52,52), new Vec2(275,65), new Vec2(bitmap.width,115), new Vec2(bitmap.width, bitmap.height), new Vec2(0, bitmap.height), new Vec2(0, 120)]], Material.wood());
+
 			
-			_body.userData.graphicOffset = new Vec2(-b.width/2, int(-b.height/2));
-				
+			body.userData.graphic = bitmap;
+			body.space = null;			
 			
-			_body.type = BodyType.STATIC;
-			VisualAlignment.apply(_body);
 			
-			Collision.setFilter(_body, Collision.LUMBER_IGNORE, ~Collision.LUMBER_IGNORE);			
-			applySuperPreferences(_body);
+			body.userData.graphicOffset = new Vec2(-bitmap.width/2, int(-bitmap.height/2) - 52/2);				
+			
+			body.type = BodyType.STATIC;
+			VisualAlignment.apply(body);			
+
+			Collision.setFilter(body, Collision.LUMBER_IGNORE, ~Collision.LUMBER_IGNORE);			
+			applySuperPreferences(body);
+			
+			
 		}
 		
-		override public function getBody():Body {
-			return _body;
+		
+		
+		override public function add():void {
+			GameWorld.container.layer4.addChild(bitmap);
+			body.space = space;
+			super.add();
 		}
+		
+		override public function onFocus():void {
+			
+		}
+		
+		override public function onLeaveFocus():void 
+		{
+			
+		}
+		
 		
 	}
 

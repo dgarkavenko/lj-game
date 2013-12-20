@@ -16,38 +16,30 @@ package dynamics.interactive
 	 */
 	public class RoadSign extends PlayerInteractiveObject
 	{
-		private var _body:Body;
+		
 		
 		public function RoadSign() 
 		{
-			var b:Bitmap = new Bitmap(new SignBMP());
-			_body = build(new Vec2(500, 322), [Polygon.rect(0, 0, 47, 67)], Material.wood());
-			_body.userData.graphic = b;
-			_body.align();
+			bitmap = new Bitmap(new SignBMP());
+			body = build(new Vec2(500, 322), [Polygon.rect(0, 0, 47, 67)], Material.wood());
+			body.userData.graphic = bitmap;
+			body.align();			
+			body.userData.graphicOffset = new Vec2(int(-bitmap.width/2), int(-bitmap.height/2));			
+			Collision.setFilter(body, Collision.LUMBER_IGNORE, ~Collision.LUMBER_IGNORE);			
+			applySuperPreferences(body);
 			
-			GameWorld.container.layer2.addChild(b);
-			
-			_body.userData.graphicOffset = new Vec2(int(-b.width/2), int(-b.height/2));
-			
-			Collision.setFilter(_body, Collision.LUMBER_IGNORE, ~Collision.LUMBER_IGNORE);			
-			applySuperPreferences(_body);
-		}
-		
-		override public function getBody():Body {
-			return _body;
-		}
+			label_offset_y = 40;
+		}		
 		
 		override public function onUse(params:Object):void 
 		{
 			ScreenManager.inst.showScreen(MapScreen);
 		}
 		
-		override public function onFocus():void 
-		{
-			super.onFocus();
-			label.x = _body.position.x;
-			label.y = _body.position.y - 40;
-			
+		override public function add():void {
+			GameWorld.container.layer2.addChild(bitmap);
+			body.space = space;
+			super.add();
 		}
 		
 	}

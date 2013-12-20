@@ -42,13 +42,13 @@ package dynamics.interactive
 			
 		}	
 		
-		public function add(position:Vec2):void {
+		public override function add(position:Vec2):void {
 			_body.space = space;
 			_body.position = position;
 			container.layer2.addChild(_sprite);
 		}
 		
-		public function remove():void {
+		public override function remove():void {
 			_body.space = null;
 			container.layer2.removeChild(_sprite);
 		}
