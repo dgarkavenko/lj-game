@@ -37,7 +37,7 @@ package gameplay
 		//public var woodCache:SimpleCache = new SimpleCache(Wood, 5);
 		
 		public function grow(space:Space, container:Sprite, x_start:int, x_end:int, amount:int):void {			
-			trees = Forest.grow(space, container, x_start, x_end, amount);
+			trees = trees.concat(Forest.grow(space, container, x_start, x_end, amount));
 		}
 		
 		public function TreeHandler() 
