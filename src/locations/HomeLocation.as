@@ -20,6 +20,7 @@ package locations
 	import nape.shape.Polygon;
 	import visual.Ground_bitmap;
 	import visuals.HomeBGBMP;
+	import visuals.MountainsBG;
 	/**
 	 * ...
 	 * @author DG
@@ -39,7 +40,7 @@ package locations
 		
 		public function HomeLocation() 
 		{
-			location_w = 640;
+			location_w = 900;
 			initial_x = 439;
 			initial_y = 339;
 		}
@@ -47,7 +48,6 @@ package locations
 		override public function build(world_:GameWorld):void {
 			super.build(world_);
 			
-			var verts:Array = [new Vec2(0, 36), new Vec2(9, 0), new Vec2(900, 0), new Vec2(900, 36) ];	
 			
 			var ground_material:Material = Material.sand();
 			ground_material.elasticity = 0.035;			
@@ -83,6 +83,7 @@ package locations
 			mailbox.add();
 			
 			TreeHandler.inst.grow(GameWorld.space, GameWorld.container, 24, 25, 1);
+			TreeHandler.inst.grow(GameWorld.space, GameWorld.container, 600, location_w - 50, 3);
 			
 			
 			
@@ -94,10 +95,24 @@ package locations
 			 * Статический бэкграунд
 			 */
 			
-			bg = new Bitmap(new HomeBGBMP());
-			bg.x = -130;
-			GameWorld.container.layer4.addChild(bg);
-			//GameWorld.camera.controlBgLayer(bg);
+			bg = new Bitmap(new BitmapData(Game.SCREEN_WIDTH, Game.SCREEN_HEIGHT, false, 0xa4bab5));
+			world.addChildAt(bg, 0);
+			
+			var source:MountainsBG = new MountainsBG();
+			var mountains:Bitmap = new Bitmap(new BitmapData(800, 101, true, 0x0));
+			
+			var mt:Matrix;
+			var ite:int = 800 / source.width + 1;			
+			for (var i:int = 0; i < ite; i++) 
+			{
+				mt = new Matrix(1, 0, 0, 1, source.width * i);				
+				mountains.bitmapData.draw(source, mt);
+			}
+			
+			GameWorld.camera.controlBgLayer(mountains);
+			world.addChildAt(mountains, 1);
+			mountains.y = Game.SCREEN_HEIGHT - mountains.height;
+			
 			
 		}
 		
