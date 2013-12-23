@@ -7,19 +7,15 @@ package fx.v
 	 * ...
 	 * @author DG
 	 */
-	public class Goo 
+	public class Goo extends BaseEffect
 	{
 		
-		private var emitter:Emitter;		
+			
 		private var source:PointSource = new PointSource(0);
 		private var particle:GooParticle = new GooParticle();	
 		
 		public function Goo(emi:Emitter) {	
-			
-			emitter = emi;			
-			source.addParticle(particle);
-			source.active = false;	
-			emitter.addSource(source);
+			super(emi, source, particle);
 		}
 		
 		public function at(x:int, y:int, dx:int = 0, dy:int = 1, pow:int = 10):void {

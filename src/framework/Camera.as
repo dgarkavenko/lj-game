@@ -104,7 +104,7 @@ package framework
 				container.x = Game.SCREEN_HALF_WIDTH - X;
 				for (var i:int = 0; i < _layers.length; i++) 
 				{	
-					_layers[i].x = (_difference[i]) * container.x / (GameWorld.WORLD_SIZE_X - Game.SCREEN_WIDTH);				
+					_layers[i].x = (_difference[i]) * container.x / (_locationWidth - Game.SCREEN_WIDTH);				
 				}
 			}
 				

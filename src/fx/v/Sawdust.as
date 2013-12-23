@@ -13,20 +13,17 @@ package fx.v
 	 * ...
 	 * @author DG
 	 */
-	public class Sawdust
+	public class Sawdust extends BaseEffect
 	{
 		
-		private var emitter:Emitter;
+		
 		//private var sources:SimpleCache= new SimpleCache(PointSource, 1);	
 		private var source:PointSource = new PointSource();
 		private var particle:SawdustParticle = new SawdustParticle();	
 		
 		public function Sawdust(emi:Emitter) {		
 			
-			emitter = emi;			
-			source.addParticle(particle);
-			source.active = false;			
-			emitter.addSource(source);
+			super(emi, source, particle);
 		}
 		
 		public function at(x:int, y:int, dir:int, pow:int):void {

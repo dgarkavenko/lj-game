@@ -12,6 +12,7 @@ package dynamics.player
 	import gamedata.DataSources;
 	import gameplay.player.SkillList;
 	import gui.PopupManager;
+	import idv.cjcat.emitter.PointSource;
 	import nape.callbacks.CbEvent;
 	import nape.callbacks.CbType;
 	import nape.callbacks.InteractionCallback;
@@ -42,6 +43,8 @@ package dynamics.player
 		
 		private var moveEvent:Event = new Event("onMove");
 		
+		private var particleSource:PointSource = $VFX.dust.step;
+		
 		public function Movement(lj:Lumberjack) 
 		{
 			lumberjack = lj;
@@ -64,6 +67,7 @@ package dynamics.player
 		{
 			if (!_grounded) _grounded = true;
 			_carrier.velocity.y = 0;
+			$VFX.dust.at(_carrier.position.x, _carrier.position.y + 27);
 		}	
 		
 		private function midAirHandler(cb:InteractionCallback):void 
@@ -96,9 +100,6 @@ package dynamics.player
 			_carrier.velocity.x = 0;
 			
 			
-			
-		
-			
 			if (isNaN(stuckX)) {
 				
 				if (keys.pressed("A") || keys.pressed("LEFT")) {
@@ -106,7 +107,7 @@ package dynamics.player
 					_carrier.applyImpulse(new Vec2( lumberjack.facing == - 1 ? -walk /** speed_m */: -walk /** speed_m*/, 0));
 					if (_grounded) {
 						view.walk();		
-						
+						particleSource.active = true;
 					}
 					
 					dispatchEvent(moveEvent);
@@ -116,13 +117,18 @@ package dynamics.player
 					_carrier.applyImpulse(new Vec2(lumberjack.facing == 1 ? walk /** speed_m*/  : walk /** speed_m*/, 0));				
 					if (_grounded) {
 						view.walk();						
-						
+						particleSource.active = true;
 					}
+					
+					
 					
 					view.turnLegs(1);
 					dispatchEvent(moveEvent);
 					
 				}else {
+					
+					particleSource.active = false;
+					
 					if (_grounded) { lumberjack.view.idle();
 					}else {
 						lumberjack.view.jump();
@@ -134,7 +140,8 @@ package dynamics.player
 						
 						//grounded = false;	
 						
-						lumberjack.view.jump();						
+						lumberjack.view.jump();			
+						particleSource.active = false;
 						_carrier.applyImpulse(new Vec2(0, -jump));						
 						
 						//$AE.did(AchievementEngine.JUMP);
@@ -145,6 +152,7 @@ package dynamics.player
 				
 			}else {
 				
+				particleSource.active = false;
 				_carrier.position.x = stuckX;
 				
 				if (keys.justPressed("W") || keys.justPressed("UP")) {				
@@ -167,6 +175,11 @@ package dynamics.player
 					
 				}
 				
+			}
+			
+			if (particleSource.active) {
+				particleSource.x = _carrier.position.x;
+				particleSource.y = _carrier.position.y + 25;
 			}
 			
 			

@@ -15,6 +15,7 @@ package fx.v
 		public var blood:Blood = new Blood(emitter);
 		public var goo:Goo = new Goo(emitter);
 		public var gooPuddle:GooPuddle = new GooPuddle(emitter);
+		public var dust:Dust = new Dust(emitter);
 		
 		
 		

@@ -176,6 +176,8 @@ package dynamics.player.weapons
 			var x:Number = pivot.x + carrier.facing *(carrier_view.gunpoint.x - 8 - .5);
 			var y:Number = pivot.y + carrier_view.gunpoint.y - 33 + 5.5;
 			
+			$VFX.dust.shot(x + 5 * carrier.facing, y - 2);
+			
 			//var x:Number = pivot.x + carrier.facing *(carrier_view.gunpoint.x);
 			//var y:Number = pivot.y + carrier_view.gunpoint.y;
 			

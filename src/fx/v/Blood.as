@@ -6,7 +6,7 @@ package fx.v
 	 * ...
 	 * @author DG
 	 */
-	public class Blood 
+	public class Blood
 	{
 		
 		private var emitter:Emitter;	

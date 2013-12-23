@@ -287,7 +287,7 @@ package dynamics
 			
 		}
 		
-		static public var f:uint = 0;
+		
 		
 		public function cut():void {
 			
@@ -313,21 +313,17 @@ package dynamics
 			trunk.group.group = stump.group.group = Collision.rootgroup;			
 			Collision.setFilter(stump, Collision.LUMBER_IGNORE);
 			Collision.setFilter(trunk, Collision.TRUNK);
-			f++;
-			//Графика для ствола
-			
-			var trunksprite:Sprite = new Sprite();
-			
-			var bdata:BitmapData = new BitmapData(W, H - CUT_B, true, 0x0);
-			bdata.draw(trunk_bmp.bitmapData);			
 			
 			
-			//TODO REMOVE PROPERLY
-			trunksprite.addChild(new Bitmap(bdata));
-			trunksprite.addChild(ttop);
 			
-			trunk.userData.graphic = trunksprite;
-			trunk.userData.graphicOffset = new Vec2( -W / 2, -(H - CUT_B) / 2);	
+			var trunkBitmap:BitmapData = new BitmapData(ttop.width, H - CUT_B, true, 0x0);
+			trunkBitmap.draw(trunk_bmp.bitmapData, new Matrix(1,0,0,1, -1 + ttop.width / 2 - W/2,0));
+			trunkBitmap.draw(ttop);
+			
+			
+			trunk.userData.graphic = new Bitmap(trunkBitmap);		
+			trunk.userData.graphicOffset = new Vec2( int(-trunkBitmap.width/2), int(-(H - CUT_B) / 2));	
+			
 			trunk.cbTypes.add(GameCb.TRUNK);				
 			
 			container.layer2.addChild(trunk.userData.graphic);	
@@ -335,7 +331,7 @@ package dynamics
 
 			
 			//Графика для пня
-			bdata = new BitmapData(W, CUT_B, true, 0x0);
+			var bdata:BitmapData = new BitmapData(W, CUT_B, true, 0x0);
 			bdata.copyPixels(trunk_bmp.bitmapData, new Rectangle(0, H - CUT_B, W, CUT_B), new Point(0, 0));			
 			stump.userData.graphicOffset = new Vec2(-W / 2, -CUT_B / 2 - 1);
 			stump.userData.graphic = new Bitmap(bdata);			
