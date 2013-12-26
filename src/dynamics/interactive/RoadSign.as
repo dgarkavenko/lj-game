@@ -21,7 +21,7 @@ package dynamics.interactive
 		public function RoadSign() 
 		{
 			bitmap = new Bitmap(new SignBMP());
-			body = build(new Vec2(500, 322), [Polygon.rect(0, 0, 47, 67)], Material.wood());
+			body = build(new Vec2(530, 322), [Polygon.rect(0, 0, 47, 67)], Material.wood());
 			body.userData.graphic = bitmap;
 			body.align();			
 			body.userData.graphicOffset = new Vec2(int(-bitmap.width/2), int(-bitmap.height/2));			

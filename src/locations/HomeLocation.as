@@ -40,7 +40,7 @@ package locations
 		
 		public function HomeLocation() 
 		{
-			location_w = 900;
+			location_w = 640;
 			initial_x = 439;
 			initial_y = 339;
 		}

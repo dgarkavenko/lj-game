@@ -5,8 +5,10 @@ package dynamics.interactive
 	import flash.display.Bitmap;
 	import nape.geom.Vec2;
 	import nape.phys.Body;
+	import nape.phys.BodyType;
 	import nape.phys.Material;
 	import nape.shape.Polygon;
+	import utils.VisualAlignment;
 	import visuals.HomeMailbox;
 	import visuals.SignBMP;
 	/**
@@ -20,13 +22,17 @@ package dynamics.interactive
 		public function Mailbox() 
 		{
 			bitmap = new Bitmap(new HomeMailbox());
-			body = build(new Vec2(90, 322), [Polygon.rect(0, 0, bitmap.width, bitmap.height)], Material.wood());
+			body = build(new Vec2(90, 314), [Polygon.rect(0, 0, bitmap.width, bitmap.height)], Material.wood());
 			body.userData.graphic = bitmap;
 			body.align();
 			body.space = null;
+			body.type = BodyType.STATIC;
+			
 			
 			
 			body.userData.graphicOffset = new Vec2(int(-bitmap.width/2), int(-bitmap.height/2));
+			
+			VisualAlignment.apply(body);
 			
 			Collision.setFilter(body, Collision.LUMBER_IGNORE, ~Collision.LUMBER_IGNORE);			
 			applySuperPreferences(body);

@@ -18,13 +18,13 @@ package dynamics
 		public static var groups:SimpleCache = new SimpleCache(InteractionGroup, 6);
 		
 		public static const LUMBER_IGNORE:uint = 2; 
-		static public const NULL_OBJECT:uint = 3;		
+		static public const NULL_OBJECT:uint = 8;		
 		static public const LUMBER_RAY:uint = 4;
-		static public const TREE:uint = 7;
-		static public const DUMMIES:uint = 8;
-		static public const IO:uint = 6;
-		static public const TRUNK:uint = 5;
-		static public const PEN:uint = 9;
+		static public const TREE:uint = 16;
+		static public const DUMMIES:uint = 32;
+		static public const IO:uint = 64;
+		static public const TRUNK:uint = 128;
+		static public const PEN:uint = 256;
 		
 		
 		
