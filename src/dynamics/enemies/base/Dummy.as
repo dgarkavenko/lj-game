@@ -101,6 +101,8 @@ package dynamics.enemies.base
 			health_bar = null;
 		}
 		
+		
+		
 		public function Dummy(alias:String) 
 		{
 			//_view = new BaseSpriteControl(ZStore.GetMC(alias));
@@ -124,6 +126,19 @@ package dynamics.enemies.base
 		
 		}
 		
+		public function get x():int {
+			return _body.position.x;
+		}
+		
+		public function get height():int {
+			return h;
+		}
+		
+		public function get width():int {
+			return w;
+		}
+
+		
 		private function get intType():int 
 		{
 			switch (_alias) 
@@ -146,6 +161,8 @@ package dynamics.enemies.base
 		
 		private var f:uint = 1;
 		private var k:uint = 1;
+		private var w:int;
+		private var h:int;
 		
 		
 		override public function tick():void {
@@ -261,11 +278,6 @@ package dynamics.enemies.base
 		protected function setParameters(ref:Object):void 
 		{
 			_view = new BaseSpriteControl(Spitter);
-			
-			
-			var w:int;
-			var h:int;			
-						
 			
 			
 			if ("w" in ref)

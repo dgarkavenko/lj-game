@@ -10,6 +10,10 @@ package dynamics.player
 	import dynamics.player.weapons.Gun;
 	import dynamics.player.weapons.GunData;
 	import gameplay.DeathReason;
+	import gameplay.SkillList;
+	import gui.PopText;
+	import utils.DataEvt;
+	import utils.GlobalEvents;
 
 	import dynamics.player.weapons.Tool;
 	import dynamics.player.weapons.ToolData;
@@ -21,7 +25,6 @@ package dynamics.player
 	import gamedata.DataSources;
 	import gamedata.LumberKeeper;
 	import gameplay.player.HP;
-	import gameplay.player.SkillList;
 	import nape.geom.Vec2;
 	import nape.phys.Body;
 	import nape.phys.Interactor;
@@ -73,7 +76,7 @@ package dynamics.player
 		//private var hp:int = save.hp;
 		private var xp:int = save.xp;
 		
-		public var skills:SkillList = new SkillList();
+
 		public var movement:Movement;		
 		public var disabled:Boolean = false;
 		
@@ -109,6 +112,10 @@ package dynamics.player
 			_body.userData.graphicOffset.y = -38;
 		}
 		
+		public function zombieCollision(a:int):void {
+			movement.zombieCollision = a;
+		}
+		
 		public function Lumberjack(x:int, y:int) 
 		{			
 			
@@ -119,7 +126,7 @@ package dynamics.player
 			_body = build(new Vec2(x, y), [Polygon.rect( 0, 0, 16, 49), Polygon.rect(3,50,10,5)], hero_material);	
 			_body.allowRotation = false;			
 			//Дровосек, не перексекается с ЛАМБЕР_ИГНОР группой и ДАмми
-			Collision.setFilter(_body, Collision.DUMMIES, ~(Collision.LUMBER_IGNORE|Collision.DUMMIES|Collision.LUMBER_RAY));
+			Collision.setFilter(_body, 256, ~(Collision.LUMBER_IGNORE|Collision.LUMBER_RAY));
 			
 			_body.cbTypes.add(GameCb.LUMBERJACK);			
 			_body.shapes.at(1).cbTypes.add(GameCb.INTERACTIVE);
@@ -133,9 +140,7 @@ package dynamics.player
 			_body.userData.x_scale = 1;
 						
 			
-			//Скилы грузим
-			skills.load(save.skills);
-			skills.addEventListener(SkillList.SKILL_UP_EVENT, onSkillUpgrade);
+
 			_body.userData.interact = interact;	
 			
 			//Здоровьишко		
@@ -155,6 +160,8 @@ package dynamics.player
 			movement.jump = ref.jump;
 			movement.walk = ref.ms;
 			movement.addEventListener("onMove", onPlayerMove);
+			
+			$GLOBAL.listenTo(GlobalEvents.SKILLS, onSkillUpgrade);
 		
 		}
 		
@@ -163,13 +170,12 @@ package dynamics.player
 			if (onPlayerMoveCallback != null) onPlayerMoveCallback();
 		}
 		
-		private function onSkillUpgrade(e:Event = null):void 
+		private function onSkillUpgrade(e:DataEvt = null):void 
 		{
+			trace("SKILL_UP");
 			hands.updateParams();
 			hp.updateParams();
-			movement.updateParams();
-			
-			
+			movement.updateParams();						
 		}
 		
 		
@@ -373,9 +379,22 @@ package dynamics.player
 		//TODO REMOVE
 		public function bite(facing_:int):void 
 		{
+			if (SkillList.isLearned(SkillList.NINJA)) {
+				if (Math.random() > 0.75) {
+					PopText.at("DODGED", _body.position.x, _body.position.y - 20, 0xffffff);
+					return;
+				}				
+			}
+			
+			
 			
 			hp.decrease(10);
 			$VFX.blood.at(_body.position.x, _body.position.y, -facing_, 0, 15);
+			
+		}
+		
+		public function growBeard():void 
+		{
 			
 		}
 		

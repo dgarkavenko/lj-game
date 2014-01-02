@@ -18,6 +18,7 @@ package
 	import framework.screens.MapScreen;
 	import framework.screens.MenuScreen;
 	import gamedata.DataSources;
+	import gameplay.SkillList;
 	/**
 	 * ...
 	 * @author DG
@@ -51,6 +52,7 @@ package
 		
 		public function Game() 
 		{
+			
 			trace("v" + Version.Major  + "." + Version.Minor + "." + Version.Build );
 			trace("@" + Version.Timestamp);			
 			

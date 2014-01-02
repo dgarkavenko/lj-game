@@ -47,10 +47,17 @@ package
 	import gameplay.DeathReason;
 	import gameplay.EvilGenius;
 	import gameplay.player.HP;
-	import gameplay.player.SkillList;
+	import gameplay.SkillList;
+
 	import gameplay.TreeHandler;
+	import gameplay.world.Ground;
 	import locations.ForestLocation;
 	import locations.HomeLocation;
+	import nape.callbacks.CbType;
+	import nape.callbacks.PreCallback;
+	import nape.callbacks.PreFlag;
+	import nape.callbacks.PreListener;
+	import nape.dynamics.CollisionArbiter;
 
 
 
@@ -129,13 +136,10 @@ package
 		private var puddle_e_listener:InteractionListener = new InteractionListener(CbEvent.END, InteractionType.SENSOR, GameCb.PUDDLE, GameCb.LEGS, onPuddleEnd);
 		private var inhell_listener:InteractionListener = new InteractionListener(CbEvent.BEGIN, InteractionType.ANY, GameCb.HELL, GameCb.LUMBERJACK, inHell);
 		
-		
-		
-		
-		
 		private function onDayTimeChanged(e:Event):void 
 		{
 			contracts.timeUpdate(time.time);
+			lumberjack.growBeard();
 		}
 
 		
@@ -171,12 +175,43 @@ package
 			
 		}
 		
+		private function oneWayHandler(cb:PreCallback):PreFlag {
+			
+			if (!SkillList.isLearned(SkillList.NINJA)) return PreFlag.IGNORE;
+            // We assigned the listener to have the one-way platform as first
+            // interactor.
+            //
+            // PreCallback 'swapped' property as API docs describe tells us that
+            // if true; arbiter.normal points from int2 to int1, else from int1 to int2
+            //
+            // To allow objects to move upwards through one-way platforms we must
+            // ignore collisions with arbiter (pointing from one-way platform) whose normal
+            // points down (y > 0). Taking swapped into account we have:
+            //
+            // Equally we gave the interactino type as COLLISION so that accessing
+            // arbiter.collisionArbiter is always valid (non-null).
+            var colArb:CollisionArbiter = cb.arbiter.collisionArbiter;
+ 
+            if ((colArb.normal.y > 0) != cb.swapped) {
+                return PreFlag.IGNORE;
+            }
+            else {
+				
+				lumberjack.movement.doublejump = true;
+				lumberjack.movement.zombiecontact = true;
+				lumberbody.velocity.y = 0;
+                return PreFlag.IGNORE;
+				
+            }
+        }
+		
 		private function first_launch(e:Event = null):void {
 		
 			removeEventListener(Event.ADDED_TO_STAGE, first_launch);	
 			new Boot();
 			addChild(container);
-
+			
+			
 			space = new Space(gravity);
 			
 			PhysDebug.space = space;
@@ -184,6 +219,15 @@ package
 				
 			inhell_listener.space = projectile_listener.space = space;
 			puddle_b_listener.space = puddle_e_listener.space = space;
+			
+			space.listeners.add(new PreListener(
+                InteractionType.COLLISION,
+                GameCb.ZOMBIE,
+                GameCb.LEGS.including(GameCb.LUMBERJACK),
+                oneWayHandler,
+                /*precedence*/ 0,
+                /*pure*/ true
+            ));
 				
 			time = new TimeManager(container);
 			time.addEventListener(TimeManager.DayTimeChange, onDayTimeChanged);		
@@ -197,7 +241,7 @@ package
 			
 			lumberjack = new Lumberjack(500, 500);			
 			lumberbody = lumberjack.getBody();
-			lumberjack.onPlayerMoveCallback = onPlayerMove;	
+			//lumberjack.onPlayerMoveCallback = onPlayerMove;	
 				
 			
 				
@@ -220,18 +264,7 @@ package
 			
 		}		
 		
-		
-		private function onPlayerMove():void {
-			
-			if (Math.abs( lumberbody.position.x - 500) < 100) {
-				lumberjack.hp.auraEffect(true)
-			}else {				
-				lumberjack.hp.auraEffect(false)
-			}
-			
-			
-			
-		}		
+				
 		
 		//Убрать отсюда
 		private function setUpMouseSprite():void 
@@ -300,6 +333,10 @@ package
 				
 			}
 			
+			if (Controls.keys.justPressed("P")) {
+				GameScreen.POP.show(PopupManager.PERKS);				
+			}
+			
 			if (Controls.keys.justPressed("M")) {
 				ScreenManager.inst.showScreen(MapScreen);
 			}
@@ -313,10 +350,20 @@ package
 				ScreenManager.inst.showScreen(MenuScreen);
 			}*/
 			
+			
+			var col:int = 0;			
 			for each (var z:Dummy in zombies) 
 			{
 				z.tick();
+				
+				if (Math.abs(z.x - lumberbody.position.x ) < 8 + z.width / 2) {
+					if (lumberbody.position.y + 25 > Game.SCREEN_HEIGHT - Ground.HEIGHT - z.height) {
+						col++;
+					}
+				}
 			}
+			
+			lumberjack.zombieCollision(col);
 			
 			for each (var o:DynamicWorldObject in dynamicsVec) {
 				o.tick();

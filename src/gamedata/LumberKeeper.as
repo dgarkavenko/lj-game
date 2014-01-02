@@ -3,7 +3,6 @@ package gamedata
 
 	import flash.events.Event;
 	import framework.screens.GameScreen;
-	import gameplay.player.SkillList;
 	import gui.PopupManager;
 
 	/**

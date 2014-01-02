@@ -4,6 +4,7 @@ package gui
 	import framework.screens.GameScreen;
 	import gui.popups.AchievementPopup;
 	import gui.popups.AchievementsWindow;
+	import gui.popups.PerkPopup;
 	import gui.popups.Popup;
 	import gui.popups.Shop;
 	/**
@@ -20,6 +21,7 @@ package gui
 		public static const ACHIEVEMENTS:AchievementsWindow = new AchievementsWindow();		
 		public static const ACHIEVEMENT_POPUP:AchievementPopup = new AchievementPopup();
 		public static const SHOP:Shop = new Shop();
+		public static const PERKS:PerkPopup = new PerkPopup();
 		
 		public function PopupManager(container:MovieClip)
 		{
@@ -42,7 +44,7 @@ package gui
 			}else {
 				pop.build(container, params);
 				popup = pop;			
-				//if (popup.require_pause) GameScreen.world_simulation_OFF();
+				if (popup.require_pause) GameScreen.world_simulation_OFF();
 			}
 			
 			
@@ -58,7 +60,7 @@ package gui
 			if (queued.length > 0) {						
 				show(queued.shift());				
 			}else {							
-				//GameScreen.world_simulation_ON();
+				GameScreen.world_simulation_ON();
 			}
 			
 			container.stage.focus = container;	

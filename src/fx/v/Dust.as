@@ -41,10 +41,10 @@ package fx.v
 			point.burst(5);
 		}
 		
-		public function at(x:int, y:int):void {
+		public function at(x:int, y:int, powah:int = 100):void {
 			source.x = x;
 			source.y = y;
-			source.burst(100);
+			source.burst(powah);
 		}
 	
 		

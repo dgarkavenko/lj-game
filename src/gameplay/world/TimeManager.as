@@ -140,12 +140,12 @@ package gameplay.world
 			//shade.alp
 			//ScreenManager.inst.showScreen(DayScreen);
 			
-			if (!debug) TweenLite.to(shade, 3, { alpha:0 } );
+			if (!debug) TweenLite.to(shade, 5, { alpha:0 } );
 			daytime = DAY;
 		}
 		
 		private function d2n():void {			
-			TweenLite.to(shade, 3, { alpha:1 } );	
+			TweenLite.to(shade, 5, { alpha:1 } );	
 			daytime = NIGHT;
 		}
 		

@@ -16,7 +16,8 @@ package dynamics.player.weapons
 	import framework.input.Controls;
 	import framework.input.Mouse;
 	import framework.PhysDebug;
-	import gameplay.player.SkillList;
+	import gameplay.SkillList;
+
 	import gameplay.world.Light;
 	import gameplay.world.TimeManager;
 	import hud.Spinner;
@@ -86,7 +87,7 @@ package dynamics.player.weapons
 		
 		public function force_reload():void {
 			
-			gundata.reload_counter = gundata.reload_time * reload_m;				
+			gundata.reload_counter = gundata.reload_time;				
 			addSpinner();
 		}
 		
@@ -108,9 +109,19 @@ package dynamics.player.weapons
 				
 			}			
 			
-			if (!mouse.pressed() || cooldown_timer.running || gundata.reload_counter > 0) return;
+			if (!mouse.pressed()) return;	
 			
-			if ((gundata.mode == SEMI && mouse.justPressed()) || gundata.mode == AUTO) act();			
+			if (cooldown_timer.running && !SkillList.isLearned(SkillList.QUICK_FINGERS)) return;
+				
+				
+			if (mouse.justPressed()) {
+				if (SkillList.isLearned(SkillList.AMMUNITION_WITHIN) || !cooldown_timer.running) act();
+			}else {
+				if (cooldown_timer.running) return;
+				if (gundata.mode == AUTO) act();			
+			
+			}
+				
 			
 		}	
 		
@@ -169,7 +180,8 @@ package dynamics.player.weapons
 		{
 			cooldown_timer.reset();
 			cooldown_timer.start();
-			gundata.ammo_current--;
+			if (gundata.reload_counter <= 0) gundata.ammo_current--;
+			else GameWorld.lumberjack.hp.decrease(gundata.damage_min / 5);
 			
 			// 8 и 27 — половина ширины и высоты физ тела.
 			// 5.5 — половина координаты спрайта, в котором ганпоинт
@@ -209,9 +221,15 @@ package dynamics.player.weapons
 					da = a + (gundata.dispersion + recoil)* (2 * Math.random() - 1)
 					ray.direction = Vec2.fromPolar(ray.maxDistance, da);
 					
+					if (SkillList.isLearned(SkillList.SHORTY)) {
+						rayResultList = space.rayMultiCast(ray, false, BULLET_RAY_FILTER);
+					}
+					else {
+						rayResultList.clear();
+						rayResult = space.rayCast(ray, false, BULLET_RAY_FILTER);
+						if (rayResult != null) rayResultList.add(rayResult);
+					}
 					
-					
-					rayResultList = space.rayMultiCast(ray, false, BULLET_RAY_FILTER);				
 					
 					var dist:int = 0;					
 					for (var j:int = 0; j < rayResultList.length; j++) 
@@ -255,8 +273,10 @@ package dynamics.player.weapons
 				
 			}
 			
-			recoil += gundata.recoilPerShoot;
-			if (recoil > 0.08) recoil = 0.08;
+			if (!SkillList.isLearned(SkillList.AUTOGUNS)) {
+				recoil += gundata.recoilPerShoot;
+				if (recoil > 0.08) recoil = 0.08;
+			}		
 			
 			fade_visual();
 			
@@ -327,7 +347,7 @@ package dynamics.player.weapons
 		override public function updateParams():void 
 		{
 			//skill_dispersion = SkillList.dispersion;
-			reload_m = SkillList.reload_m;
+			
 		}
 		
 		

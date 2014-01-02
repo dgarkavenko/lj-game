@@ -23,23 +23,25 @@ package framework.screens {
 		public static var HUD:HUDClass;
 		public static var POP:PopupManager;
 		
-	
+		public static var WORLD_UPDATE_FUNCTION:Function;
 		
 
 		public function GameScreen() {			
 			
-			WORLD = new GameWorld();			
+			WORLD = new GameWorld();	
+			WORLD_UPDATE_FUNCTION = WORLD.tick;
 			HUD = new HUDClass();			
 			POP = new PopupManager(HUD);		
 			
 			addChild(WORLD);			
-			addChild(HUD);				
+			addChild(HUD);		
+			
 		}
 		
-		public function world_simulation_ON():void {
+		public static function world_simulation_ON():void {
 			//Запустить все таймеры
 			
-			Game.updateFunction = WORLD.tick;
+			Game.updateFunction = WORLD_UPDATE_FUNCTION;
 			
 			
 		}
@@ -47,7 +49,7 @@ package framework.screens {
 		/**
 		 * Поставить мир на паузу.
 		 */
-		public function world_simulation_OFF():void {
+		public static function world_simulation_OFF():void {
 			//Заморозить все таймеры
 			Game.updateFunction = Game.EMPTY_FUNCTION;
 		}

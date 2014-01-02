@@ -1,6 +1,7 @@
 package gameplay.player 
 {
 	import framework.screens.GameScreen;
+	import gameplay.SkillList;
 	import nape.geom.Vec2;
 	import nape.phys.Body;
 	/**
@@ -62,18 +63,10 @@ package gameplay.player
 			
 		}
 		
-		public function auraEffect(b:Boolean):void 
-		{
-			if (aura == b) return			
-			aura = b;
-			updateParams();
-		}
-		
 		public function updateParams():void 
 		{
-			regen = aura? SkillList.regen_a + 1 : SkillList.regen_a;
-			GameScreen.HUD.regen = regen;
-			resistance = SkillList.dmg_reduction;
+			if (SkillList.isLearned(SkillList.BEAR_VITALITY)) regen = 1;
+			GameScreen.HUD.regen = regen;			
 			GameScreen.HUD.update_hp(_current,max);
 		}
 		

@@ -10,7 +10,8 @@ package dynamics.player
 	import framework.input.Mouse;
 	import framework.screens.GameScreen;
 	import gamedata.DataSources;
-	import gameplay.player.SkillList;
+	import gameplay.SkillList;
+
 	import gui.PopupManager;
 	import idv.cjcat.emitter.PointSource;
 	import nape.callbacks.CbEvent;
@@ -32,18 +33,28 @@ package dynamics.player
 		private var lumberjack:Lumberjack;
 		private var locked_x:Number = NaN;
 		private var _grounded:Boolean = true;
+		public var doublejump:Boolean = false;
+
 		
 		public var jump:int = 125;
 		public var walk:int = 90 * 1;
+		public var zombieCollision:int = 0;
+		public var zombiecontact:Boolean = false;
 		private var speed_m:Number = 1;
 		
 		private var stuckX:Number = NaN;
 		private var deep:int = 0;
 		private var view:Lumberskin;
 		
-		private var moveEvent:Event = new Event("onMove");
+		//private var moveEvent:Event = new Event("onMove");
 		
 		private var particleSource:PointSource = $VFX.dust.step;
+		
+		
+		private var slick:Boolean = false;
+		private var coordination:Boolean = false;
+	
+
 		
 		public function Movement(lj:Lumberjack) 
 		{
@@ -51,9 +62,9 @@ package dynamics.player
 			_carrier = lj.getBody().castBody;
 			view = lumberjack.view as Lumberskin;
 			
-			var groundListener:InteractionListener = new InteractionListener(CbEvent.BEGIN, InteractionType.COLLISION, GameCb.LEGS, GameCb.GROUND.including(GameCb.TRUNK), groundHandler);
+			var groundListener:InteractionListener = new InteractionListener(CbEvent.BEGIN, InteractionType.COLLISION, GameCb.LEGS, GameCb.GROUND.including([GameCb.TRUNK]), groundHandler);
 			
-			var midAirListener:InteractionListener = new InteractionListener(CbEvent.END, InteractionType.COLLISION, GameCb.LEGS, GameCb.GROUND.including(GameCb.TRUNK), midAirHandler);
+			var midAirListener:InteractionListener = new InteractionListener(CbEvent.END, InteractionType.COLLISION, GameCb.LEGS, GameCb.GROUND.including([GameCb.TRUNK]), midAirHandler);
 
 			midAirListener.space = groundListener.space = _carrier.space;
 		}
@@ -65,9 +76,15 @@ package dynamics.player
 		
 		private function groundHandler(cb:InteractionCallback):void 
 		{
-			if (!_grounded) _grounded = true;
-			_carrier.velocity.y = 0;
-			$VFX.dust.at(_carrier.position.x, _carrier.position.y + 27);
+			_grounded = true;
+			if (SkillList.isLearned(SkillList.DOUBLE_JUMP)) doublejump = true;			
+			if (cb.int2.cbTypes.has(GameCb.GROUND)) {
+				$VFX.dust.at(_carrier.position.x, _carrier.position.y + 27);
+				_carrier.velocity.y = 0;
+				
+			}		
+			
+			zombiecontact = false;
 		}	
 		
 		private function midAirHandler(cb:InteractionCallback):void 
@@ -86,17 +103,30 @@ package dynamics.player
 			locked_x = NaN;
 		}
 		
-		
+		private function walkThisWay(dir:int):void 
+		{
+			var currentSpeed:Number = slick ? walk : walk / (1 + zombieCollision / 3);	
+			
+			if (coordination) {
+				view.turnLegs( dir);				
+			}else if(dir != lumberjack.facing) {
+				currentSpeed = currentSpeed * .65;	
+			}
+			
+			_carrier.applyImpulse(new Vec2(currentSpeed * dir, 0));
+			if (_grounded) {
+				view.walk();		
+				if (slick) particleSource.active = true;
+			}
+			
+			
+		}
 		
 		
 		public function tick():void {			
 			
 			
 			lumberjack.facing = _carrier.position.x > mouse.relativeX ? -1 : 1
-			
-			
-			//Damping
-			//_carrier.velocity.x *= (Math.pow(0.0001, 1 / 30));			
 			_carrier.velocity.x = 0;
 			
 			
@@ -104,26 +134,13 @@ package dynamics.player
 				
 				if (keys.pressed("A") || keys.pressed("LEFT")) {
 					
-					_carrier.applyImpulse(new Vec2( lumberjack.facing == - 1 ? -walk /** speed_m */: -walk /** speed_m*/, 0));
-					if (_grounded) {
-						view.walk();		
-						particleSource.active = true;
-					}
-					
-					dispatchEvent(moveEvent);
-					view.turnLegs( -1);
+					walkThisWay( -1);
+				
 				
 				}else if (keys.pressed("D") || keys.pressed("RIGHT")) {
-					_carrier.applyImpulse(new Vec2(lumberjack.facing == 1 ? walk /** speed_m*/  : walk /** speed_m*/, 0));				
-					if (_grounded) {
-						view.walk();						
-						particleSource.active = true;
-					}
 					
+					walkThisWay(1);
 					
-					
-					view.turnLegs(1);
-					dispatchEvent(moveEvent);
 					
 				}else {
 					
@@ -136,9 +153,16 @@ package dynamics.player
 				}				
 				
 				if (keys.justPressed("W") || keys.justPressed("UP")) {				
-					if (_grounded) {
+					if (_grounded || doublejump) {
 						
 						//grounded = false;	
+						if (_grounded == false) {
+							doublejump = false;
+							_carrier.velocity.y = 0;
+							
+							if (!zombiecontact) $VFX.dust.at(_carrier.position.x, _carrier.position.y + 27, 25);
+							else $VFX.blood.at(_carrier.position.x, _carrier.position.y + 27, 0, -1, 5);
+						}
 						
 						lumberjack.view.jump();			
 						particleSource.active = false;
@@ -186,9 +210,17 @@ package dynamics.player
 			
 		}
 		
+	
+		
 		public function updateParams():void 
 		{
-			speed_m = SkillList.speed_m;
+			if (SkillList.isLearned(SkillList.SLICK)) {
+				slick = true;
+				walk = 110;
+			}
+			if (SkillList.isLearned(SkillList.COORDINATION)) coordination = true;
+			
+			if (SkillList.isLearned(SkillList.DOUBLE_JUMP) && grounded) doublejump = true;
 		}
 		
 		public function get grounded():Boolean 
