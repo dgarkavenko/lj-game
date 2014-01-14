@@ -31,20 +31,18 @@ package gui.popups
 			temp_mc.graphics.endFill();			
 			addChild(temp_mc);
 			
-			var title_tf:FormatedTextField = new FormatedTextField(30);
-			title_tf.text = "Perks"; title_tf.y = 30; title_tf.x = 20;
-			title_tf.width = 400;
-			temp_mc.addChild(title_tf);
 			
-			var close_tf:FormatedTextField = new FormatedTextField();
-			close_tf.text = "[x]"; close_tf.x = 520; close_tf.y = 30;
-			temp_mc.addChild(close_tf);
+			
+			AddTitle(temp_mc, "Perks");
+			AddCloseButton(temp_mc);
 			
 			var i:int = 0;			
 			var item:String		
 			
-			close_tf.addEventListener(MouseEvent.CLICK, hide);
+			
 		}
+		
+		
 		
 		override protected function animation_IN():void 
 		{
@@ -60,7 +58,7 @@ package gui.popups
 		}
 		
 		override public function hide(e:* = null):void {
-			Mouse.hide();	
+				
 			super.hide();				
 		}
 		
@@ -77,7 +75,6 @@ package gui.popups
 		
 		override public function build(container:MovieClip, params:Object = null):void 
 		{
-			Mouse.show();		
 			super.build(container, params);
 			
 			var display:Array = [];

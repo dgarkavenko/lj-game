@@ -3,6 +3,10 @@ package dynamics.interactive
 	import dynamics.Collision;
 	import dynamics.interactions.PlayerInteractiveObject;
 	import flash.display.Bitmap;
+	import framework.screens.GameScreen;
+	import gameplay.contracts.BaseContract;
+	import gameplay.contracts.ContractHandler;
+	import gui.PopupManager;
 	import nape.geom.Vec2;
 	import nape.phys.Body;
 	import nape.phys.BodyType;
@@ -18,6 +22,7 @@ package dynamics.interactive
 	public class Mailbox extends PlayerInteractiveObject
 	{
 		
+		public var getContracts:Function;
 		
 		public function Mailbox() 
 		{
@@ -44,6 +49,20 @@ package dynamics.interactive
 			body.space = space;
 			super.add();
 		}
+		
+		override public function onUse(params:Object):void 
+		{
+			if (getContracts == null || getContracts().length == 0) return;		
+			
+			GameScreen.POP.show(PopupManager.CONTRACT, true, getContracts());
+			
+			
+			//
+			//CONTRACT
+			//ScreenManager.inst.showScreen(MapScreen);
+		}
+		
+		
 		
 	}
 

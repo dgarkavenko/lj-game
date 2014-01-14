@@ -38,7 +38,7 @@ package locations
 		
 		public function ForestLocation() 
 		{
-			location_w = 6000;
+			location_w = 4205;
 			initial_x = 783;
 			initial_y = 339;
 		}
@@ -51,7 +51,7 @@ package locations
 			
 			//Enviroment.place_GasStation(2100, ground);
 			var ref:Object = DataSources.instance.getReference("world");			
-			TreeHandler.inst.grow(GameWorld.space, GameWorld.container, 1000, GameWorld.WORLD_SIZE_X - 750, ref.trees);		
+			TreeHandler.inst.grow(GameWorld.space, GameWorld.container, 1000, 4205, ref.trees);		
 			
 			
 			

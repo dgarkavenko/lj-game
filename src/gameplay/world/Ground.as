@@ -50,7 +50,7 @@ package gameplay.world
 			
 		
 					
-			var groundWidth:int = GameWorld.WORLD_SIZE_X - MARGIN_RIGHT - MARGIN_LEFT;
+			var groundWidth:int = 4000;
 			var verts:Array = [new Vec2(0,36), new Vec2(205,0), new Vec2(groundWidth, 0), new Vec2(groundWidth,36) ];	
 			
 			ground = new Body(BodyType.STATIC, new Vec2(MARGIN_LEFT, Game.SCREEN_HEIGHT - HEIGHT)); // dunno about 22
@@ -82,10 +82,10 @@ package gameplay.world
 			gmc.x = shore_mc.width - 1; //OVERLAPPING PIXEL
 			
 			
-			var pier:Bitmap = new Bitmap(new Pier_bitmap());
+			//var pier:Bitmap = new Bitmap(new Pier_bitmap());
 			
 			
-			var widthOf2ndPart:int = groundWidth + MARGIN_RIGHT - shore_mc.width - gmc.width + 2 - 369 //pier.width; //OVERLAPPING
+			var widthOf2ndPart:int = groundWidth + MARGIN_RIGHT - shore_mc.width - gmc.width + 2 //pier.width; //OVERLAPPING
 			gmc2 = new Bitmap(new BitmapData(widthOf2ndPart, 36, true, 0x0));
 			
 			ite = widthOf2ndPart / bdata.width + 1;			
@@ -98,15 +98,15 @@ package gameplay.world
 			gmc2.x = gmc.x + gmc.width;
 			gmc2.y = gmc.y = Game.SCREEN_HEIGHT - gmc.height;	
 			
-			pier.y = Game.SCREEN_HEIGHT - pier.height;
-			pier.x = gmc2.x + gmc2.width - 1;
+			//pier.y = Game.SCREEN_HEIGHT - pier.height;
+			//pier.x = gmc2.x + gmc2.width - 1;
 			
 			container.layer1.addChild(shore_mc);	
 			container.layer1.addChild(gmc);	
-			container.layer1.addChild(pier);
+			//container.layer1.addChild(pier);
 			container.layer1.addChild(gmc2);
 			
-			groundSprites = [shore_mc, gmc, pier, gmc2];
+			groundSprites = [shore_mc, gmc, gmc2];
 			
 			//VisualAlignment.apply(shore);
 			//VisualAlignment.apply(ground);
@@ -132,10 +132,10 @@ package gameplay.world
 			bm.y = Game.SCREEN_HEIGHT - bm.height;
 			bm.x = pier.x + 345;*/
 			
-			bm = new Bitmap(new WaterOverlayEast_bitmap());
+			/*bm = new Bitmap(new WaterOverlayEast_bitmap());
 			container.layer0.addChild(bm);
 			bm.y = Game.SCREEN_HEIGHT - bm.height;
-			bm.x = pier.x;
+			bm.x = pier.x;*/
 			
 			bm = new Bitmap(new Ground_bg_west_bitmap());
 			container.layer4.addChild(bm);

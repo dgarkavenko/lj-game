@@ -120,7 +120,7 @@ package
 		public static var playerInteractors:Vector.<PlayerInteractiveObject> = new Vector.<PlayerInteractiveObject>();
 		
 		public static var time:TimeManager;
-		private var contracts:ContractHandler;
+		public var contracts:ContractHandler = new ContractHandler();
 		private var locationManager:LocationManager = LocationManager.inst;
 		
 		
@@ -254,7 +254,6 @@ package
 		public function initializeNewGame():void 
 		{
 			
-			contracts = new ContractHandler();
 			contracts.timeUpdate(time.time);			
 			lumberjack.getBody().position.setxy(locationManager.initial_X, locationManager.initial_Y);
 			lumberjack.hp.init(100);

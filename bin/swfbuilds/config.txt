@@ -31,24 +31,29 @@
 	"bg":{"count":0,"n1":"bg1.png","n2":"bg2.png","n3":"bg3.png","n4":"bg4.png", "n5":"bg5.png", "n6":"bg6.png"},
 	
 	"contracts":[
-		{"tasks":[{"type":"hunt", "count":2}],
-		"starts":1, "term":0, "constant":true},
-		
-		{"tasks":[{"type":"chop", "count":20}], 
-		"starts":1, "term":1, "constant":true},
-		
-		{"tasks":[{"type":"hunt", "count":15, "killedby":1},{"type":"chop", "count":15}], 
-		"starts":2, "term":0, "constant":true},
-		
+	
 		{"tasks":[{"type":"chop", "count":20,"targets":[1]}], 
-		"starts":1, "term":1, "reward":200},
+		"starts":1, "term":1, "reward":200, "title":"Chop Trees 1"},
 		
 		{"tasks":[{"type":"chop", "count":20,"targets":[2]}], 
-		"starts":2, "term":1, "reward":250},
+		"starts":2, "term":1, "reward":250, "title":"Chop Trees 2"},
 		
-		{"tasks":[{"type":"hunt", "count":2, "targets":[2]},{"type":"chop", "count":2, "targets":[]}], 
-		"starts":1, "term":2, "reward":800},
+		{"tasks":[{"type":"chop", "count":5, "targets":[2]},{"type":"chop", "count":5, "targets":[1]}], 
+		"starts":3, "term":2, "reward":600, "title":"Chop Different Trees"},
 		
-		{"tasks":[{"type":"hunt", "count":5, "targets":[2]}], "starts":3, "term":1, "reward":500}
+		{"tasks":[{"type":"hunt", "count":5, "targets":[1]}], "starts":3, "term":2, "reward":500, "title":"Hunt 1"}
+	],
+	
+	"achievements":[
+	
+		{"tasks":[{"type":"hunt", "count":50}],
+		"starts":1, "term":0, "title":"If it bleeds, we can kill it"},
+		
+		{"tasks":[{"type":"chop", "count":50}], 
+		"starts":1, "term":0, "title":"Cut It"},
+		
+		{"tasks":[{"type":"hunt", "count":10, "killedby":1},{"type":"chop", "count":10}], 
+		"starts":1, "term":2, "title":"Lumberjack's high school finals"}
+		
 	]
 }

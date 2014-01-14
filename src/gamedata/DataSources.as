@@ -4,6 +4,7 @@ package gamedata
 	import flash.net.SharedObject;
 	import flash.net.URLLoader;
 	import flash.net.URLRequest;
+	import utils.GlobalEvents;
 	
 	/**
 	 * Синглтон содержащий всех дата киперов.
@@ -24,9 +25,8 @@ package gamedata
 		{
 			trace("Sources on");
 			lumber = new LumberKeeper("ljack", 0);		
-			
-			//loadJSON("swfbuilds/config.txt");
-			loadJSON("http://lumberjack.rawapps.ru/swfbuilds/config.txt");
+			loadJSON("swfbuilds/config.txt");
+			//loadJSON("http://lumberjack.rawapps.ru/swfbuilds/config.txt");
 		}			
 		
 		private function loadJSON(fileName:String):void {			
@@ -42,7 +42,7 @@ package gamedata
 			_JSONEncoded = JSON.parse(e.target.data);
 			_JSONLoader.removeEventListener(Event.COMPLETE, loadComplete);
 			_JSONLoader = null;		
-			
+			$GLOBAL.dispatch(GlobalEvents.LOADED_CONFIG);
 		}
 		
 		public function getReference(alias:String):Object 

@@ -12,7 +12,9 @@ package gameplay.contracts
 	{
 		
 		private var contracts:Vector.<BaseContract> = new Vector.<BaseContract>();
-		private var current:Vector.<BaseContract> = new Vector.<BaseContract>();
+		
+		
+		public var current:Vector.<BaseContract> = new Vector.<BaseContract>();
 		
 		
 		
@@ -63,8 +65,11 @@ package gameplay.contracts
 			$GLOBAL.listenTo(GlobalEvents.ZOMBIE_KILLED, onZombieKill);
 			$GLOBAL.listenTo(GlobalEvents.TREE_CUT, onTreeCut);			
 			
-			parseContracts();
-			trace(contracts);
+			
+			parseContracts(DataSources.instance.getList("contracts"));
+			parseContracts(DataSources.instance.getList("achievements"), true);
+			
+			
 		}
 		
 		private function onTreeCut(e:DataEvt):void 
@@ -120,12 +125,13 @@ package gameplay.contracts
 			}
 		}
 		
-		private function parseContracts():void 
+		private function parseContracts(a:Array, ach:Boolean = false):void 
 		{
-			var a:Array = DataSources.instance.getList("contracts");
+			
 			for each (var c:Object in a ) 
 			{
-				var contract:BaseContract = new BaseContract(c.starts, c.term, "constant" in c);
+				var contract:BaseContract = new BaseContract(c.starts, c.term, ach, c.title);
+				if ("reward" in c) contract.reward_size = c.reward;
 				if ("location" in c) contract.location = a.location;				
 				contracts.push(contract);
 				
@@ -192,6 +198,11 @@ package gameplay.contracts
 			
 			trace(current);
 			
+		}
+		
+		public function getContracts():Vector.<BaseContract> 
+		{
+			return current;
 		}
 		
 		

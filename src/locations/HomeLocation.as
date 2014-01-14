@@ -81,6 +81,7 @@ package locations
 			house.add();
 			sign.add();
 			mailbox.add();
+			mailbox.getContracts = world.contracts.getContracts;
 			
 			TreeHandler.inst.grow(GameWorld.space, GameWorld.container, 24, 25, 1);
 			TreeHandler.inst.grow(GameWorld.space, GameWorld.container, 600, location_w - 50, 3);

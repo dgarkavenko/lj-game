@@ -19,6 +19,8 @@ package
 	import framework.screens.MenuScreen;
 	import gamedata.DataSources;
 	import gameplay.SkillList;
+	import utils.DataEvt;
+	import utils.GlobalEvents;
 	/**
 	 * ...
 	 * @author DG
@@ -75,14 +77,22 @@ package
 			
 			stage.stageFocusRect = false;
 			
+			
+			$GLOBAL.listenTo(GlobalEvents.LOADED_CONFIG, onConfigLoad);		
+			DataSources.instance;
+			ScreenManager.inst.registerScreen(new MenuScreen());	
+			
+			
+		}
+		
+		private function onConfigLoad(e:DataEvt = null):void 
+		{
 			ScreenManager.inst.registerScreen(new GameScreen());
-			ScreenManager.inst.registerScreen(new MenuScreen());
 			ScreenManager.inst.registerScreen(new DayScreen());
 			ScreenManager.inst.registerScreen(new GameOverScreen());
 			ScreenManager.inst.registerScreen(new LoadingScreen());
 			ScreenManager.inst.registerScreen(new MapScreen());
 			ScreenManager.inst.showScreen(MenuScreen);
-			
 		}
 		
 		private function tick(e:Event):void 

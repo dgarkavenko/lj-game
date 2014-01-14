@@ -3,7 +3,7 @@ package gui
 	import flash.display.MovieClip;
 	import framework.screens.GameScreen;
 	import gui.popups.AchievementPopup;
-	import gui.popups.AchievementsWindow;
+	import gui.popups.ContractWindow;
 	import gui.popups.PerkPopup;
 	import gui.popups.Popup;
 	import gui.popups.Shop;
@@ -16,9 +16,10 @@ package gui
 		private var container:MovieClip;
 		private var popup:Popup;
 		private var queued:Vector.<Popup> = new Vector.<Popup>();
+		private var queuedParams:Array = [];
 		
 		//CACHED POPUPS
-		public static const ACHIEVEMENTS:AchievementsWindow = new AchievementsWindow();		
+		public static const CONTRACT:ContractWindow = new ContractWindow();		
 		public static const ACHIEVEMENT_POPUP:AchievementPopup = new AchievementPopup();
 		public static const SHOP:Shop = new Shop();
 		public static const PERKS:PerkPopup = new PerkPopup();
@@ -40,7 +41,10 @@ package gui
 			if (!container) return;
 			
 			if (popup) {				
-				if (queue) queued.push(pop);				
+				if (queue) {
+					queued.push(pop);	
+					queuedParams.push(params);
+				}
 			}else {
 				pop.build(container, params);
 				popup = pop;			
@@ -58,7 +62,7 @@ package gui
 			popup = null;
 			
 			if (queued.length > 0) {						
-				show(queued.shift());				
+				show(queued.shift(), false, queuedParams.shift());				
 			}else {							
 				GameScreen.world_simulation_ON();
 			}
