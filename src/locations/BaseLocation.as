@@ -12,6 +12,7 @@ package locations
 		public var initial_x:int = 500;
 		public var location_w:int;
 		
+		
 		protected var world:GameWorld;
 		
 		public function BaseLocation() 
@@ -42,6 +43,16 @@ package locations
 			while (GameWorld.container.layer4.numChildren > 0) {
 				GameWorld.container.layer4.removeChildAt(0);
 			}
+		}
+		
+		public function left():void 
+		{
+			
+		}
+		
+		public function right():void 
+		{
+			
 		}
 		
 		

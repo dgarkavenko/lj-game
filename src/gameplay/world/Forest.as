@@ -20,7 +20,7 @@ package gameplay.world
 		
 		
 		
-		public static function grow(space:Space, container:Sprite, x_start:int, x_end:int, amount:int):Vector.<Tree> {
+		public static function grow(space:Space, container:Sprite, x_start:int, x_end:int, amount:int, noise_:int):Vector.<Tree> {
 			
 			if (x_end <= x_start) return new Vector.<Tree>();
 
@@ -33,7 +33,8 @@ package gameplay.world
 				
 				var width:int = TREEWIDTH_TEMP[Math.floor(Math.random() * TREEWIDTH_TEMP.length)];
 				var dx:int = (x_start + forest_width / amount * i);		
-				var noise:int = Math.random() * 20 - 10;
+				
+				var noise:int = Math.random() * noise_ - noise_ / 2;
 				
 				trees.push(new Tree(dx + noise, 230 + Math.random() * 200, width));				
 				

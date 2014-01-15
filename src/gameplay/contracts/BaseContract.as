@@ -18,12 +18,9 @@ package gameplay.contracts
 		
 		public var tasks:Vector.<Task> = new Vector.<Task>();
 		
-		public function BaseContract(initTime:int, term_:int, achievement:Boolean, title_:String = "") 
+		public function BaseContract() 
 		{
-			startsFrom = initTime;
-			term = term_;
-			isAchievement = achievement;	
-			title = title_ == "" ? title : title_;
+			
 		}
 		
 		public function reset():void 

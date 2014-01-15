@@ -40,6 +40,7 @@ package dynamics.player
 		public var walk:int = 90 * 1;
 		public var zombieCollision:int = 0;
 		public var zombiecontact:Boolean = false;
+		public var onMove:Function;
 		private var speed_m:Number = 1;
 		
 		private var stuckX:Number = NaN;
@@ -105,6 +106,9 @@ package dynamics.player
 		
 		private function walkThisWay(dir:int):void 
 		{
+			
+			if (onMove != null) onMove();
+			
 			var currentSpeed:Number = slick ? walk : walk / (1 + zombieCollision / 3);	
 			
 			if (coordination) {

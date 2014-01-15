@@ -40,7 +40,7 @@ package dynamics.tree
 			_tree = tree;
 			_body.position.setxy(x, y);
 			_body.space = space;
-			trace("added");
+			
 		
 		}
 		

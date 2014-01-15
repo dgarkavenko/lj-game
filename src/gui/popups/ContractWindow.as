@@ -107,8 +107,8 @@ package gui.popups
 				t.y = 140 + dy * 40;
 				
 				
-				var action:String = task.type == TaskType.chopping ? "Chop" : "Kill";
-				var how_much:String = task.targetCount.toString();
+				var action:String = task.event == TaskType.chopping ? "Chop" : "Kill";
+				var how_much:String = task.howMuch.toString();
 				t.text = "Task: " + action + " " + task.count + "/" + how_much;
 				
 				temp_mc.addChild(t);

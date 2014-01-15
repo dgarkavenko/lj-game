@@ -44,7 +44,7 @@ package dynamics.player
 
 		
 		
-		public var onPlayerMoveCallback:Function;
+	
 		
 		private var save:LumberKeeper = DataSources.lumberkeeper;
 		
@@ -159,15 +159,14 @@ package dynamics.player
 			movement = new Movement(this);
 			movement.jump = ref.jump;
 			movement.walk = ref.ms;
-			movement.addEventListener("onMove", onPlayerMove);
+			
 			
 			$GLOBAL.listenTo(GlobalEvents.SKILLS, onSkillUpgrade);
 		
 		}
 		
-		private function onPlayerMove(e:Event = null):void 
-		{
-			if (onPlayerMoveCallback != null) onPlayerMoveCallback();
+		public function setMoveCallback(f:Function):void {
+			movement.onMove = f;
 		}
 		
 		private function onSkillUpgrade(e:DataEvt = null):void 

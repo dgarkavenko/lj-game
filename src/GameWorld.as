@@ -241,7 +241,7 @@ package
 			
 			lumberjack = new Lumberjack(500, 500);			
 			lumberbody = lumberjack.getBody();
-			//lumberjack.onPlayerMoveCallback = onPlayerMove;	
+			lumberjack.setMoveCallback(onPlayerMove);
 				
 			
 				
@@ -249,6 +249,13 @@ package
 			
 			EG = new EvilGenius(space, container, lumberjack);			
 			initializeNewGame();
+		}
+		
+		private function onPlayerMove():void 
+		{
+			
+			locationManager.ljPositionChangedTo(lumberbody.position.x);
+		
 		}
 		
 		public function initializeNewGame():void 

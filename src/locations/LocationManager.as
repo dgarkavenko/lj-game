@@ -55,6 +55,12 @@ package locations
 			
 		}
 		
+		public function ljPositionChangedTo(x:Number):void 
+		{
+			if (x > current.location_w) current.right();
+			else if (x < 0) current.left();
+		}
+		
 		private function loadComplete():void {
 			ScreenManager.inst.showScreen(GameScreen);
 			Game.updateFunction = world.tick;

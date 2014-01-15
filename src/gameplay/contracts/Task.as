@@ -1,7 +1,9 @@
 package gameplay.contracts 
 {
 	import dynamics.player.weapons.WeaponData;
+	import gameplay.KilledBy;
 	import gameplay.ZombieTypes;
+	import utils.GlobalEvents;
 	/**
 	 * ...
 	 * @author dg
@@ -11,26 +13,25 @@ package gameplay.contracts
 	
 		public var contract:BaseContract;
 		
-		public var type:TaskType;
+		public var event:String = GlobalEvents.ZOMBIE_KILLED;
 		
-		public var targets:Array = [];		
-		public var killedBy:int = -1;		
+		public var targets:uint;		
+		public var killedBy:uint = KilledBy.ANY;		
 		public var dayTime:int = -1;
 		
 		
 	
 		
-		public var targetCount:int = 5;
+		public var howMuch:int = 5;
 		
 		public var count:int = 0;
 		public var sinceMorning:int = 0;
 		
 		public var isDone:Boolean = false;
 		
-		public function Task(count_:int, contract_:BaseContract) 
+		public function Task() 
 		{
-			targetCount = count_;
-			contract = contract_
+			
 		}
 		
 		public function progress(a:int = 1):void {
@@ -38,11 +39,9 @@ package gameplay.contracts
 			
 			count += a;
 			
-			trace("Task progress: " + count + "/" + targetCount );
+			trace("Task progress: " + count + "/" + howMuch );			
 			
-			
-			
-			if (count == targetCount) {
+			if (count == howMuch) {
 				isDone = true;		
 				trace("Task complete");
 			}
@@ -63,24 +62,23 @@ package gameplay.contracts
 		{
 			
 			if (!MatchType(data.type)) return isDone;
-			if (killedBy != -1 && data.how != killedBy) return isDone;
-			if (dayTime != -1 && dayTime != GameWorld.time.daytime) return isDone;
+			if (!MatchKilledBy(data.how)) return isDone;
 			
 			progress("val" in data? data.val : 1);			
 			return isDone;
 			
 		}
 		
-		public function MatchType(type:int):Boolean {
+		private function MatchKilledBy(how:uint):Boolean 
+		{
+			if (killedBy == KilledBy.ANY || (killedBy & how) == how) return true;
+			else return false;
+		}
+		
+		public function MatchType(type:uint):Boolean {			
+			if ((targets & type) == type) return true;
+			else return false;
 			
-			if (targets.length == 0) return true;
-			
-			for each (var t:int in targets) 
-			{
-				if (t == type) return true;
-			}
-			
-			return false;
 		}
 		
 	}

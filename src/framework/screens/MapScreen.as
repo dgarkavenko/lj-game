@@ -36,7 +36,7 @@ package framework.screens
 			addChild(ttl);
 			
 			elements.push(new MapElement("[Home]", HomeLocation));
-			elements.push(new MapElement("[CrashSite]", ForestLocation));
+			elements.push(new MapElement("[Familiar Forest]", ForestLocation));
 			
 			for (var i:int = 0; i < elements.length; i++) 
 			{

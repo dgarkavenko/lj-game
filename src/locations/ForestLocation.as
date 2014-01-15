@@ -5,6 +5,7 @@ package locations
 	 * @author DG
 	 */
 	
+	import dynamics.GameCb;
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
@@ -19,54 +20,98 @@ package locations
 	import flash.net.URLRequest;
 	import flash.utils.setTimeout;
 	import framework.ScreenManager;
+	import framework.screens.MapScreen;
 	import framework.SpriteContainer;
 	import gamedata.DataSources;
+	import gameplay.contracts.ContractHandler;
 	import gameplay.TreeHandler;
 	import gameplay.world.Enviroment;
 	import gameplay.world.Ground;
 	import gameplay.world.Light;
+	import nape.geom.Vec2;
+	import nape.phys.Body;
+	import nape.phys.BodyType;
+	import nape.phys.Material;
+	import nape.shape.Polygon;
 	import nape.space.Space;
 	import visual.Fireplace_mc;
+	import visual.Ground_bitmap;
 	 
 	public class ForestLocation extends BaseLocation
 	{
-		private var ground:Ground;
+		private var ground:Body;
+		private var ground_material:Material = Material.sand();
+		
 		private var loadedBitmpas:Object = new Object();
 		private var fire:Fireplace_mc;
 		private var l:Light;
 		private var bg:Sprite;
+		private var gmc:Bitmap;
 		
 		public function ForestLocation() 
 		{
-			location_w = 4205;
-			initial_x = 783;
+			location_w = 3000;
+			initial_x = 50;
 			initial_y = 339;
 		}
 		
 		override public function build(world_:GameWorld):void {
 			
-			super.build(world_);
+			super.build(world_);		
 			
-			ground = new Ground(GameWorld.space, GameWorld.container);
+					
+			TreeHandler.inst.grow(GameWorld.space, GameWorld.container, 530, 2000, 12, 50);		
+			TreeHandler.inst.grow(GameWorld.space, GameWorld.container, 2020, 3020, 12);	
+			TreeHandler.inst.grow(GameWorld.space, GameWorld.container, 173, 174, 1);
+			TreeHandler.inst.grow(GameWorld.space, GameWorld.container, 256, 257, 1);
 			
-			//Enviroment.place_GasStation(2100, ground);
-			var ref:Object = DataSources.instance.getReference("world");			
-			TreeHandler.inst.grow(GameWorld.space, GameWorld.container, 1000, 4205, ref.trees);		
+			var groundWidth:int = location_w;				
+			ground_material.elasticity = 0.035;
+			var verts:Array = [new Vec2(-50,36), new Vec2(-50,0), new Vec2(groundWidth + 50, 0), new Vec2(groundWidth + 50,36) ];	
+			
+			ground = new Body(BodyType.STATIC, new Vec2(0, Game.SCREEN_HEIGHT - 32)); // dunno about 22
+			ground.shapes.add(new Polygon(verts, ground_material));			
+			ground.cbTypes.add(GameCb.GROUND);
+			ground.space = GameWorld.space;
+			
+			var bdata:Ground_bitmap = new Ground_bitmap();	
+			var mt:Matrix;
+			
+			gmc = new Bitmap(new BitmapData(location_w, 36, true, 0x0));
+			
+			var ite:int = location_w / bdata.width;			
+			for (var i:int = 0; i < ite + 1; i++) 
+			{
+				mt = new Matrix(1, 0, 0, 1, bdata.width * i);				
+				gmc.bitmapData.draw(bdata, mt);
+			}		
+			
+			gmc.y = Game.SCREEN_HEIGHT - gmc.height;	
+			GameWorld.container.layer1.addChild(gmc);	
 			
 			
-			
+		}
+		
+		override public function right():void {
+			if (true) {
+				GameWorld.lumberbody.applyImpulse(new Vec2( -150, -10));
+				world.contracts.addNewContract(ContractHandler.DANGER_TO_GO_ALONE);
+			}
+		}
+		
+		override public function left():void 
+		{
+			ScreenManager.inst.showScreen(MapScreen);
 		}
 		
 		override public function destroy():void {
 			
 			super.destroy();
 			
-			ground.hell.space = null;
-			ground.ground.space = null;
-			for each (var ch:DisplayObject in ground.groundSprites ) 
-			{
-				GameWorld.container.layer1.removeChild(ch);
-			}
+			
+			ground.space = null;
+			
+			GameWorld.container.layer1.removeChild(gmc);			
 			
 			world.removeChild(bg);
 			world = null;

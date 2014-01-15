@@ -2,6 +2,8 @@ package gameplay.contracts
 {
 	import flash.events.EventDispatcher;
 	import gamedata.DataSources;
+	import gameplay.contracts.imp.DangerToGoAlone;
+	import gameplay.contracts.imp.WeCanKillEm;
 	import utils.DataEvt;
 	import utils.GlobalEvents;
 	/**
@@ -29,9 +31,9 @@ package gameplay.contracts
 		private function AddContract(cntrct:BaseContract):void {
 			for each (var t:Task in cntrct.tasks ) 
 			{
-				if (t.type == TaskType.hunt) {
+				if (t.event == GlobalEvents.ZOMBIE_KILLED) {
 					huntTasks.push(t);
-				}else if (t.type == TaskType.chopping) {
+				}else if (t.event == GlobalEvents.TREE_CUT) {
 					chopTasks.push(t);
 				}
 			}
@@ -42,13 +44,13 @@ package gameplay.contracts
 		private function RemoveContract(cntrct:BaseContract):void {
 			for each (var t:Task in cntrct.tasks ) 
 			{
-				if (t.type == TaskType.hunt) {
+				if (t.event == TaskType.hunt) {
 					for (var i:int = huntTasks.length - 1; i >= 0 ; i--) 
 					{
 						if (huntTasks[i] == t) huntTasks.splice(i, 1);
 					}
 					
-				}else if (t.type == TaskType.chopping) {
+				}else if (t.event == TaskType.chopping) {
 					for (var j:int = chopTasks.length - 1; j >= 0 ; j--) 
 					{
 						if (chopTasks[j] == t) chopTasks.splice(j, 1);
@@ -66,8 +68,8 @@ package gameplay.contracts
 			$GLOBAL.listenTo(GlobalEvents.TREE_CUT, onTreeCut);			
 			
 			
-			parseContracts(DataSources.instance.getList("contracts"));
-			parseContracts(DataSources.instance.getList("achievements"), true);
+			addNewContract(IF_THEY_BLEED);			
+			addNewContract(IF_THEY_BLEED);
 			
 			
 		}
@@ -125,7 +127,7 @@ package gameplay.contracts
 			}
 		}
 		
-		private function parseContracts(a:Array, ach:Boolean = false):void 
+		/*private function parseContracts(a:Array, ach:Boolean = false):void 
 		{
 			
 			for each (var c:Object in a ) 
@@ -172,7 +174,7 @@ package gameplay.contracts
 				
 				
 			}
-		}		
+		}		*/
 		
 		public function timeUpdate(time:int):void 
 		{
@@ -193,8 +195,7 @@ package gameplay.contracts
 				if (current[j].expired(time)) {	
 					RemoveContract(current.splice(j, 1)[0]);					
 				}
-			}
-			
+			}			
 			
 			trace(current);
 			
@@ -205,8 +206,24 @@ package gameplay.contracts
 			return current;
 		}
 		
+		public function addNewContract(alias:String):void 
+		{
+			if (alias in c) {
+				
+				trace("Contract recieved");
+				AddContract(c[alias]);
+				delete c[alias];
+			}
+			
+		}
 		
 		
+		public static var DANGER_TO_GO_ALONE:String = "DANGER_TO_GO_ALONE";
+		public static var IF_THEY_BLEED:String = "IF_THEY_BLEED";
+		private var c:Object = { 
+			DANGER_TO_GO_ALONE:new DangerToGoAlone(),
+			IF_THEY_BLEED:new WeCanKillEm()		
+		}
 		
 		
 	}

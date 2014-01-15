@@ -7,9 +7,11 @@ package gameplay
 	public class ZombieTypes 
 	{
 		
-		public static const SPITTER:int = 0;
-		public static const STALKER:int = 1;
-		public static const HALFMAN:int = 2;
+		public static var SPITTER:uint = 1;
+		public static var STALKER:uint = 2;
+		public static var HALFMAN:uint = 4;
+		
+		public static var ANY:uint = SPITTER | STALKER | HALFMAN;
 		
 	}
 
