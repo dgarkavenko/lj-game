@@ -67,8 +67,8 @@ package dynamics
 		private var visual_stages:int = 0;
 		private var current_visual_step:int = 0;
 		
-		private var H:int;
-		private var W:int;
+		public var H:int;
+		public var W:int;
 		protected var MAX_HP:Number = 0;
 		protected var HP:Number = 0;
 		
@@ -336,8 +336,10 @@ package dynamics
 			stump.userData.graphicOffset = new Vec2(-W / 2, -CUT_B / 2 - 1);
 			stump.userData.graphic = new Bitmap(bdata);			
 			//TODO Add stomps on different layers?
-			container.layer3.addChild(stump.userData.graphic);
+			container.layer3.addChild(stump.userData.graphic);			
+			TreeHandler.inst.stumps.push(stump.userData.graphic);
 			VisualAlignment.apply(stump);
+			stump.userData.graphic = null;
 			
 			trunk.userData.stump = stump;
 			TreeHandler.inst.addTrunk(trunk);

@@ -6,8 +6,10 @@ package gameplay
 	import dynamics.GameCb;
 	import dynamics.interactive.Wood;
 	import dynamics.Tree;
+	import flash.display.Bitmap;
 	import flash.display.Sprite;
 	import gameplay.world.Forest;
+	import locations.TreeData;
 	import nape.geom.Vec2;
 	import nape.phys.Interactor;
 	import nape.shape.Shape;
@@ -29,21 +31,30 @@ package gameplay
 		private var tree_hit_listener:InteractionListener;
 		private var trees:Vector.<Tree> = new Vector.<Tree>();
 		private var ln:int = 0;
-		private var stumps:Vector.<Body>;
+		public var stumps:Vector.<Bitmap>;
 		
 		static private var _inst:TreeHandler;
 		
 		
 		//public var woodCache:SimpleCache = new SimpleCache(Wood, 5);
 		
-		public function grow(space:Space, container:Sprite, x_start:int, x_end:int, amount:int, noise:int = 20):void {			
+		public function growRange(space:Space, container:Sprite, x_start:int, x_end:int, amount:int, noise:int = 20):void {			
 			trees = trees.concat(Forest.grow(space, container, x_start, x_end, amount, noise));
+		}
+		
+		public function growAtCoords(coords:Vector.<TreeData>):void {
+			
+			for (var i:int = 0; i < coords.length; i++) 
+			{
+				
+				trees.push(new Tree(coords[i].x, coords[i].h, coords[i].w));
+			}
 		}
 		
 		public function TreeHandler() 
 		{
 			trunks = new Vector.<Body>();
-			stumps = new Vector.<Body>();
+			stumps = new Vector.<Bitmap>();
 			tree_hit_listener = new InteractionListener(CbEvent.BEGIN, InteractionType.COLLISION, GameCb.TRUNK, GameCb.GROUND.including(GameCb.INTERACTIVE), onTreeFall);
 			tree_hit_listener.space = GameWorld.space;
 			
@@ -111,27 +122,33 @@ package gameplay
 			for (var i:int = 0; i < ln; i++) 
 			{
 				var tr:Body = trunks[i];
-				var st:Body = tr.userData.stump;
 				
+				
+				var st:Body = tr.userData.stump;
+				if (st != null) {
+					Collision.groups.setInstance(st.group);	
+					tr.userData.stump = null;					
+					st.userData.graphic = null;
+					st.space = null;
+					tr.userData.stump = null;
+				}
 				
 				Collision.groups.setInstance(tr.group);
-				Collision.groups.setInstance(st.group);	
-				
+					
 				TweenLite.killTweensOf(tr.userData.graphic);
 				GameWorld.container.layer2.removeChild(tr.userData.graphic);
-				GameWorld.container.layer3.removeChild(st.userData.graphic);
-				tr.userData.graphic = st.userData.graphic = null;
-				tr.space = st.space = null;
+				
+				tr.userData.graphic = null;
+				
+				tr.space;
 				tr = null;
-				st = null;
+				
 			}
 			
-			for each (var stump:Body in stumps) 
+			for each (var stump:Bitmap in stumps) 
 			{
-				GameWorld.container.layer3.removeChild(stump.userData.graphic);
-				stump.userData.graphic = null;
-				stump.space = null;
-				stump = null;
+				GameWorld.container.layer3.removeChild(stump);
+				
 			}
 			
 			stumps.length = trunks.length = 0;
@@ -154,26 +171,47 @@ package gameplay
 			}
 		}
 		
+		public function getTreeData():Vector.<TreeData>
+		{
+			var r:Vector.<TreeData> = new Vector.<TreeData>();
+			for (var i:int = 0; i < trees.length; i++) 
+			{
+				r.push(new TreeData(trees[i].getBody().position.x, trees[i].W, trees[i].H));
+			}
+			return r;
+		}
+		
+		public function getStumps():Vector.<Bitmap> 
+		{
+			var s:Vector.<Bitmap> = new Vector.<Bitmap>();
+			return s.concat(stumps);
+		}
+		
 		private function onTrunkLifetimeExpired(trunk:Body):void 
 		{				
-			trace("TREE TRUNK LIFETIME EXPIRED"); 
-			stumps.push(trunk.userData.stump);
+			trace("TREE TRUNK LIFETIME EXPIRED"); 		
 			
-			Collision.setFilter(trunk.userData.stump, Collision.LUMBER_IGNORE, ~Collision.TRUNK);
+			
+			var stump:Body = trunk.userData.stump;
+			Collision.groups.setInstance(stump.group);	
+			trunk.userData.stump = null;
+			stump.space = null;
+			
+			
+			
+			//Collision.setFilter(trunk.userData.stump, Collision.LUMBER_IGNORE, ~Collision.TRUNK);
 			
 			
 			
 			if (trunk.cbTypes.has(GameCb.TRUNK)) trunk.cbTypes.remove(GameCb.TRUNK);								
 			Collision.setFilter(trunk, Collision.LUMBER_IGNORE, ~Collision.LUMBER_IGNORE);
-			TweenLite.to(trunk.userData.graphic, 6, { alpha:0, onComplete:fade, onCompleteParams:[trunk, trunk.userData.stump] } );		
+			TweenLite.to(trunk.userData.graphic, 6, { alpha:0, onComplete:fade, onCompleteParams:[trunk] } );		
 			
 		}			
 		
-		private function fade(trunk:Body, stump:Body):void {
+		private function fade(trunk:Body):void {
 			
 			Collision.groups.setInstance(trunk.group);
-			Collision.groups.setInstance(stump.group);				
-			Collision.setFilter(stump, Collision.LUMBER_IGNORE, ~Collision.NULL_OBJECT);				
 			GameWorld.container.layer2.removeChild(trunk.userData.graphic);
 			trunk.space = null;
 			

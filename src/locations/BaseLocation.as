@@ -1,5 +1,6 @@
 package locations 
 {
+	import gameplay.TreeHandler;
 	import gameplay.world.Ground;
 	
 	/**
@@ -43,6 +44,7 @@ package locations
 			while (GameWorld.container.layer4.numChildren > 0) {
 				GameWorld.container.layer4.removeChildAt(0);
 			}
+		
 		}
 		
 		public function left():void 

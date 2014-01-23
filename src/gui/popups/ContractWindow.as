@@ -6,6 +6,7 @@ package gui.popups
 	import gameplay.contracts.BaseContract;
 	import gameplay.contracts.Task;
 	import gameplay.contracts.TaskType;
+	import utils.GlobalEvents;
 	/**
 	 * ...
 	 * @author DG
@@ -107,7 +108,7 @@ package gui.popups
 				t.y = 140 + dy * 40;
 				
 				
-				var action:String = task.event == TaskType.chopping ? "Chop" : "Kill";
+				var action:String = task.event == GlobalEvents.TREE_CUT ? "Chop" : "Kill";
 				var how_much:String = task.howMuch.toString();
 				t.text = "Task: " + action + " " + task.count + "/" + how_much;
 				

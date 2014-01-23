@@ -1,5 +1,6 @@
 package locations 
 {
+	import flash.utils.Dictionary;
 	import flash.utils.setTimeout;
 	import framework.ScreenManager;
 	import framework.screens.GameScreen;
@@ -14,9 +15,11 @@ package locations
 		
 		public var current:BaseLocation;
 		private var currentClass:Class;
-		private var world:GameWorld;
-		
+		private var world:GameWorld;		
 		private static var _inst:LocationManager;
+		
+		public var trees:Dictionary = new Dictionary();
+		public var stumps:Dictionary = new Dictionary();
 		
 		public function LocationManager() {
 			
@@ -33,8 +36,7 @@ package locations
 			world = world_;
 			current = new HomeLocation();
 			currentClass = HomeLocation;
-			current.build(world);
-			
+			current.build(world);			
 		}
 		
 		public function goto(cls:Class):void {
@@ -48,10 +50,8 @@ package locations
 			currentClass = cls;
 			current.build(world);
 			GameWorld.lumberbody.position.setxy(current.initial_x, current.initial_y);
-			VisualAlignment.apply(GameWorld.lumberbody);
-			
-			setTimeout(loadComplete, 500);
-			
+			VisualAlignment.apply(GameWorld.lumberbody);			
+			setTimeout(loadComplete, 500);			
 			
 		}
 		

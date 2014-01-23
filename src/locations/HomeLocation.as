@@ -83,8 +83,8 @@ package locations
 			mailbox.add();
 			mailbox.getContracts = world.contracts.getContracts;
 			
-			TreeHandler.inst.grow(GameWorld.space, GameWorld.container, 24, 25, 1);
-			TreeHandler.inst.grow(GameWorld.space, GameWorld.container, 600, location_w - 50, 3);
+			TreeHandler.inst.growRange(GameWorld.space, GameWorld.container, 24, 25, 1);
+			TreeHandler.inst.growRange(GameWorld.space, GameWorld.container, 600, location_w - 50, 3);
 			
 			
 			

@@ -44,13 +44,13 @@ package gameplay.contracts
 		private function RemoveContract(cntrct:BaseContract):void {
 			for each (var t:Task in cntrct.tasks ) 
 			{
-				if (t.event == TaskType.hunt) {
+				if (t.event == GlobalEvents.ZOMBIE_KILLED) {
 					for (var i:int = huntTasks.length - 1; i >= 0 ; i--) 
 					{
 						if (huntTasks[i] == t) huntTasks.splice(i, 1);
 					}
 					
-				}else if (t.event == TaskType.chopping) {
+				}else if (t.event == GlobalEvents.TREE_CUT) {
 					for (var j:int = chopTasks.length - 1; j >= 0 ; j--) 
 					{
 						if (chopTasks[j] == t) chopTasks.splice(j, 1);

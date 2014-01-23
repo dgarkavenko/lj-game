@@ -18,6 +18,7 @@ package locations
 	import flash.events.Event;
 	import flash.geom.Matrix;
 	import flash.net.URLRequest;
+	import flash.utils.Dictionary;
 	import flash.utils.setTimeout;
 	import framework.ScreenManager;
 	import framework.screens.MapScreen;
@@ -59,11 +60,31 @@ package locations
 			
 			super.build(world_);		
 			
-					
-			TreeHandler.inst.grow(GameWorld.space, GameWorld.container, 530, 2000, 12, 50);		
-			TreeHandler.inst.grow(GameWorld.space, GameWorld.container, 2020, 3020, 12);	
-			TreeHandler.inst.grow(GameWorld.space, GameWorld.container, 173, 174, 1);
-			TreeHandler.inst.grow(GameWorld.space, GameWorld.container, 256, 257, 1);
+			
+			var treedat:Vector.<TreeData> = LocationManager.inst.trees[ForestLocation];
+			
+			if (treedat != null) {
+				
+				TreeHandler.inst.growAtCoords(LocationManager.inst.trees[ForestLocation]);
+				
+			}else {
+							
+				TreeHandler.inst.growRange(GameWorld.space, GameWorld.container, 530, 2000, 12, 50);		
+				TreeHandler.inst.growRange(GameWorld.space, GameWorld.container, 2020, 3020, 12);	
+				TreeHandler.inst.growRange(GameWorld.space, GameWorld.container, 173, 174, 1);
+				TreeHandler.inst.growRange(GameWorld.space, GameWorld.container, 256, 257, 1);
+			}
+			
+			var stumps:Vector.<Bitmap> = LocationManager.inst.stumps[ForestLocation];
+			if (stumps != null) {			
+				
+				trace("STUMPS:" + stumps.length);
+				for (var j:int = 0; j < stumps.length; j++) 
+				{
+					GameWorld.container.layer3.addChild(stumps[j]);
+				}
+			}
+		
 			
 			var groundWidth:int = location_w;				
 			ground_material.elasticity = 0.035;
@@ -105,6 +126,12 @@ package locations
 		}
 		
 		override public function destroy():void {
+			
+			
+				
+			LocationManager.inst.trees[ForestLocation] = TreeHandler.inst.getTreeData();
+			LocationManager.inst.stumps[ForestLocation] = TreeHandler.inst.getStumps();
+			
 			
 			super.destroy();
 			
