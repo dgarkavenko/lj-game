@@ -1,6 +1,7 @@
 package dynamics.player.weapons 
 {
 	import gamedata.DataSources;
+	import gameplay.KilledBy;
 	/**
 	 * ...
 	 * @author DG
@@ -13,9 +14,12 @@ package dynamics.player.weapons
 		public var inc:Number;
 		
 		
+		
+		
 		public function ToolData(a:String) 
 		{
 			type = TYPE_TOOL;
+			flag = KilledBy.AXE;
 			super(a);
 		}
 		

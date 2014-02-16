@@ -1,5 +1,6 @@
 package dynamics.player 
 {
+	import com.greensock.TweenLite;
 	import dynamics.actions.ActionTypes;
 	import dynamics.actions.IAction;
 	import dynamics.Collision;
@@ -9,6 +10,7 @@ package dynamics.player
 	import dynamics.player.weapons.Carry;
 	import dynamics.player.weapons.Gun;
 	import dynamics.player.weapons.GunData;
+	import framework.input.Mouse;
 	import gameplay.DeathReason;
 	import gameplay.SkillList;
 	import gui.PopText;
@@ -41,13 +43,8 @@ package dynamics.player
 		
 		public var lastDamage:String = "";
 		
-
-		
-		
-	
-		
 		private var save:LumberKeeper = DataSources.lumberkeeper;
-		
+		public var cash:int = save.money;
 		
 		private var hands:Hands;		
 		
@@ -58,15 +55,16 @@ package dynamics.player
 		
 		//private var equip:Array = [new GunData("spas"), new GunData("uzi"), new ToolData("axe_rusty")];
 		
+		private var mouse:Mouse = Controls.mouse;
 		
 		
 		private var currentCategory:int = -1;
 		
-		private var axes:Array = [new ToolData("axe_rusty"), new ToolData("axe_double"), new ToolData("axe_fire")];
-		private var pdws:Array = [new GunData("pistol"), new GunData("revolver")];
-		private var shotguns:Array = [new GunData("shotgun"), new GunData("spas")];
-		private var machineguns:Array = [new GunData("uzi"), new GunData("assault")];
-		private var rifles:Array = [new GunData("barret")];
+		private var axes:Array = [new ToolData("axe_rusty")/*, new ToolData("axe_double"), new ToolData("axe_fire")*/];
+		private var pdws:Array = [new GunData("pistol")/*, new GunData("revolver")*/];
+		private var shotguns:Array = [/*new GunData("shotgun"), new GunData("spas")*/];
+		private var machineguns:Array = [/*new GunData("uzi"), new GunData("assault")*/];
+		private var rifles:Array = [/*new GunData("barret")*/];
 		
 		private var equip:Array = [axes, pdws, shotguns, machineguns, rifles];
 		private var lastEquipedInCategory:Array = [0,0,0,0,0];
@@ -74,11 +72,16 @@ package dynamics.player
 		public var hp:HP = new HP();
 		//private var max_hp:int = save.max_hp;
 		//private var hp:int = save.hp;
-		private var xp:int = save.xp;
+	
+		private var rollend:Boolean = false;
+		
 		
 
 		public var movement:Movement;		
 		public var disabled:Boolean = false;
+		public var quovirouk:int = 0;
+		
+		
 		
 		private var interactor:PlayerInteractor = new PlayerInteractor();
 		
@@ -96,6 +99,7 @@ package dynamics.player
 		
 		private var keyboard:Keyboard = Controls.keys;
 		private var lastWeapon:WeaponData;
+		private var quovirouk_cd:int = 0;
 		
 		
 		internal function stuck():void {
@@ -177,7 +181,65 @@ package dynamics.player
 			movement.updateParams();						
 		}
 		
+		private function selectNew(index:int):void {
+			selectWeapon(equip[index][equip[index].length - 1]);
+		}
 		
+		public function serialize():void {
+			
+			var weapons:Array;
+			
+			for each (var ary:Array in equip ) 
+			{
+				for each (var dt:WeaponData in ary) 
+				{
+					weapons.push(dt.alias);
+				}
+			}			
+			
+			
+		}
+		
+		public function purchased(a:String):void {
+			
+			if (hasGunOrTool(a)) {
+				trace("I have it already");
+				return;
+			}
+			
+			if (a == "axe_double" || a == "axe_fire" || a == "axe_rust") {
+				axes.push(new ToolData(a));
+				selectNew(0);
+			}else if ( a == "revolver" || a == "pistol") {
+				pdws.push(new GunData(a));	
+				selectNew(1);
+			}else if (a == "shotgun" || a == "spas") {
+				shotguns.push(new GunData(a));	
+				selectNew(2);
+			}else if (a =="uzi" || a == "assault") {
+				machineguns.push(new GunData(a));	
+				selectNew(3);
+			}else if (a == "barret") {
+				rifles.push(new GunData(a));
+				selectNew(4);
+			}
+			else
+			{
+				trace("WRONG WEAPON ALIAS");
+			}			
+		}
+		
+		public function hasGunOrTool(a:String):Boolean {
+			for each (var ary:Array in equip ) 
+			{
+				for each (var dt:WeaponData in ary) 
+				{
+					if (dt.alias == a) return true;
+				}
+			}
+			
+			return false;
+		}
 		
 		public function drop(e:Boolean = false):void {			
 			
@@ -192,27 +254,64 @@ package dynamics.player
 		
 		override public function tick():void {
 			
-			super.tick();
+			if (quovirouk_cd > 0) quovirouk_cd--;
 			hp.tick();
 			interactor.update();
-			movement.tick();			
 			
-			if (keyboard.justPressed("E")) {
+			// Use items or other shi. Prevents double using
+			if (keyboard.justPressed("E")) onUse();				
+			else if (keyboard.pressed("E"))	onUse(); 	
+			
+			// Quovirouk			
+			if (quovirouk > 0) {	
 				
-				onUse();
 				
-			}else if (keyboard.pressed("E")) {
+				view.battleroll(true);
 				
-				onUse(); 
+				if (quovirouk > 13) {
+					_body.velocity.x = 50 * facing;
+				}else if (quovirouk > 5) {
+					_body.velocity.x = 300 * facing;
+				}else if (quovirouk > 2) {
+					_body.velocity.x = 400 * facing;
+				}else 
+				{
+					_body.velocity.x = 50 * facing;
+				}
 				
+				quovirouk--;				
+				if (quovirouk == 0)	rollend = true;
+				return;
 			}
 			
+			if (rollend) {
+				rollend = false;
+				hp.immune = false;
+				view.battleroll(false);
+			}
 			
+			if (quovirouk_cd <= 0 && keyboard.justPressed("SPACE") /*&& SkillList.isLearned(SkillList.NINJA)*/) {	
+					
+				if (keyboard.pressed("A")) {
+					facing = -1;
+				}else if (keyboard.pressed("D")) {
+					facing = 1;
+				}
+				quovirouk = 15;		
+				hp.immune = true;
+				quovirouk_cd = 30;
+				return;
+			}	
+			
+			//Movement and aiming			
+			facing = _body.position.x > mouse.relativeX ? -1 : 1
+			movement.tick();	
+			
+			//Changin weapons
 			var i:int = 0;
-			
 			for each (var btn:String in ["ONE","TWO","THREE","FOUR","FIVE"]) 
 			{
-				if (keyboard.justPressed(btn)) {
+				if (keyboard.justPressed(btn)){
 					
 					if (i == currentCategory) {
 						
@@ -222,6 +321,7 @@ package dynamics.player
 					}
 					
 					currentCategory = i;
+					if (equip[currentCategory].length < 1) return;
 					
 					selectWeapon(equip[currentCategory][lastEquipedInCategory[currentCategory]]);
 					break;
@@ -230,20 +330,6 @@ package dynamics.player
 				i++;
 				
 			}
-			//******************* OLD SYSTEM **************************
-			
-			/*for each (var btn:String in ["ONE","TWO","THREE"]) 
-			{		
-				if (keyboard.justPressed(btn)) {
-					
-					if (equip[i] == null) break;					
-					selectWeapon(equip[i]);					
-					break;
-				}
-				
-				i++;
-			}*/
-			//******************* OLD SYSTEM **************************
 			
 			hands.tick();	
 			
@@ -361,9 +447,7 @@ package dynamics.player
 				break;
 				
 				case ActionTypes.PUDDLE_BURN:
-				
 					hp.dot = action.params.damage;
-					
 				break
 				
 				default:
@@ -377,18 +461,14 @@ package dynamics.player
 		
 		//TODO REMOVE
 		public function bite(facing_:int):void 
-		{
-			if (SkillList.isLearned(SkillList.NINJA)) {
-				if (Math.random() > 0.75) {
-					PopText.at("DODGED", _body.position.x, _body.position.y - 20, 0xffffff);
-					return;
-				}				
-			}
-			
-			
-			
-			hp.decrease(10);
-			$VFX.blood.at(_body.position.x, _body.position.y, -facing_, 0, 15);
+		{			
+			if (hp.immune) {
+				PopText.at("DODGED", _body.position.x, _body.position.y - 20, 0xffffff);
+				return;
+			}else {
+				hp.decrease(10);
+				$VFX.blood.at(_body.position.x, _body.position.y, -facing_, 0, 15);
+			}		
 			
 		}
 		

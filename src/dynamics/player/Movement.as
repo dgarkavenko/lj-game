@@ -7,7 +7,7 @@ package dynamics.player
 	import flash.utils.setTimeout;
 	import framework.input.Controls;
 	import framework.input.Keyboard;
-	import framework.input.Mouse;
+
 	import framework.screens.GameScreen;
 	import gamedata.DataSources;
 	import gameplay.SkillList;
@@ -29,7 +29,7 @@ package dynamics.player
 	{
 		private var _carrier:Body;
 		private var keys:Keyboard = Controls.keys;		
-		private var mouse:Mouse = Controls.mouse;
+
 		private var lumberjack:Lumberjack;
 		private var locked_x:Number = NaN;
 		private var _grounded:Boolean = true;
@@ -130,7 +130,7 @@ package dynamics.player
 		public function tick():void {			
 			
 			
-			lumberjack.facing = _carrier.position.x > mouse.relativeX ? -1 : 1
+			
 			_carrier.velocity.x = 0;
 			
 			
@@ -148,8 +148,7 @@ package dynamics.player
 					
 				}else {
 					
-					particleSource.active = false;
-					
+					particleSource.active = false;				
 					if (_grounded) { lumberjack.view.idle();
 					}else {
 						lumberjack.view.jump();

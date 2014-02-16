@@ -19,6 +19,7 @@ package gameplay.player
 		private var _current:int = 100;
 		public var max:int = 100;
 		public var dot:Number = 0;
+		public var immune:Boolean = false;
 		
 		private var regenToApply:Number = 0;
 		private var dotToApply:Number = 0;
@@ -49,7 +50,7 @@ package gameplay.player
 				}				
 			}
 			
-			if (dot > 0) {
+			if (dot > 0 && !immune) {
 				dotToApply += dot / 30;
 				if (dotToApply >= 1) {
 					if (_current > 1) _current--;

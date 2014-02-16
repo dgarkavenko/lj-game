@@ -3,6 +3,7 @@ package dynamics
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.utils.setTimeout;
+	import nape.callbacks.BodyCallback;
 	/**
 	 * ...
 	 * @author DG
@@ -100,6 +101,11 @@ package dynamics
 				f = 13;		
 			
 			_sprite.body.arms.gotoAndStop(f);
+		}
+		
+		public function battleroll(b:Boolean):void 
+		{
+			
 		}
 		
 		public function get sprite():MovieClip 

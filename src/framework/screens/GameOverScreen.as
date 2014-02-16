@@ -45,8 +45,8 @@ package framework.screens
 			stats.alpha = 1;
 			stats.scaleX = stats.scaleY = 1;
 			
-			var msg:String = "You survived for " + DataSources.lumberkeeper.day + " day"
-			msg += DataSources.lumberkeeper.day > 1 ? "s" : "" 
+			var msg:String = "You survived for " + DataSources.lumberkeeper.time + " day"
+			msg += DataSources.lumberkeeper.time > 1 ? "s" : "" 
 			msg += ", but " + GameWorld.lumberjack.lastDamage + ".";
 			
 			stats.text = msg;

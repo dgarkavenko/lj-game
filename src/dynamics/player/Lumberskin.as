@@ -25,6 +25,7 @@ package dynamics.player
 			
 			if (state == "idle") return;
 			
+			
 			state = "idle";			
 			_sprite.gotoAndStop("stand");
 			_sprite.body_bg.y = _sprite.body.y = 10;
@@ -35,7 +36,24 @@ package dynamics.player
 			_sprite.legs.scaleX = dir * _facing;
 		}
 		
+		override public function battleroll(b:Boolean):void {
+			
+			if (!b) {
+				_sprite.body.visible = true;
+			}else {
+				if (state == "roll") return;
+				state = "roll";
+				_sprite.gotoAndStop("roll");
+				_sprite.body.visible = false;
+			}
+			
+			
+		}
+		
 		override public function walk():void {
+			
+			
+			
 			
 			if (state != "run") {
 				_sprite.gotoAndStop("run");

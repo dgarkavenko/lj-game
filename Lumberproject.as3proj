@@ -62,6 +62,7 @@
     <element path="lib\z.swc" />
     <element path="lib\majorchi.swc" />
     <element path="lib\locations.swc" />
+    <element path="lib\shop.swc" />
   </libraryPaths>
   <!-- External Libraries -->
   <externalLibraryPaths>

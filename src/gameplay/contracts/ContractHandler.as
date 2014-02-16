@@ -4,6 +4,7 @@ package gameplay.contracts
 	import gamedata.DataSources;
 	import gameplay.contracts.imp.DangerToGoAlone;
 	import gameplay.contracts.imp.WeCanKillEm;
+	import gui.PopText;
 	import utils.DataEvt;
 	import utils.GlobalEvents;
 	/**
@@ -28,7 +29,7 @@ package gameplay.contracts
 		private var temporaryComplete:Array = [];
 		
 		
-		private function AddContract(cntrct:BaseContract):void {
+		private function AddContract(cntrct:BaseContract, flag:uint):void {
 			for each (var t:Task in cntrct.tasks ) 
 			{
 				if (t.event == GlobalEvents.ZOMBIE_KILLED) {
@@ -39,6 +40,9 @@ package gameplay.contracts
 			}
 			
 			current.push(cntrct);
+			
+			cntrct.flag = flag;
+			mask_current |= flag;
 		}
 		
 		private function RemoveContract(cntrct:BaseContract):void {
@@ -120,8 +124,11 @@ package gameplay.contracts
 				if (complete == current[i]) {
 					current.splice(i, 1);
 					RemoveContract(complete);
-					complete.reward();	
-					trace("Contract removed");
+					complete.reward();
+					
+					mask_current &= ~complete.flag;
+					mask_complete |= complete.flag;
+							
 					return;
 				}						
 			}
@@ -183,7 +190,7 @@ package gameplay.contracts
 			for (var i:int = ln - 1; i >= 0; i--) 
 			{
 				if (contracts[i].startsFrom == time) {					
-					AddContract(contracts.splice(i, 1)[0]);				
+					//AddContract(contracts.splice(i, 1)[0]);				
 				}
 			}			
 			
@@ -208,19 +215,44 @@ package gameplay.contracts
 		
 		public function addNewContract(alias:String):void 
 		{
-			if (alias in c) {
-				
-				trace("Contract recieved");
-				AddContract(c[alias]);
-				delete c[alias];
-			}
 			
+			if (isComplete(alias) || isCurrent(alias)) return;
+			
+			if (alias in c) {		
+				
+				if (GameWorld.lumberbody != null) {
+					PopText.at(alias, GameWorld.lumberbody.position.x, GameWorld.lumberbody.position.y - 20, 0xffffff);
+				}else {
+					trace(alias);
+				}
+				
+				AddContract(c[alias], flags[alias]);			
+				delete c[alias];
+			}			
 		}
 		
+		public function isComplete(alias:String):Boolean {
+			return (mask_complete & flags[alias]) == flags[alias];
+		}
+		
+		public function isCurrent(alias:String):Boolean {
+			return (mask_current & flags[alias]) == flags[alias];
+		}		
+		
+		public static var mask_current:uint = 0;
+		public static var mask_complete:uint = 0;
 		
 		public static var DANGER_TO_GO_ALONE:String = "DANGER_TO_GO_ALONE";
 		public static var IF_THEY_BLEED:String = "IF_THEY_BLEED";
+		
+		private var flags:Object = {
+			DANGER_TO_GO_ALONE:1,
+			IF_THEY_BLEED:2			
+		}
+		
 		private var c:Object = { 
+		
+		
 			DANGER_TO_GO_ALONE:new DangerToGoAlone(),
 			IF_THEY_BLEED:new WeCanKillEm()		
 		}

@@ -15,6 +15,7 @@ package dynamics.player.weapons
 		public var bought:Boolean = false;
 		public var alias:String;	
 		public var type:int;
+		public var flag:uint;
 		
 		public function WeaponData(a:String) 
 		{

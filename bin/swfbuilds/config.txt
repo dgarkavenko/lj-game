@@ -2,17 +2,17 @@
 	"guns":["pistol", "shotgun", "assault"],
 	"tools":["axe_rusty"],	
 	
-	"pistol":{"ammo_max":7, "dispersion":0, "fragments":1, "mode":0, "rate":220, "reload_time":40, "damage_min":12, "damage_max":20, "force":5},
-	"revolver":{"ammo_max":6, "dispersion":0, "fragments":1, "mode":0, "rate":150, "reload_time":70, "damage_min":20, "damage_max":45, "force":30},
-	"shotgun":{"ammo_max":5, "dispersion":0.066, "fragments":6, "mode":0, "rate":200, "reload_time":70, "damage_min":5, "damage_max":9, "force":5},
-	"uzi":{"ammo_max":15, "dispersion":0, "fragments":1, "mode":1, "rate":75, "reload_time":80, "damage_min":10, "damage_max":16, "force":5},
-	"assault":{"ammo_max":20, "dispersion":0, "fragments":1, "mode":1, "rate":100, "reload_time":100, "damage_min":12, "damage_max":20, "force":25, "rps":0.038, "rrpf":0.0045},
-	"spas":{"ammo_max":8, "dispersion":0.056, "fragments":5, "mode":1, "rate":200, "reload_time":120, "damage_min":7, "damage_max":12, "force":5},
-	"barret":{"ammo_max":5, "dispersion":0, "fragments":1, "mode":0, "rate":300, "reload_time":120, "damage_min":20, "damage_max":55, "force":30, "rps":0.08, "rrpf":0.0035},
+	"pistol":{"flag":8, "price":500, "ammo_max":7, "dispersion":0, "fragments":1, "mode":0, "rate":220, "reload_time":40, "damage_min":12, "damage_max":20, "force":5},
+	"revolver":{"flag":8, "price":1500, "ammo_max":6, "dispersion":0, "fragments":1, "mode":0, "rate":150, "reload_time":70, "damage_min":20, "damage_max":45, "force":30},
+	"shotgun":{"flag":2, "price":3500, "ammo_max":5, "dispersion":0.066, "fragments":6, "mode":0, "rate":200, "reload_time":70, "damage_min":5, "damage_max":9, "force":5},
+	"uzi":{"flag":16, "price":3500, "ammo_max":15, "dispersion":0, "fragments":1, "mode":1, "rate":75, "reload_time":80, "damage_min":10, "damage_max":16, "force":5},
+	"assault":{"flag":16, "price":5500, "ammo_max":20, "dispersion":0, "fragments":1, "mode":1, "rate":200, "reload_time":100, "damage_min":12, "damage_max":20, "force":25, "rps":0.038, "rrpf":0.0045},
+	"spas":{"flag":2, "price":6500, "ammo_max":8, "dispersion":0.056, "fragments":5, "mode":1, "rate":200, "reload_time":120, "damage_min":7, "damage_max":12, "force":5},
+	"barret":{"flag":32, "price":12500, "ammo_max":5, "dispersion":0, "fragments":1, "mode":0, "rate":300, "reload_time":120, "damage_min":20, "damage_max":55, "force":30, "rps":0.08, "rrpf":0.0035},
 
-	"axe_rusty":{"inc":0.1 , "t_dmg":2.5, "z_dmg":10},
-	"axe_double":{"inc":0.15 , "t_dmg":4, "z_dmg":15},
-	"axe_fire":{"inc":0.15 , "t_dmg":3, "z_dmg":20},
+	"axe_rusty":{"inc":0.1, "price":12500, "t_dmg":2.5, "z_dmg":10},
+	"axe_double":{"inc":0.15, "price":12500, "t_dmg":4, "z_dmg":15},
+	"axe_fire":{"inc":0.15, "price":12500, "t_dmg":3, "z_dmg":20},
 	
 	"spitter":{
 		"hp":100, "ms":16, "ms_dispersion":2, "w":10, "viewRange":250, "senceRange":20, 

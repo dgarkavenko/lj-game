@@ -10,6 +10,7 @@ package framework.screens
 	import locations.ForestLocation;
 	import locations.HomeLocation;
 	import locations.LocationManager;
+	import locations.ShopLocation;
 	/**
 	 * ...
 	 * @author dg
@@ -37,6 +38,7 @@ package framework.screens
 			
 			elements.push(new MapElement("[Home]", HomeLocation));
 			elements.push(new MapElement("[Familiar Forest]", ForestLocation));
+			elements.push(new MapElement("[Shop]", ShopLocation));
 			
 			for (var i:int = 0; i < elements.length; i++) 
 			{

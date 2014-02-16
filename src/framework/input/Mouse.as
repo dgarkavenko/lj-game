@@ -37,6 +37,7 @@ package framework.input
 			
 		}
 		
+		
 		/**
 		 * Check to see if the mouse is pressed.
 		 * 
@@ -93,6 +94,17 @@ package framework.input
 			visual_object.stage.addEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown, false, 0, false);
 			visual_object.stage.addEventListener(MouseEvent.MOUSE_UP, handleMouseUp, false, 0, false);			
 			tracker = visual_object;				
+		}
+		
+		public function force_no_track():void {
+			tracker.stage.removeEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown);
+			tracker.stage.removeEventListener(MouseEvent.MOUSE_UP, handleMouseUp);	
+		}
+		
+		public function force_track():void {
+			//TODO Could be a mistake
+			tracker.stage.addEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown, false, 0, false);
+			tracker.stage.addEventListener(MouseEvent.MOUSE_UP, handleMouseUp, false, 0, false);			
 		}
 		
 		public function get screenX():Number {

@@ -37,7 +37,7 @@ package gameplay
 		public static var DOUBLE_JUMP:uint = 2; 
 		public static var SLICK:uint = 4; 		//zombie dont stop u, move faster
 		
-		public static var NINJA:uint = 8; 		//chance to dodge attacks, jump over heads
+		public static var NINJA:uint = 8; 		//GIVES KUVIROK to dodge attacks, jump over heads
 			public static var MIGHTY_AXE:uint = 16; //axe hits knock back zombies, faster cutting trees
 			public static var HADOUKEN:uint = 32; //powerfull strike with axe charged
 		
@@ -54,6 +54,7 @@ package gameplay
 			public static var INFERNAL_CONTRACT:uint = 16384;
 			
 		public static var COORDINATION:uint = 32768;
+		public static var PARTYSOLDER:uint = 65536;
 		
 		static public function get strings():Dictionary 
 		{
@@ -73,6 +74,11 @@ package gameplay
 			}
 			
 			return strings_;
+		}
+		
+		static public function get learned():uint 
+		{
+			return learned_skills;
 		}
 	}
 

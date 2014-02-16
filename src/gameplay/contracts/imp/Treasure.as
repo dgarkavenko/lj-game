@@ -4,10 +4,10 @@ package gameplay.contracts.imp
 	 * ...
 	 * @author DG
 	 */
-	public class Profit 
+	public class Treasure 
 	{
 		
-		public function Profit() 
+		public function Treasure() 
 		{
 			
 		}

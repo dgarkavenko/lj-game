@@ -23,6 +23,7 @@ package dynamics.player.weapons
 		public var recoilReduction:Number;
 		
 		
+		
 		public var reload_counter:int = 0;
 		
 		
@@ -54,6 +55,7 @@ package dynamics.player.weapons
 			
 			
 			alias = a;
+			flag = weapon.flag;
 			
 			
 		}

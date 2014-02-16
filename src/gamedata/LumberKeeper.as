@@ -3,6 +3,8 @@ package gamedata
 
 	import flash.events.Event;
 	import framework.screens.GameScreen;
+	import gameplay.contracts.ContractHandler;
+	import gameplay.SkillList;
 	import gui.PopupManager;
 
 	/**
@@ -12,24 +14,22 @@ package gamedata
 	public class LumberKeeper extends GameKeeper
 	{
 		
-		public var achievements:Object = {};
-		public var pixels:int = 0;
-		public var jumps:int = 0;		
-		public var score:int = 0;
-		
-		public var skills:Array = [0,0,0,0,0,0]
+	
 		
 		
-		public var day:int = 1;
-		public var wood:int = 0;
-		public var money:int = 0;
+		public var time:int = 1;
+		public var money:int = 200;
+		public var skills:uint = 0;
+		public var current_quests:uint = 0;
+		public var complete_quests:uint = 0;
 		
-		public var hp:int = 100;
-		public var max_hp:int = 100;
-		public var xp:int = 0;		
+		public var hp:int = 0;
 		
 		
-		private var params:Array = ["pixels", "jumps", "score", "day", "skills", "hp", "xp","max_hp"];
+		
+		
+		
+		private var params:Array = ["hp","skills","time", "current_quests", "complete_quests", "money"];
 		
 		public function LumberKeeper(a:String, autosave:int = 0) 
 		{
@@ -40,10 +40,22 @@ package gamedata
 		
 		override public function pack():Object {
 			
+			refresh();
+			
 			var serial:Object = {};			
 			for each (var param:String in params ) serial[param] = this[param]; 			
 			return serial;
 			
+		}
+		
+		private function refresh():void 
+		{
+			hp = GameWorld.lumberjack.hp;
+			skills = SkillList.learned;
+			time = GameWorld.time.time;
+			current_quests = ContractHandler.mask_current;
+			complete_quests = ContractHandler.mask_complete;
+			money = GameWorld.lumberjack.cash;
 		}
 		
 		override public function extract(load_data:Object):void {

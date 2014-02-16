@@ -111,17 +111,46 @@ package dynamics.player.weapons
 			
 			if (!mouse.pressed()) return;	
 			
-			if (cooldown_timer.running && !SkillList.isLearned(SkillList.QUICK_FINGERS)) return;
+			if (gundata.mode == AUTO) {
 				
+				if (gundata.reload_counter > 0) {
+					if (SkillList.isLearned(SkillList.AMMUNITION_WITHIN)) {
+						if (cooldown_timer.running)
+						{
+							if (SkillList.isLearned(SkillList.QUICK_FINGERS) && mouse.justPressed()) {
+								act();
+							}
+						}
+						
+					}
+				}else {
+					
+					if (SkillList.isLearned(SkillList.QUICK_FINGERS) && mouse.justPressed()) {
+						act();
+					}else if (!cooldown_timer.running) {
+						act();
+					}
 				
-			if (mouse.justPressed()) {
-				if (SkillList.isLearned(SkillList.AMMUNITION_WITHIN) || !cooldown_timer.running) act();
-			}else {
-				if (cooldown_timer.running) return;
-				if (gundata.mode == AUTO) act();			
+				}
 			
-			}
 				
+			}else if (gundata.mode == SEMI) {
+			
+				if (!mouse.justPressed()) return;				
+				if (gundata.reload_counter > 0) {
+					if (SkillList.isLearned(SkillList.AMMUNITION_WITHIN)) {
+						if (!cooldown_timer.running || SkillList.isLearned(SkillList.QUICK_FINGERS)) {
+							act();
+						}
+					}
+				}else {
+					if (!cooldown_timer.running || SkillList.isLearned(SkillList.QUICK_FINGERS)) {
+						act();
+					}
+				}
+			}
+			
+			
 			
 		}	
 		

@@ -46,7 +46,7 @@ package framework.screens
 		override public function init(...args):void {
 
 			
-			if (DataSources.lumberkeeper.day == 1) {
+			if (DataSources.lumberkeeper.time == 1) {
 				dayResultField.width = Game.SCREEN_WIDTH - 98;
 				dayResultField.height = Game.SCREEN_HEIGHT - 100;
 				dayResultField.text = DAY1;				
@@ -71,7 +71,7 @@ package framework.screens
 		
 		private function gatherDayMessage():void 
 		{
-			dayResultField.text = "Day " + DataSources.lumberkeeper.day;			
+			dayResultField.text = "Day " + DataSources.lumberkeeper.time;			
 			
 			dayResultField.text += "\n\n";
 			v.text = "";
