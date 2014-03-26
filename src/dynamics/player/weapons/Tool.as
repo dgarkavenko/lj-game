@@ -29,39 +29,53 @@ package dynamics.player.weapons
 		
 		private var power_bar:SimpleBar = new SimpleBar(30, 5, 0xffffff, false);
 		private var cd:Number = 0; //frames
+		private var prepare:Boolean = false;
 		
 		public function Tool() 
 		{
-			weaponType = WeaponData.TYPE_TOOL;
+			weaponType = WeaponData.TYPE_AXE;
 			_action = new ChopAction();			
+		}
+		
+		override public function interrupt():void 
+		{
+			prepare = false;
+			_power = 0;
+			updateView();
+			carrier_view.stady();
+			
 		}
 		
 		override public function tick():void {
 			
+		
+			if (mouse.justPressed()) {
+				if (!carrier_view.sprite.contains(power_bar)) carrier_view.sprite.addChild(power_bar);
+				carrier_view.swing();
+				prepare = true;
+			}
 			
-			passive();	
-			
-			
-			if (mouse.pressed()) {
+			if (prepare) {
 				active();
 			}
-			if (mouse.justReleased()) {	
-				
+			if (mouse.justReleased() && prepare) {					
 				carrier_view.shot(true);
 				act();
 			}
 			
-			
 		}	
+		
+	
 		
 		override public function kill():void {
 			_power = 0; 
+			
 			updateView();
 		}
 		
 		private function act():void 
 		{
-			
+			prepare = false;
 			
 			var subj:Body;
 			
@@ -143,16 +157,6 @@ package dynamics.player.weapons
 			power_bar.scaleX = carrier.facing;
 		}
 		
-		private function passive():void {
-			
-			
-			
-			if (mouse.justPressed()) {
-				if (!carrier_view.sprite.contains(power_bar)) carrier_view.sprite.addChild(power_bar);
-				carrier_view.swing();
-			}
-		}
-		
 		override public function init():void {
 			power_bar.scale(0);			
 			ray.maxDistance = 40;			
@@ -161,6 +165,11 @@ package dynamics.player.weapons
 		
 		override public function select(new_wd:WeaponData):void 
 		{
+			_power = 0;
+			prepare = false;
+			updateView();
+			carrier_view.stady();
+			
 			toolData = new_wd as ToolData;
 		}
 		

@@ -22,7 +22,8 @@ package dynamics.interactive
 	public class Mailbox extends PlayerInteractiveObject
 	{
 		
-		public var getContracts:Function;
+		
+
 		
 		public function Mailbox() 
 		{
@@ -52,15 +53,16 @@ package dynamics.interactive
 		
 		override public function onUse(params:Object):void 
 		{
-			if (getContracts == null || getContracts().length == 0) return;		
-			
-			GameScreen.POP.show(PopupManager.CONTRACT, true, getContracts());
-			
+			if (GameWorld.contracts.getBillsRef().length == 0) return;					
+			//GameScreen.POP.show(PopupManager.CONTRACT, true, getContracts());
+			GameScreen.POP.show(PopupManager.BILLS, true, GameWorld.contracts.getBillsRef());
 			
 			//
 			//CONTRACT
 			//ScreenManager.inst.showScreen(MapScreen);
 		}
+		
+	
 		
 		
 		

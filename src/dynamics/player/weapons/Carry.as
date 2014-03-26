@@ -10,9 +10,8 @@ package dynamics.player.weapons
 	{
 		
 		public function Carry() 
-		{
-			
-			weaponType = WeaponData.TYPE_MISC;
+		{			
+			weaponType = WeaponData.TYPE_EXPLOSIVE;
 		}
 		
 		override public function tick():void {

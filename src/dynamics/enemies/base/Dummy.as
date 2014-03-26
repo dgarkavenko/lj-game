@@ -185,6 +185,7 @@ package dynamics.enemies.base
 				
 				//TODO: Types to UINTS
 				case ActionTypes.CHOP_ACTION:
+				case ActionTypes.CHAINSAW:
 					
 					worried = true;					
 					$VFX.blood.at(params.x, params.y, -params.facing, 0, params.power * 4);

@@ -73,7 +73,7 @@ package dynamics
 		protected var HP:Number = 0;
 		
 		private var L2R:Number = 0;
-		private var CUT_A:int = 12 + Math.random() * 9;
+		private var CUT_A:int = 19 + Math.random() * 6;
 		private var CUT_B:int = CUT_A + 4 + Math.random() * 3;
 		private var CUT_C:int = CUT_B + 5 + Math.random() * 3;	
 		
@@ -209,16 +209,19 @@ package dynamics
 				case ActionTypes.CHOP_ACTION:
 					chopActionHandler(action.params.power * action.params.tree_dmg, action.params.facing);
 				break;
+				case ActionTypes.CHAINSAW:
+					chopActionHandler(action.params.power * action.params.tree_dmg, action.params.facing, true);
+				break;
 				default: return;
 			}
 		}
 				
-		private function chopActionHandler(power:Number, facing:int):void 
+		private function chopActionHandler(power:Number, facing:int, chainsaw:Boolean = false):void 
 		{
 			
-			$VFX.sawdust.at(_body.position.x - W/2 * facing + L2R / MAX_HP * W/2, _body.position.y + H/2 - CUT_B, -facing, power * 2.5);
+			$VFX.sawdust.at(_body.position.x - W/2 * facing + L2R / MAX_HP * W/2, _body.position.y + H/2 - CUT_B, -facing, chainsaw ? 4 : power * 2.5);
 			
-			if (power < 1.5) return;
+			if (power < 1.5 && !chainsaw) return;
 			HP -= power;		
 			L2R += facing * power;
 			visualUpdate(facing);			

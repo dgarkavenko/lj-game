@@ -12,8 +12,12 @@ package gui.popups
 	import framework.input.Controls;
 	import framework.screens.GameScreen;
 	import gamedata.DataSources;
+	import gameplay.contracts.ContractHandler;
+	import gameplay.SkillList;
+	import gui.ButtonHandler;
 	import gui.popups.shop.PurchaseButton;
 	import ui.Shop_mc;
+	import utils.GlobalEvents;
 	/**
 	 * ...
 	 * @author DG
@@ -25,6 +29,7 @@ package gui.popups
 		
 		private var current_price:int;
 		private var current_alais:String;
+		private var buy_button:ButtonHandler;
 		
 		
 		public var slots:Array = ["pistol","uzi","revolver","chainsaw","axe_double","axe_rusty","axe_fire","assault","barret","chainsaw","spas","shotgun"];
@@ -36,34 +41,34 @@ package gui.popups
 			shop.x = 110;
 			shop.y = 45;
 			
+			shop.dsc.mouseEnabled = shop.title.mouseEnabled = false;
+			
 			selectMatrix = [];
 			selectMatrix = selectMatrix.concat([1, 0.3, 0.2, 0, 0]); // red
             selectMatrix = selectMatrix.concat([1, 0.3, 0.2, 0, 0]); // green
             selectMatrix = selectMatrix.concat([0, 0, 0, 0, 0]); // blue
             selectMatrix = selectMatrix.concat([0, 0, 0, 1, 0]); // alpha
 			
-			shop.buy_button.stop();
-			shop.buy_button.buttonMode = true;
-			shop.buy_button.useHandCursor = true;
-			shop.buy_button.mouseChildren = false;
-			shop.buy_button.addEventListener(MouseEvent.MOUSE_OVER, buybuttonmouseover);
-			shop.buy_button.addEventListener(MouseEvent.MOUSE_OUT, buybuttonmouseout);
-			shop.buy_button.addEventListener(MouseEvent.CLICK, click);
-			shop.buy_button.addEventListener(MouseEvent.MOUSE_DOWN, buybuttondown);
+			
+			buy_button = new ButtonHandler(shop.buy_button);
+			buy_button.mouseOutAction = buybuttonmouseout;
+			buy_button.mouseOverAction = buybuttonmouseover;
+			buy_button.mouseClickAction = buttonclick;
+			buy_button.mouseDownAction = buybuttondown;
 			
 			
 			/************
 			 * 
 			 * 
 			 * 
-			 *  	SUBTRUCT MONEY
-			 * 		SHOW NOT ENOUGH
-			 * 		SALE AND DISCOUNTS
-			 * 		OTHER SHOP ASSETS
-			 * 		PRICES AND WEAPON DSC, TITLES
-			 * 		CURSOR OVER TEXT
+			 *  		SUBTRUCT MONEY
+			 * 			SHOW NOT ENOUGH
+			 * 			SALE AND DISCOUNTS
+			 * 			OTHER SHOP ASSETS
+			 * 		PRICES AND WEAPON DSC, TITLES, FONT
+			 * 			CURSOR OVER TEXT
 			 * 		MONEY BAR INTERFACE
-			 * 		CLOSE SHOP AFTER LEAVIG A LOCATION
+			 * 			CLOSE SHOP AFTER LEAVIG A LOCATION
 			 * 
 			 * 
 			 * */
@@ -71,45 +76,42 @@ package gui.popups
 		}
 		
 		private function buybuttonmouseout(e:MouseEvent):void 
-		{
-			shop.buy_button.gotoAndStop(1);
+		{			
 			Controls.mouse.force_track();
 		}
 		
-		private function click(e:MouseEvent):void 
+		private function buttonclick(e:MouseEvent):void 
 		{
-			
-			shop.buy_button.gotoAndStop(1);
+			if (GameWorld.lumberjack.hasGunOrTool(current_alais) || current_price > GameWorld.lumberjack.cash) return;
 			
 			if (current_alais != "") {
+				GameWorld.lumberjack.cash -= current_price;
 				GameWorld.lumberjack.purchased(current_alais);
+				$GLOBAL.dispatch(GlobalEvents.PURCHASE, { a:current_alais } );
+				shop[current_alais].label.visible = false;
 			}
 			
 			if (GameWorld.lumberjack.hasGunOrTool(current_alais)) {
-				shop.buy_button.price.text = "Equipped";
+				buy_button.text = "Equipped";
 				shop.buy_button.bax.visible = false;
 				
 			}else {
-				shop.buy_button.price.text = getCurrentPrice();
+				buy_button.text = getCurrentPriceString();
 				shop.buy_button.bax.visible = true;
 			}
-			
-			
-			
 		}
 		
 		private function buybuttondown(e:MouseEvent):void 
 		{
-			if (GameWorld.lumberjack.hasGunOrTool(current_alais)) return;
-			shop.buy_button.gotoAndStop(3);
-			shop.buy_button.price.text = getCurrentPrice();
+			if (GameWorld.lumberjack.hasGunOrTool(current_alais) || current_price > GameWorld.lumberjack.cash) return;			
+			
 		}
 		
 		private function buybuttonmouseover(e:MouseEvent):void 
 		{
 			Controls.mouse.force_no_track();
 			if (GameWorld.lumberjack.hasGunOrTool(current_alais)) return;
-			shop.buy_button.gotoAndStop(2);
+			
 		}
 		
 		private function out(e:MouseEvent):void 
@@ -133,15 +135,24 @@ package gui.popups
 			current_alais = e.currentTarget.alias;
 			shop.title.text = current_alais;
 			
-			if (GameWorld.lumberjack.hasGunOrTool(current_alais)) {
-				shop.buy_button.price.text = "Equipped";
-				shop.buy_button.bax.visible = false;
-			}else {
-				current_price = DataSources.instance.getReference(current_alais).price;			
-				shop.buy_button.price.text = getCurrentPrice();
-				shop.buy_button.bax.visible = true;
-			}
 			
+			if (GameWorld.lumberjack.hasGunOrTool(current_alais)) {
+				
+				shop.buy_button.bax.visible = false;
+				
+				buy_button.text = "Equipped";
+				
+			}else {
+				current_price = DataSources.instance.getReference(current_alais).price;		
+				discounts();
+				
+				if (current_price > GameWorld.lumberjack.cash) {
+					shop.dsc.text = "Let's discuss this when you have enough money";
+				}
+				
+				shop.buy_button.bax.visible = true;				
+				buy_button.text = getCurrentPriceString();
+			}			
 			
 			
 			
@@ -149,7 +160,14 @@ package gui.popups
 			bg.filters = [new ColorMatrixFilter(selectMatrix)];
 		}
 		
-		private function getCurrentPrice():String 
+		private function discounts():void 
+		{
+			if (SkillList.isLearned(SkillList.GENTELMAN)) current_price *= .9;
+			//50% discount
+			if (ContractHandler.isCurrent(ContractHandler.DANGER_TO_GO_ALONE)) current_price *= .5;
+		}
+		
+		private function getCurrentPriceString():String 
 		{
 			var price:String = current_price.toString();
 			if (price.length > 3) {
@@ -170,18 +188,22 @@ package gui.popups
 		override protected function animation_OUT():void 
 		{
 			//Начинаем удалять сверху			
-			TweenLite.to(this, 0.4, {y: -height, onComplete:GameScreen.POP.hide, ease:Cubic.easeIn} );
+			TweenLite.to(this, 0.4, {y: -height, onComplete:GameScreen.POP.hide, onCompleteParams:[this], ease:Cubic.easeIn} );
 		}
 		
 		override public function hide(e:* = null):void {
 			Mouse.hide();	
-			super.hide();				
+			super.hide();
+			buy_button.dontlisten();
+
 		}
 		
 		override public function build(container:MovieClip, params:Object = null):void 
 		{
 			Mouse.show();		
 			super.build(container, params);
+			buy_button.listen();
+
 			
 			var btn:MovieClip = new MovieClip();
 			

@@ -121,6 +121,11 @@ package dynamics.player
 			_sprite.body.arms.gotoAndPlay(2);
 		}
 		
+		public function stady():void 
+		{
+			_sprite.body.arms.gotoAndStop(1);
+		}
+		
 	}
 
 }

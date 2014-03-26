@@ -13,6 +13,7 @@
 	"axe_rusty":{"inc":0.1, "price":12500, "t_dmg":2.5, "z_dmg":10},
 	"axe_double":{"inc":0.15, "price":12500, "t_dmg":4, "z_dmg":15},
 	"axe_fire":{"inc":0.15, "price":12500, "t_dmg":3, "z_dmg":20},
+	"chainsaw":{"inc":0.15, "price":1200, "t_dmg":0.66, "z_dmg":3},
 	
 	"spitter":{
 		"hp":100, "ms":16, "ms_dispersion":2, "w":10, "viewRange":250, "senceRange":20, 

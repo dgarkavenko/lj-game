@@ -11,6 +11,7 @@ package dynamics.actions
 		public static const GUNSHOT_ACTION:int = 1;
 		public static const TREE_HIT:int = 2;
 		public static const PUDDLE_BURN:int = 3;
+		static public const CHAINSAW:int = 4;
 	}
 
 }

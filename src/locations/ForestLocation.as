@@ -114,9 +114,9 @@ package locations
 		}
 		
 		override public function right():void {
-			if (!world.contracts.isComplete(ContractHandler.DANGER_TO_GO_ALONE)) {
+			if (!ContractHandler.isComplete(ContractHandler.DANGER_TO_GO_ALONE)) {
 				GameWorld.lumberbody.applyImpulse(new Vec2( -150, -10));
-				world.contracts.addNewContract(ContractHandler.DANGER_TO_GO_ALONE);
+				GameWorld.contracts.addNewContract(ContractHandler.DANGER_TO_GO_ALONE);
 			}else {
 				//reveal location	
 			}

@@ -13,9 +13,11 @@ package gameplay
 		public static var PISTOL:uint = 8;
 		public static var AUTOGUN:uint = 16;
 		public static var SNIPER:uint = 32;
+		static public const CHAINSAW:uint = 64;
+		
 		
 		public static var ANY_GUN:uint = SHOTGUN | PISTOL | AUTOGUN | SNIPER;
-		public static var ANY:uint = ANY_GUN | TREE | AXE;
+		public static var ANY:uint = ANY_GUN | TREE | AXE | CHAINSAW;
 		
 	}
 

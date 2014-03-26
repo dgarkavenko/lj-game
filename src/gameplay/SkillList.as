@@ -42,7 +42,7 @@ package gameplay
 			public static var HADOUKEN:uint = 32; //powerfull strike with axe charged
 		
 			public static var NEGOTIATOR:uint = 64; //+10
-			public static var GENTELMAN:uint = 128; //-10
+		public static var GENTELMAN:uint = 128; //-10
 		
 		public static var SHORTY:uint = 256; // splash
 		public static var AUTOGUNS:uint = 512; // no dispersion
@@ -53,8 +53,8 @@ package gameplay
 			public static var LUMBERJACK_IN_A_NUTSHELL:uint = 8192; //armor + tree resistance
 			public static var INFERNAL_CONTRACT:uint = 16384;
 			
-		public static var COORDINATION:uint = 32768;
-		public static var PARTYSOLDER:uint = 65536;
+			public static var COORDINATION:uint = 32768;	//Replace
+		public static var PARTYSOLDIER:uint = 65536;
 		
 		static public function get strings():Dictionary 
 		{
