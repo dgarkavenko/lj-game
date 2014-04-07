@@ -6,14 +6,14 @@
 	"revolver":{"flag":8, "dsc":"100% chance of losing the Russian roulette", title:"Revolver", "price":1500, "ammo_max":6, "dispersion":0, "fragments":1, "mode":0, "rate":150, "reload_time":70, "damage_min":20, "damage_max":45, "force":30},
 	"shotgun":{"flag":2, "dsc":"Cheap but solid", title:"Shotgun", "price":3500, "ammo_max":5, "dispersion":0.066, "fragments":6, "mode":0, "rate":200, "reload_time":70, "damage_min":5, "damage_max":9, "force":5},
 	"uzi":{"flag":16, "dsc":"Its actually an Ingram, but show me a person who actually knows what an Ingram is", title:"Uzi", "price":3500, "ammo_max":15, "dispersion":0, "fragments":1, "mode":1, "rate":75, "reload_time":80, "damage_min":10, "damage_max":16, "force":5},
-	"assault":{"flag":16, "dsc":"", title:"", "price":5500, "ammo_max":20, "dispersion":0, "fragments":1, "mode":1, "rate":200, "reload_time":100, "damage_min":12, "damage_max":20, "force":25, "rps":0.038, "rrpf":0.0045},
-	"spas":{"flag":2, "dsc":"", title:"", "price":6500, "ammo_max":8, "dispersion":0.056, "fragments":5, "mode":1, "rate":200, "reload_time":120, "damage_min":7, "damage_max":12, "force":5},
-	"barret":{"flag":32, "dsc":"", title:"", "price":12500, "ammo_max":5, "dispersion":0, "fragments":1, "mode":0, "rate":300, "reload_time":120, "damage_min":20, "damage_max":55, "force":30, "rps":0.08, "rrpf":0.0035},
+	"assault":{"flag":16, "dsc":"Romanian quality and Brasillian accuracy", title:"Assault rifle", "price":5500, "ammo_max":20, "dispersion":0, "fragments":1, "mode":1, "rate":200, "reload_time":100, "damage_min":12, "damage_max":20, "force":25, "rps":0.038, "rrpf":0.0045},
+	"spas":{"flag":2, "dsc":"God made all men different. SPAS-12 can deal with everyone of them", title:"SPAS-12", "price":6500, "ammo_max":8, "dispersion":0.056, "fragments":5, "mode":1, "rate":200, "reload_time":120, "damage_min":7, "damage_max":12, "force":5},
+	"barret":{"flag":32, "dsc":".50 cal of suffering and destruction", title:"", "price":12500, "ammo_max":5, "dispersion":0, "fragments":1, "mode":0, "rate":300, "reload_time":120, "damage_min":20, "damage_max":55, "force":30, "rps":0.08, "rrpf":0.0035},
 
-	"axe_rusty":{"inc":0.1, "dsc":"", title:"",  "price":12500, "t_dmg":2.5, "z_dmg":10},
-	"axe_double":{"inc":0.15, "dsc":"", title:"", "price":12500, "t_dmg":4, "z_dmg":15},
-	"axe_fire":{"inc":0.15, "dsc":"", title:"", "price":12500, "t_dmg":3, "z_dmg":20},
-	"chainsaw":{"inc":0.15, "price":1200, "t_dmg":0.66, "z_dmg":3},
+	"axe_rusty":{"inc":0.1, "dsc":"Your father's axe", title:"Rusty axe",  "price":12500, "t_dmg":2.5, "z_dmg":10},
+	"axe_double":{"inc":0.15, "dsc":"A little too heavy, but it chops trees in mere seconds", title:"Doubel axe", "price":12500, "t_dmg":4, "z_dmg":15},
+	"axe_fire":{"inc":0.15, "dsc":"Not as good for a tree chopping, as for killing stuff", title:"Firefighter's axe", "price":12500, "t_dmg":3, "z_dmg":20},
+	"chainsaw":{"inc":0.15, "dsc":"Let the trees shake in fear", title:"Chainsaw", "price":1200, "t_dmg":0.66, "z_dmg":3},
 	
 	"spitter":{
 		"hp":100, "ms":16, "ms_dispersion":2, "w":10, "viewRange":250, "senceRange":20, 
