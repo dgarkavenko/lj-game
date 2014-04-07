@@ -85,6 +85,11 @@ package dynamics.player
 			
 		}
 		
+		public function interrupt():void 
+		{
+			
+		}
+		
 		
 		public function get action():IAction 
 		{	

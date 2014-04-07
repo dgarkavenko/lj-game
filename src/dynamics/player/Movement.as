@@ -53,7 +53,6 @@ package dynamics.player
 		
 		
 		private var slick:Boolean = false;
-		private var coordination:Boolean = false;
 	
 
 		
@@ -111,11 +110,9 @@ package dynamics.player
 			
 			var currentSpeed:Number = slick ? walk : walk / (1 + zombieCollision / 3);	
 			
-			if (coordination) {
-				view.turnLegs( dir);				
-			}else if(dir != lumberjack.facing) {
-				currentSpeed = currentSpeed * .65;	
-			}
+			
+			view.turnLegs( dir);
+			
 			
 			_carrier.applyImpulse(new Vec2(currentSpeed * dir, 0));
 			if (_grounded) {
@@ -220,9 +217,7 @@ package dynamics.player
 			if (SkillList.isLearned(SkillList.SLICK)) {
 				slick = true;
 				walk = 110;
-			}
-			if (SkillList.isLearned(SkillList.COORDINATION)) coordination = true;
-			
+			}			
 			if (SkillList.isLearned(SkillList.DOUBLE_JUMP) && grounded) doublejump = true;
 		}
 		

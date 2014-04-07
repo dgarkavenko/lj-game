@@ -8,8 +8,10 @@ package dynamics.player.weapons
 	{
 		
 		static public const TYPE_GUN:int = 1;
-		static public const TYPE_TOOL:int = 0;
-		static public const TYPE_MISC:int = 2;
+		static public const TYPE_AXE:int = 0;
+		static public const TYPE_EXPLOSIVE:int = 2;
+		static public const TYPE_CHAINSAW:int = 4;
+
 		
 		public var price:int;
 		public var bought:Boolean = false;

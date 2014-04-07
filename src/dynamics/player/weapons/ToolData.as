@@ -18,8 +18,14 @@ package dynamics.player.weapons
 		
 		public function ToolData(a:String) 
 		{
-			type = TYPE_TOOL;
-			flag = KilledBy.AXE;
+			if (a == "chainsaw") {
+				type = TYPE_CHAINSAW;
+				flag = KilledBy.CHAINSAW;
+			}else {
+				type = TYPE_AXE;
+				flag = KilledBy.AXE;
+			}			
+		
 			super(a);
 		}
 		

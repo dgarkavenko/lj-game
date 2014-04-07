@@ -120,7 +120,7 @@ package
 		public static var playerInteractors:Vector.<PlayerInteractiveObject> = new Vector.<PlayerInteractiveObject>();
 		
 		public static var time:TimeManager;
-		public var contracts:ContractHandler = new ContractHandler();
+		public static var contracts:ContractHandler;
 		private var locationManager:LocationManager = LocationManager.inst;
 		
 		
@@ -232,6 +232,8 @@ package
 			time = new TimeManager(container);
 			time.addEventListener(TimeManager.DayTimeChange, onDayTimeChanged);		
 			
+			contracts = new ContractHandler();
+			
 			addChild(time.shade);
 			addChild(time.bar);
 				
@@ -340,7 +342,7 @@ package
 			}
 			
 			if (Controls.keys.justPressed("P")) {
-				GameScreen.POP.show(PopupManager.PERKS);				
+				GameScreen.POP.show(PopupManager.PERKS, false);				
 			}
 			
 			if (Controls.keys.justPressed("M")) {

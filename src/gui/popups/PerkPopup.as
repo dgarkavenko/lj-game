@@ -54,7 +54,7 @@ package gui.popups
 		override protected function animation_OUT():void 
 		{
 			//Начинаем удалять сверху			
-			TweenLite.to(this, 0.4, {y: -height, onComplete:GameScreen.POP.hide, ease:Cubic.easeIn} );
+			TweenLite.to(this, 0.4, {y: -height, onComplete:GameScreen.POP.hide, onCompleteParams:[this], ease:Cubic.easeIn} );
 		}
 		
 		override public function hide(e:* = null):void {

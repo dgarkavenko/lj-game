@@ -18,7 +18,7 @@ package gamedata
 		
 		
 		public var time:int = 1;
-		public var money:int = 200;
+		public var money:int = 7000;
 		public var skills:uint = 0;
 		public var current_quests:uint = 0;
 		public var complete_quests:uint = 0;

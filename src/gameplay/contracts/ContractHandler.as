@@ -2,8 +2,18 @@ package gameplay.contracts
 {
 	import flash.events.EventDispatcher;
 	import gamedata.DataSources;
+	import gameplay.contracts.bills.Bill;
+	import gameplay.contracts.bills.Blackmail;
+	import gameplay.contracts.bills.Bribe;
+	import gameplay.contracts.bills.Gambling;
+	import gameplay.contracts.bills.Housemaid;
+	import gameplay.contracts.bills.Mortgage;
+	import gameplay.contracts.bills.Parking;
+	import gameplay.contracts.bills.Ransom;
+	import gameplay.contracts.bills.Vet;
 	import gameplay.contracts.imp.DangerToGoAlone;
 	import gameplay.contracts.imp.WeCanKillEm;
+	import gameplay.world.TimeManager;
 	import gui.PopText;
 	import utils.DataEvt;
 	import utils.GlobalEvents;
@@ -14,18 +24,15 @@ package gameplay.contracts
 	public class ContractHandler
 	{
 		
-		private var contracts:Vector.<BaseContract> = new Vector.<BaseContract>();
+		private var currentTime:int = 0;
 		
+		private var bills:Vector.<Bill> = new Vector.<Bill>();
+		private var allbills:Vector.<Bill> = new Vector.<Bill>();
 		
-		public var current:Vector.<BaseContract> = new Vector.<BaseContract>();
-		
-		
-		
-		
-		
+		private var contracts:Vector.<BaseContract> = new Vector.<BaseContract>();		
+		public var current:Vector.<BaseContract> = new Vector.<BaseContract>();	
 		private var huntTasks:Vector.<Task> = new Vector.<Task>();
-		private var chopTasks:Vector.<Task> = new Vector.<Task>();
-		
+		private var chopTasks:Vector.<Task> = new Vector.<Task>();		
 		private var temporaryComplete:Array = [];
 		
 		
@@ -69,14 +76,28 @@ package gameplay.contracts
 		{
 			
 			$GLOBAL.listenTo(GlobalEvents.ZOMBIE_KILLED, onZombieKill);
-			$GLOBAL.listenTo(GlobalEvents.TREE_CUT, onTreeCut);			
-			
+			$GLOBAL.listenTo(GlobalEvents.TREE_CUT, onTreeCut);						
 			
 			addNewContract(IF_THEY_BLEED);			
-			addNewContract(IF_THEY_BLEED);
+			addNewContract(IF_THEY_BLEED);		
 			
+			billsSetup();
+		}
+		
+		private function billsSetup():void 
+		{
+			AddBill(new Bribe(), 1);
+			AddBill(new Parking(), 5);
+			AddBill(new Mortgage(), 9);
+			
+			allbills.push(new Blackmail());
+			allbills.push(new Ransom());
+			allbills.push(new Gambling());
+			allbills.push(new Housemaid());
 			
 		}
+		
+	
 		
 		private function onTreeCut(e:DataEvt):void 
 		{
@@ -134,57 +155,13 @@ package gameplay.contracts
 			}
 		}
 		
-		/*private function parseContracts(a:Array, ach:Boolean = false):void 
-		{
-			
-			for each (var c:Object in a ) 
-			{
-				var contract:BaseContract = new BaseContract(c.starts, c.term, ach, c.title);
-				if ("reward" in c) contract.reward_size = c.reward;
-				if ("location" in c) contract.location = a.location;				
-				contracts.push(contract);
-				
-				var ts:Array = c.tasks;
-			
-				for each (var t:Object in ts) 
-				{
-					
-					trace("Added task");
-					
-					var task:Task = new Task(t.count, contract);
-					
-					switch (t.type) 
-					{
-						case "hunt":
-							task.type = TaskType.hunt;
-						break;
-						case "chop":
-							task.type = TaskType.chopping;
-						break;
-						default:
-					}
-					
-					if ("killedby" in t) {
-						task.killedBy = t.killedby;
-					}
-					
-					if ("targets" in t) {
-						task.targets = t.targets;
-					}
-					
-					if ("time" in t) {
-						task.dayTime = t.time;
-					}
-					
-					contract.tasks.push(task);
-				}
-				
-				
-			}
-		}		*/
+		
 		
 		public function timeUpdate(time:int):void 
 		{
+			
+			currentTime = time;
+			
 			//NEW Contracts
 			var ln:int = contracts.length;			
 			for (var i:int = ln - 1; i >= 0; i--) 
@@ -194,7 +171,7 @@ package gameplay.contracts
 				}
 			}			
 			
-			
+			/*
 			//Expired contracts
 			var ln2:int = current.length;
 			for (var j:int = ln2 - 1; j >= 0; j--) 
@@ -202,15 +179,56 @@ package gameplay.contracts
 				if (current[j].expired(time)) {	
 					RemoveContract(current.splice(j, 1)[0]);					
 				}
+			}*/
+			
+			
+			
+			
+			//BILLS
+			if (bills.length < 4 && Math.random() > 0.66) {
+				AddRandomBill();
+			}
+			
+			for (var k:int = 0; k < bills.length; k++) 
+			{
+				if (bills[k].expired(time)) {
+					bills[k].onNotPaid();
+					return;
+				}
 			}			
 			
-			trace(current);
+		}
+		
+		private function AddRandomBill():void 
+		{
+			var b:Bill = allbills.shift();
+			AddBill(b);			
+		}
+		
+		private function AddBill(b:Bill, t:int = 0):void {
+			b.startDate = currentTime;
+			b.term = t == 0? 2 + Math.random() * 6 : t;
+			bills.push(b);
+		}
+		
+		public function PayBill(b:Bill):void {
+			
+			allbills.push(b);
+			trace(bills.length);
 			
 		}
 		
 		public function getContracts():Vector.<BaseContract> 
 		{
 			return current;
+		}
+		
+		private function compare(x:Bill, y:Bill):Number {
+			return x.timeLeft() > y.timeLeft() ? 1 : -1;
+		}	
+		
+		public function getBillsRef():Vector.<Bill> {
+			return bills.sort(compare);			
 		}
 		
 		public function addNewContract(alias:String):void 
@@ -231,11 +249,11 @@ package gameplay.contracts
 			}			
 		}
 		
-		public function isComplete(alias:String):Boolean {
+		public static function isComplete(alias:String):Boolean {
 			return (mask_complete & flags[alias]) == flags[alias];
 		}
 		
-		public function isCurrent(alias:String):Boolean {
+		public static function isCurrent(alias:String):Boolean {
 			return (mask_current & flags[alias]) == flags[alias];
 		}		
 		
@@ -245,7 +263,7 @@ package gameplay.contracts
 		public static var DANGER_TO_GO_ALONE:String = "DANGER_TO_GO_ALONE";
 		public static var IF_THEY_BLEED:String = "IF_THEY_BLEED";
 		
-		private var flags:Object = {
+		private static var flags:Object = {
 			DANGER_TO_GO_ALONE:1,
 			IF_THEY_BLEED:2			
 		}

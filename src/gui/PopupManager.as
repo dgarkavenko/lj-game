@@ -3,6 +3,7 @@ package gui
 	import flash.display.MovieClip;
 	import framework.screens.GameScreen;
 	import gui.popups.AchievementPopup;
+	import gui.popups.BillPopup;
 	import gui.popups.ContractWindow;
 	import gui.popups.PerkPopup;
 	import gui.popups.Popup;
@@ -15,6 +16,7 @@ package gui
 	{
 		private var container:MovieClip;
 		private var popup:Popup;
+		private var pops:Vector.<Popup> = new Vector.<Popup>();
 		private var queued:Vector.<Popup> = new Vector.<Popup>();
 		private var queuedParams:Array = [];
 		
@@ -23,6 +25,7 @@ package gui
 		public static const ACHIEVEMENT_POPUP:AchievementPopup = new AchievementPopup();
 		public static const SHOP:Shop = new Shop();
 		public static const PERKS:PerkPopup = new PerkPopup();
+		static public const BILLS:BillPopup = new BillPopup();
 		
 		public function PopupManager(container:MovieClip)
 		{
@@ -30,6 +33,15 @@ package gui
 			
 		}
 		
+		
+		public function isOpen(pop:Popup):Boolean {
+			for (var i:int = 0; i < pops.length; i++) 
+			{
+				if (pops[i] == pop) return true;
+			}
+			
+			return false;
+		}
 		
 		/**
 		 * Показать попап
@@ -40,26 +52,36 @@ package gui
 			
 			if (!container) return;
 			
-			if (popup) {				
+			if (pops.length > 0) {				
 				if (queue) {
 					queued.push(pop);	
 					queuedParams.push(params);
+				}else {				
+					pop.build(container, params);
+					pops.push(pop);		
+					if (pop.require_pause) GameScreen.world_simulation_OFF();
 				}
 			}else {
 				pop.build(container, params);
-				popup = pop;			
-				if (popup.require_pause) GameScreen.world_simulation_OFF();
-			}
-			
-			
+				pops.push(pop);		
+				if (pop.require_pause) GameScreen.world_simulation_OFF();
+			}		
 			
 		}
 		
-		public function hide():void {
+		public function hide(pop:Popup):void {
 			
-			if (popup == null) return;
-			popup.destory(container);
-			popup = null;
+			if (pops.length == 0) return;
+			
+			for (var i:int = 0; i < pops.length; i++) 
+			{
+				if (pop == pops[i]) {
+					pops.splice(i, 1);
+					break;
+				}
+			}
+			
+			pop.destory(container);
 			
 			if (queued.length > 0) {						
 				show(queued.shift(), false, queuedParams.shift());				
@@ -67,7 +89,7 @@ package gui
 				GameScreen.world_simulation_ON();
 			}
 			
-			container.stage.focus = container;	
+			if (container.stage) container.stage.focus = container;	
 			
 			
 		}

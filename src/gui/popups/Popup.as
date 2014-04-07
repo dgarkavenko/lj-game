@@ -77,7 +77,7 @@ package gui.popups
 		protected function animation_OUT():void 
 		{
 			//Начинаем удалять сверху
-			TweenLite.to(this, 0.4, {y: -Game.SCREEN_HEIGHT, onComplete:GameScreen.POP.hide} );
+			TweenLite.to(this, 0.4, {y: -Game.SCREEN_HEIGHT, onComplete:GameScreen.POP.hide, onCompleteParams:[this]} );
 		}
 		
 		

@@ -1,6 +1,7 @@
 package locations 
 {
 	import dynamics.GameCb;
+	import dynamics.staticbuildings.GasStation;
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.geom.Matrix;
@@ -13,6 +14,9 @@ package locations
 	import nape.phys.BodyType;
 	import nape.phys.Material;
 	import nape.shape.Polygon;
+	import utils.VisualAlignment;
+	import visual.AsianGuy_bitmap;
+	import visual.GasStation_bitmap;
 	import visual.Ground_bitmap;
 	/**
 	 * ...
@@ -22,6 +26,8 @@ package locations
 	{
 		private var ground:Body;
 		private var gmc:Bitmap;
+		private static var station:GasStation
+		private var gas:GasStation;
 		
 		public function ShopLocation() 			
 		{
@@ -59,10 +65,26 @@ package locations
 			
 			GameScreen.POP.show(PopupManager.SHOP, false);
 			
+			var asset:Bitmap = new Bitmap(new AsianGuy_bitmap());
+			asset.x = 320;
+			asset.y = 304;
+			GameWorld.container.layer0.addChild(asset);
+			
+			
+			gas = new GasStation();
+			
+			
+			
 		}
 		
 		override public function destroy():void {
 			super.destroy();
+			PopupManager.SHOP.hide();
+			ground.space = null;
+			GameWorld.container.layer1.removeChild(gmc);
+			gmc = null;
+			gas.Destroy();
+			
 		}
 		
 		override public function right():void {

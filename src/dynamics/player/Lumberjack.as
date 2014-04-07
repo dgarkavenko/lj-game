@@ -8,6 +8,8 @@ package dynamics.player
 	import dynamics.interactions.IInteractive;
 	import dynamics.interactions.PlayerInteractiveObject;
 	import dynamics.player.weapons.Carry;
+	import dynamics.player.weapons.Chainsaw;
+	import dynamics.player.weapons.Explosives;
 	import dynamics.player.weapons.Gun;
 	import dynamics.player.weapons.GunData;
 	import framework.input.Mouse;
@@ -51,6 +53,9 @@ package dynamics.player
 		
 		private var gunContainer:Gun = new Gun();
 		private var toolContainer:Tool = new Tool();
+		private var explosives:Explosives = new Explosives();
+		private var chainsaw:Chainsaw = new Chainsaw();
+		
 		private var miscContainer:Carry = new Carry();
 		
 		//private var equip:Array = [new GunData("spas"), new GunData("uzi"), new ToolData("axe_rusty")];
@@ -150,7 +155,6 @@ package dynamics.player
 			//Здоровьишко		
 			var ref:Object = DataSources.instance.getReference("lumberjack");
 			hp.init(ref.hp);
-			gunContainer.skill_dispersion = ref.aimDispersion;
 			
 			//Оружие настраиваем
 			Hands.carrier = this;
@@ -202,12 +206,15 @@ package dynamics.player
 		
 		public function purchased(a:String):void {
 			
+			PopText.at("$" + cash, _body.position.x, _body.position.y - 20, 0xffffff);
+
+			
 			if (hasGunOrTool(a)) {
 				trace("I have it already");
 				return;
 			}
 			
-			if (a == "axe_double" || a == "axe_fire" || a == "axe_rust") {
+			if (a == "axe_double" || a == "axe_fire" || a == "axe_rust" || a == "chainsaw") {
 				axes.push(new ToolData(a));
 				selectNew(0);
 			}else if ( a == "revolver" || a == "pistol") {
@@ -268,15 +275,20 @@ package dynamics.player
 				
 				view.battleroll(true);
 				
-				if (quovirouk > 13) {
+				if (quovirouk > 16) {
 					_body.velocity.x = 50 * facing;
+				}else if (quovirouk > 9) {
+					
+
+					_body.velocity.x = 330 * facing;
 				}else if (quovirouk > 5) {
-					_body.velocity.x = 300 * facing;
-				}else if (quovirouk > 2) {
-					_body.velocity.x = 400 * facing;
-				}else 
-				{
-					_body.velocity.x = 50 * facing;
+					$VFX.dust.at(_body.position.x, _body.position.y + 27, 10);
+					_body.velocity.x = 250 * facing;
+				}else if (quovirouk > 2)
+				{	$VFX.dust.at(_body.position.x, _body.position.y + 27, 10);
+					_body.velocity.x = 150 * facing;
+				}else {
+					_body.velocity.x = 150 * facing;
 				}
 				
 				quovirouk--;				
@@ -290,14 +302,15 @@ package dynamics.player
 				view.battleroll(false);
 			}
 			
-			if (quovirouk_cd <= 0 && keyboard.justPressed("SPACE") /*&& SkillList.isLearned(SkillList.NINJA)*/) {	
+			if (quovirouk_cd <= 0 && keyboard.justPressed("SPACE") && SkillList.isLearned(SkillList.NINJA)) {	
 					
 				if (keyboard.pressed("A")) {
 					facing = -1;
 				}else if (keyboard.pressed("D")) {
 					facing = 1;
 				}
-				quovirouk = 15;		
+				quovirouk = 20;		
+				hands.interrupt();
 				hp.immune = true;
 				quovirouk_cd = 30;
 				return;
@@ -358,7 +371,7 @@ package dynamics.player
 				
 				if (hands != null) hands.kill();
 				
-				for each (var item:Hands in [gunContainer, toolContainer]) 
+				for each (var item:Hands in [gunContainer, toolContainer, explosives, chainsaw]) 
 				{
 					if (item.weaponType == wData.type) hands = item;
 				}

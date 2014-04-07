@@ -119,6 +119,8 @@ package gameplay
 		
 		public function clear():void {
 		
+			trace(ln + " trunks still alive, killing");
+			
 			for (var i:int = 0; i < ln; i++) 
 			{
 				var tr:Body = trunks[i];
@@ -140,7 +142,7 @@ package gameplay
 				
 				tr.userData.graphic = null;
 				
-				tr.space;
+				tr.space = null;
 				tr = null;
 				
 			}
