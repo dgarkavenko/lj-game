@@ -62,7 +62,7 @@ package gui.popups
 			super.hide();				
 		}
 		
-		override public function destory(container:MovieClip):void 
+		override public function destroy(container:MovieClip):void 
 		{
 			for each (var pb:PerkButton in perks_to_show) 
 			{
@@ -70,7 +70,7 @@ package gui.popups
 			}
 			
 			perks_to_show.length = 0;
-			super.destory(container);
+			super.destroy(container);
 		}
 		
 		override public function build(container:MovieClip, params:Object = null):void 

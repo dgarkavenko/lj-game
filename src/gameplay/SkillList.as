@@ -27,6 +27,7 @@ package gameplay
 		}
 		
 		public static function learn(skill:uint):void {
+			
 			learned_skills |= skill;
 			$GLOBAL.dispatch(GlobalEvents.SKILLS, null);
 			
@@ -34,12 +35,12 @@ package gameplay
 		
 		
 		public static var BEAR_VITALITY:uint = 1; //regen, beard started to grow
-		public static var DOUBLE_JUMP:uint = 2; 
-		public static var SLICK:uint = 4; 		//zombie dont stop u, move faster
+		public static var DOUBLE_JUMP:uint = 2; 	//Этот навык говорит сам за себя. Беспрецедентная возможность посмеяться в лицо гравитации. 
+		public static var SLICK:uint = 4; 		//zombie dont stop u, move faster //Устал от тесноты? Ищещшт свободы и скорости? SLICK позволит тебе безпрепятственно пробегать сквозь орды врагов.
 		
-		public static var NINJA:uint = 8; 		//GIVES KUVIROK to dodge attacks, jump over heads
-			public static var MIGHTY_AXE:uint = 16; //axe hits knock back zombies, faster cutting trees
-			public static var HADOUKEN:uint = 32; //powerfull strike with axe charged
+		public static var NINJA:uint = 8; 		//GIVES KUVIROK to dodge attacks, jump over heads						
+		public static var CARRY:uint = 16; //axe hits knock back zombies, faster cutting trees
+			public static var PATH_OF_AXE:uint = 32; //powerfull strike with axe charged and chopping faster
 		
 			public static var NEGOTIATOR:uint = 64; //+10
 		public static var GENTELMAN:uint = 128; //-10
@@ -50,11 +51,13 @@ package gameplay
 		public static var QUICK_FINGERS:uint = 2048; //no cd between shots
 		
 		public static var MORE_PERKS:uint = 4096; 
-			public static var LUMBERJACK_IN_A_NUTSHELL:uint = 8192; //armor + tree resistance
-			public static var INFERNAL_CONTRACT:uint = 16384;
+				public static var LUMBERJACK_IN_A_NUTSHELL:uint = 8192; //armor + tree resistance
+				public static var INFERNAL_CONTRACT:uint = 16384;
 			
-			public static var COORDINATION:uint = 32768;	//Replace
-		public static var PARTYSOLDIER:uint = 65536;
+				public static var COORDINATION:uint = 32768;	//Replace
+			public static var PARTYSOLDIER:uint = 65536;
+				public static var QTE_RELOAD:uint = 65536 + 65536;
+			public static var SADIST:uint = QTE_RELOAD + QTE_RELOAD;
 		
 		static public function get strings():Dictionary 
 		{
