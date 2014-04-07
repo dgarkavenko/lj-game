@@ -63,21 +63,31 @@ package gameplay
 		{
 			if (strings_ == null) {
 				strings_ = new Dictionary();
-				strings_[DOUBLE_JUMP] = "Double jump";
-				strings_[SLICK] = "Slick";
-				strings_[NINJA] = "Ninja";
-				strings_[SHORTY] = "Shorty";
-				strings_[AUTOGUNS] = "Autoguns";
-				strings_[AMMUNITION_WITHIN] = "Ammunition Within";
-				strings_[QUICK_FINGERS] = "Quick Fingers";
-				strings_[MORE_PERKS] = "More Perks";
-				strings_[BEAR_VITALITY] = "Bear vitality";
-				strings_[COORDINATION] = "Coordination";
+				strings_[DOUBLE_JUMP] = {t:"Double jump", d:"This perk speaks for itself. It is an unprecedented possibility to laugh in gravity's face."};
+				strings_[SLICK] = {t:"Slick", d:"Is it too tight here? Looking for freedom and speed? This perk will allow you easily run through hordes of enemies."};
+				strings_[NINJA] = {t:"Ninja", d:"Gives you a coupon for a free ninjutsu class. We will teach you to do a battle roll to help you get out of any hot situation"};
+				strings_[SHORTY] = {t:"Shorty", d:"Vietnam war taught you how to use a shotgun properly: shotgun rounds now have a splash effect."};
+				strings_[AUTOGUNS] = {t:"Autoguns", d:"Iraqi war taught you how to use machine guns properly. You can now shoot with no recoil at all."};
+				strings_[AMMUNITION_WITHIN] = {t:"Ammunition Within", d:"After you've signed a contract with the devil you can keep shooting using your health while reloading."};
+				strings_[QUICK_FINGERS] = {t:"Quick Fingers", d:"While getting ready for filming in a western movie you gain the ability of shooting as fast as your trigger finger allows you."};
+				strings_[MORE_PERKS] = {t:"More Perks", d:"DO not limit your options to just three perks! Limit yourself to four perks!"};
+				strings_[BEAR_VITALITY] = {t:"Bear vitality", d:"You found the wasy to activate the genes of your most bearded ancestors, it will help you grow a gorgeous, long, fabulous beard - an object of envy for any lumberjack. By the way, those genes also increase your regeneration."};
+				strings_[COORDINATION] = { t:"Coordination", d:"" };
+				
+				strings_[CARRY] = { t:"Carry", d:"Intensive military trainings taught you how to pack 2 times more explosives and med kits to carry with you." };
+				strings_[PATH_OF_AXE] = {t:"Path of Axe", d:"Some time ago, bearded Canadian lumberjacks taught you this secret art. Now you are able to control a secret ancient power. Oh yes, you can also chop trees faster." };
+				strings_[NEGOTIATOR] = { t:"Negotiator", d:"You can negotiate an extra 10% bonus for literally any contract deal." };
+				strings_[GENTELMAN] = {t:"Gentelman", d:"Such gentleman like you was destined to get promo deals in stores. It's 10%, but still!"};
+				strings_[PARTYSOLDER] = {t:"Party Soldier", d:"Endless night parties help your travel at night and be as accurate as during the day"};
 
-			}
+				
+				
+				}
 			
 			return strings_;
 		}
+		
+		
 		
 		static public function get learned():uint 
 		{
