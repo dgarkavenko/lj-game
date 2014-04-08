@@ -45,9 +45,8 @@ package framework.screens
 			stats.alpha = 1;
 			stats.scaleX = stats.scaleY = 1;
 			
-			var msg:String = "You survived for " + DataSources.lumberkeeper.time + " day"
-			msg += DataSources.lumberkeeper.time > 1 ? "s" : "" 
-			msg += ", but " + GameWorld.lumberjack.lastDamage + ".";
+			var msg:String = "No time to explain, but you kinda failed ("+ args[0] +")"; 
+			
 			
 			stats.text = msg;
 			stats.width = Game.SCREEN_WIDTH * 2 / 3;
@@ -59,7 +58,7 @@ package framework.screens
 			
 			
 			//TODO move to GameScreen					
-			setTimeout(function():void{ScreenManager.inst.showScreen(MenuScreen, GameScreen.RESTART_GAME)}, 6000);
+			//setTimeout(function():void{ScreenManager.inst.showScreen(MenuScreen, GameScreen.RESTART_GAME)}, 6000);
 		}
 		
 		public function alphaOff():void {

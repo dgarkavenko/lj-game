@@ -12,7 +12,7 @@ package gui.popups
 		public var skill:uint;
 		public var dsc:String;
 		
-		public function PerkButton(tx:String, skill_:uint, dsc_) 
+		public function PerkButton(tx:String, skill_:uint, dsc_:String) 
 		{
 			super(12, 0xffffff);
 			width = 300;

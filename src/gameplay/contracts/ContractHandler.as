@@ -18,7 +18,16 @@ package gameplay.contracts
 	import utils.DataEvt;
 	import utils.GlobalEvents;
 	/**
-	 * ...
+	 * 
+	 * BILLS POPUP CLOSE BUTTON 
+	 * MONEY BAR
+	 * BILLS FAIL ---> CINEMATIC?
+	 * 
+	 * PRICES AND WEAPON DSC, TITLES, FONT
+	 * 
+	 * 
+	 * 
+	 * 
 	 * @author dg
 	 */
 	public class ContractHandler
@@ -33,8 +42,7 @@ package gameplay.contracts
 		public var current:Vector.<BaseContract> = new Vector.<BaseContract>();	
 		private var huntTasks:Vector.<Task> = new Vector.<Task>();
 		private var chopTasks:Vector.<Task> = new Vector.<Task>();		
-		private var temporaryComplete:Array = [];
-		
+		private var temporaryComplete:Array = [];		
 		
 		private function AddContract(cntrct:BaseContract, flag:uint):void {
 			for each (var t:Task in cntrct.tasks ) 
@@ -189,13 +197,17 @@ package gameplay.contracts
 				AddRandomBill();
 			}
 			
+			/*
+			
 			for (var k:int = 0; k < bills.length; k++) 
 			{
-				if (bills[k].expired(time)) {
+				if (bills[k].expired()) {
 					bills[k].onNotPaid();
 					return;
 				}
-			}			
+			}	
+			
+			*/
 			
 		}
 		

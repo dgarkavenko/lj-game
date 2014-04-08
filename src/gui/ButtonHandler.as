@@ -21,13 +21,16 @@ package gui
 		public function ButtonHandler(clip_:MovieClip) 
 		{
 			clip = clip_;
-			clip.stop();
-				
-			clip.stop();
-			clip.buttonMode = true;
-			clip.useHandCursor = true;
-			clip.mouseChildren = false;
+			ButtonMode(clip);
 		
+		
+		}
+		
+		public static function ButtonMode(mc:MovieClip):void {
+			mc.stop();
+			mc.buttonMode = true;
+			mc.useHandCursor = true;
+			mc.mouseChildren = false;
 		}
 		
 		public function listen():void {

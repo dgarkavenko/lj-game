@@ -139,6 +139,7 @@ package
 		private function onDayTimeChanged(e:Event):void 
 		{
 			contracts.timeUpdate(time.time);
+			locationManager.current.timeUpdate(time.time);
 			lumberjack.growBeard();
 		}
 

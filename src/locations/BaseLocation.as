@@ -57,6 +57,16 @@ package locations
 			
 		}
 		
+		public function OnLoadComplete():void 
+		{
+			
+		}
+		
+		public function timeUpdate(time:int):void 
+		{
+			
+		}
+		
 		
 		
 	}

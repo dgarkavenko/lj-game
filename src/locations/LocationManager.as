@@ -63,6 +63,7 @@ package locations
 		
 		private function loadComplete():void {
 			ScreenManager.inst.showScreen(GameScreen);
+			current.OnLoadComplete();
 			Game.updateFunction = world.tick;
 		}
 		

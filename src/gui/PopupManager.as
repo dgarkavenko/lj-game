@@ -81,7 +81,7 @@ package gui
 				}
 			}
 			
-			pop.destory(container);
+			pop.destroy(container);
 			
 			if (queued.length > 0) {						
 				show(queued.shift(), false, queuedParams.shift());				

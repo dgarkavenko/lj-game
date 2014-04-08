@@ -91,7 +91,7 @@ package gui.popups
 			for (var j:int = 0; j < i; j++) 
 			{
 				var skill_index:uint = display.splice(Math.random() * display.length, 1);
-				var pb:PerkButton = new PerkButton(SkillList.strings[skill_index].t, skill_index);
+				var pb:PerkButton = new PerkButton(SkillList.strings[skill_index].t, skill_index, SkillList.strings[skill_index].d);
 				pb.addEventListener(MouseEvent.CLICK, onPerkClick);				
 				perks_to_show.push(pb);
 				

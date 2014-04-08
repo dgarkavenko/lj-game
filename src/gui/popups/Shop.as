@@ -30,9 +30,12 @@ package gui.popups
 		private var current_price:int;
 		private var current_alais:String;
 		private var buy_button:ButtonHandler;
+		private var current_obj:Object;
 		
 		
-		public var slots:Array = ["pistol","uzi","revolver","chainsaw","axe_double","axe_rusty","axe_fire","assault","barret","chainsaw","spas","shotgun"];
+		public var slots:Array = ["pistol","uzi","revolver","chainsaw","axe_double","axe_rusty","axe_fire","assault","barret","spas","shotgun"];
+		
+		
 		
 		public function Shop() 
 		{
@@ -56,22 +59,6 @@ package gui.popups
 			buy_button.mouseClickAction = buttonclick;
 			buy_button.mouseDownAction = buybuttondown;
 			
-			
-			/************
-			 * 
-			 * 
-			 * 
-			 *  		SUBTRUCT MONEY
-			 * 			SHOW NOT ENOUGH
-			 * 			SALE AND DISCOUNTS
-			 * 			OTHER SHOP ASSETS
-			 * 		PRICES AND WEAPON DSC, TITLES, FONT
-			 * 			CURSOR OVER TEXT
-			 * 		MONEY BAR INTERFACE
-			 * 			CLOSE SHOP AFTER LEAVIG A LOCATION
-			 * 
-			 * 
-			 * */
 			
 		}
 		
@@ -133,17 +120,18 @@ package gui.popups
 			}
 			
 			current_alais = e.currentTarget.alias;
-			shop.title.text = current_alais;
-			
+			current_obj = DataSources.instance.getReference(current_alais);
+			shop.title.text = current_obj.title;
+			shop.dsc.text = current_obj.dsc;
 			
 			if (GameWorld.lumberjack.hasGunOrTool(current_alais)) {
 				
-				shop.buy_button.bax.visible = false;
-				
+				shop.buy_button.bax.visible = false;				
 				buy_button.text = "Equipped";
 				
+				
 			}else {
-				current_price = DataSources.instance.getReference(current_alais).price;		
+				current_price = current_obj.price;		
 				discounts();
 				
 				if (current_price > GameWorld.lumberjack.cash) {
@@ -159,6 +147,8 @@ package gui.popups
 			var bg:MovieClip = shop[current_alais].bg;		
 			bg.filters = [new ColorMatrixFilter(selectMatrix)];
 		}
+		
+	
 		
 		private function discounts():void 
 		{

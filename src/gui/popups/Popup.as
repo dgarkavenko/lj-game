@@ -62,10 +62,10 @@ package gui.popups
 			animation_IN();
 		}
 		
-		public function destory(container:MovieClip):void 
+		public function destroy(container:MovieClip):void 
 		{
 			container.removeChild(this);
-			
+			Mouse.hide();
 		}
 		
 		protected function animation_IN():void 

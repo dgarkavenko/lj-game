@@ -78,7 +78,7 @@ package gameplay
 				strings_[PATH_OF_AXE] = {t:"Path of Axe", d:"Some time ago, bearded Canadian lumberjacks taught you this secret art. Now you are able to control a secret ancient power. Oh yes, you can also chop trees faster." };
 				strings_[NEGOTIATOR] = { t:"Negotiator", d:"You can negotiate an extra 10% bonus for literally any contract deal." };
 				strings_[GENTELMAN] = {t:"Gentelman", d:"Such gentleman like you was destined to get promo deals in stores. It's 10%, but still!"};
-				strings_[PARTYSOLDER] = {t:"Party Soldier", d:"Endless night parties help your travel at night and be as accurate as during the day"};
+				strings_[PARTYSOLDIER] = {t:"Party Soldier", d:"Endless night parties help your travel at night and be as accurate as during the day"};
 
 				
 				

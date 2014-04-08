@@ -1,10 +1,12 @@
 package dynamics.interactive 
 {
+	import com.greensock.TweenLite;
 	import dynamics.Collision;
 	import dynamics.interactions.PlayerInteractiveObject;
 	import flash.display.Bitmap;
 	import framework.screens.GameScreen;
 	import gameplay.contracts.BaseContract;
+	import gameplay.contracts.bills.Bill;
 	import gameplay.contracts.ContractHandler;
 	import gui.PopupManager;
 	import nape.geom.Vec2;
@@ -15,6 +17,8 @@ package dynamics.interactive
 	import utils.VisualAlignment;
 	import visuals.HomeMailbox;
 	import visuals.SignBMP;
+	import visuals.Warning;
+	import visuals.WarningClip;
 	/**
 	 * ...
 	 * @author DG
@@ -23,7 +27,14 @@ package dynamics.interactive
 	{
 		
 		
-
+		private var sign:WarningClip = new WarningClip();
+		
+		
+		override public function remove():void {
+			super.remove();	
+			if (bitmap.parent) bitmap.parent.removeChild(bitmap);
+			if (sign.parent) sign.parent.removeChild(sign);
+		}
 		
 		public function Mailbox() 
 		{
@@ -46,13 +57,30 @@ package dynamics.interactive
 		}
 		
 		override public function add():void {
+			
 			GameWorld.container.layer2.addChild(bitmap);
 			body.space = space;
 			super.add();
-		}
+			
+			
+			for each (var item:Bill in GameWorld.contracts.getBillsRef()) 
+			{
+				if (item.timeLeft() <= 1) {
+					
+					sign.x = bitmap.x + bitmap.width/2 - sign.width/2 + 2;
+					sign.y = bitmap.y - 30;		
+		
+					GameWorld.container.layer2.addChild(sign);
+					break;
+				}
+			}			
+		}			
 		
 		override public function onUse(params:Object):void 
 		{
+			
+			if (sign.parent) sign.parent.removeChild(sign);
+			
 			if (GameWorld.contracts.getBillsRef().length == 0) return;					
 			//GameScreen.POP.show(PopupManager.CONTRACT, true, getContracts());
 			GameScreen.POP.show(PopupManager.BILLS, true, GameWorld.contracts.getBillsRef());

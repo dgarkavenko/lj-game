@@ -10,6 +10,9 @@ package locations
 	import flash.display.GradientType;
 	import flash.display.Sprite;
 	import flash.geom.Matrix;
+	import framework.ScreenManager;
+	import framework.screens.GameOverScreen;
+	import gameplay.contracts.bills.Bill;
 	import gameplay.TreeHandler;
 	import gameplay.world.Forest;
 	import gameplay.world.Ground;
@@ -86,8 +89,31 @@ package locations
 			TreeHandler.inst.growRange(GameWorld.space, GameWorld.container, 24, 25, 1);
 			//TreeHandler.inst.growRange(GameWorld.space, GameWorld.container, 600, location_w - 50, 3);
 			
-			
-			
+		}
+		
+		override public function OnLoadComplete():void 
+		{
+			CheckExpiredBills();
+		}
+		
+		override public function timeUpdate(time:int):void 
+		{
+			CheckExpiredBills();
+		}
+		
+		private function CheckExpiredBills():void 
+		{
+			for each (var b:Bill in GameWorld.contracts.getBillsRef()) 
+			{
+				if (b.expired()) {
+					StartExpiredBillScenario(b);
+				}
+			}
+		}
+		
+		private function StartExpiredBillScenario(b:Bill):void 
+		{
+			ScreenManager.inst.showScreen(GameOverScreen, b.name);
 		}
 		
 		override public function addBackground():void 

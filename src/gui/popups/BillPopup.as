@@ -9,6 +9,7 @@ package gui.popups
 	import gameplay.contracts.bills.Bill;
 	import gui.ButtonHandler;
 	import gui.PopText;
+	import UI.bill_close;
 	import UI.bill_footer;
 	import UI.bill_header;
 	import UI.bill_item;
@@ -20,6 +21,8 @@ package gui.popups
 	{
 		private var header:bill_header;
 		private var footer:bill_footer;
+		private var close_b:bill_close;
+
 		private var bill_items:Vector.<bill_item>
 		
 		private var pay_button:ButtonHandler;
@@ -34,15 +37,37 @@ package gui.popups
 		{
 			header = new bill_header();
 			footer = new bill_footer();		
-			footer.buy_button.stop();
+			close_b = new bill_close();
 			addChild(header);
 			addChild(footer);
 			
 			pay_button = new ButtonHandler(footer.buy_button);
 			pay_button.mouseClickAction = click;
 			
+			ButtonHandler.ButtonMode(close_b);
+		
+			addChild(close_b);
+			
+			
 			footer.title.mouseEnabled = footer.dsc.mouseEnabled = footer.title.mouseWheelEnabled = footer.dsc.mouseWheelEnabled = false;
 		
+		}
+		
+		private function close_out(e:MouseEvent):void 
+		{
+			close_b.gotoAndStop(1);
+		}
+		
+		private function close_over(e:MouseEvent):void 
+		{
+			close_b.gotoAndStop(2);
+
+		}
+		
+		private function close_popup(e:MouseEvent):void 
+		{
+			close_b.gotoAndStop(1);
+			hide();
 		}
 		
 		override protected function animation_IN():void 
@@ -65,16 +90,31 @@ package gui.popups
 			
 			pay_button.dontlisten();
 			
+			close_b.removeEventListener(MouseEvent.CLICK, close_popup);
+			close_b.removeEventListener(MouseEvent.MOUSE_OVER, close_over);
+			close_b.removeEventListener(MouseEvent.MOUSE_OUT, close_out);
+			
+			
+			super.hide();				
+		}
+		
+		override public function destroy(container:MovieClip):void {
+			super.destroy(container);
+			
 			for (var i:int = 0; i < bill_items.length; i++) 			
 				removeChild(bill_items[i]);				
 				
-			bill_items.length = bills.length = 0;
-			super.hide();				
+			bill_items.length = 0;
 		}
 		
 		override public function build(container:MovieClip, params:Object = null):void 
 		{
 			pay_button.listen();
+			
+			close_b.addEventListener(MouseEvent.CLICK, close_popup);
+			close_b.addEventListener(MouseEvent.MOUSE_OVER, close_over);
+			close_b.addEventListener(MouseEvent.MOUSE_OUT, close_out);
+			
 			bills = params as Vector.<Bill>;			
 			CreateBill();	
 			
@@ -84,9 +124,12 @@ package gui.popups
 		private function CreateBill():void 
 		{
 			var totalH:int = header.height + footer.height + bills.length * 29; //такая высота у айтема
-			var ypos:int = (Game.SCREEN_HEIGHT - totalH) / 2;
+			var ypos:int = (Game.SCREEN_HEIGHT - totalH) / 2 - 50;
 			header.y = ypos;
 			ypos += header.height;
+			
+			close_b.x = header.x + header.width;
+			close_b.y = header.y + 20;
 			
 			bill_items = new Vector.<bill_item>();
 			

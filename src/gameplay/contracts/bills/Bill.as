@@ -31,9 +31,9 @@ package gameplay.contracts.bills
 			return startDate + term - GameWorld.time.time;
 		}	
 		
-		public function expired(time:int):Boolean 
+		public function expired():Boolean 
 		{
-			return time >= startDate + term;
+			return GameWorld.time.time > startDate + term;
 		}
 		
 		public function getCostString():String 
@@ -49,12 +49,12 @@ package gameplay.contracts.bills
 		
 		public function getTimeLeft():String 
 		{
-			var timestring:String = "Today";
+			var timestring:String = "Today!";
 			
 			switch (timeLeft()) 
 			{
 				case 0:
-					timestring = "Today";
+					timestring = "Today!";
 				break;
 				case 1:
 					timestring = "1 Day Left";
@@ -70,11 +70,13 @@ package gameplay.contracts.bills
 					timestring = "1 Week Left";
 				break;
 				default:
-					timestring = "This Month";
+					timestring = "2 Weeks Left";
 			}
 			
 			return timestring;
 		}
+		
+	
 		
 	}
 
