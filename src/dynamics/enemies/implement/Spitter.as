@@ -67,7 +67,7 @@ package dynamics.enemies.implement
 		
 		
 		override public function tick():void {
-			super.tick();
+			;
 			
 			
 			if (isDead) return;
@@ -85,10 +85,7 @@ package dynamics.enemies.implement
 			}
 			
 				
-			
-			if (_currentShedule != null) {
-				_currentShedule.update();
-			}
+			super.tick()
 			
 		}
 		

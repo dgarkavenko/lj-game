@@ -18,7 +18,7 @@ package dynamics.enemies.implement
 		}
 		
 		override public function tick():void {
-			super.tick();
+			
 			if (isDead) return;
 			
 			if (++ite >= 10) {
@@ -29,17 +29,11 @@ package dynamics.enemies.implement
 					selectNewSchedule();
 				}
 				
-				
-				
 				ite = 0;
 				
 			}
-			
-				
-			
-			if (_currentShedule != null) {
-				_currentShedule.update();
-			}
+		
+			super.tick();
 			
 		}
 		

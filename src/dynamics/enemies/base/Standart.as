@@ -44,6 +44,8 @@ package dynamics.enemies.base
 		
 		override public function tick():void
 		{
+			
+			
 			super.tick();
 		}
 		
@@ -110,10 +112,10 @@ package dynamics.enemies.base
 			
 			if (daddy.lumbervec.x < _body.position.x) d = -1;			
 			facing = d;			
-			_body.velocity.x = 0;
+			
 			
 			if (Vec2.distance(_body.position, daddy.lumbervec) > meleeAttackRange) {				
-				_body.applyImpulse(Vec2.get(d * movementSpeed, 0));
+				_body.velocity.x = d * movementSpeed * 3;
 				_view.walk();
 			}					
 			

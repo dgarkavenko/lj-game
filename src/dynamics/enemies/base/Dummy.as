@@ -77,6 +77,7 @@ package dynamics.enemies.base
 		protected var worried:Boolean = false;
 		public var daddy:EvilGenius;
 		
+		protected var stunned:int = 0;
 		
 		private function show_hp():void 
 		{
@@ -167,6 +168,14 @@ package dynamics.enemies.base
 		
 		override public function tick():void {
 			
+			if (stunned > 0) {
+				stunned--;
+			}
+			
+			if (_currentShedule != null && stunned < 1) {
+				_currentShedule.update();
+			}
+			
 			if (health_bar != null) {
 					health_bar.x = _body.position.x;
 					health_bar.y = _body.position.y - view.sprite.height / 2 - 10;
@@ -219,7 +228,15 @@ package dynamics.enemies.base
 					show_hp();
 					
 					
-				break;			
+				break;	
+				
+			case ActionTypes.CABOOM:
+				stunned = 5;
+				currentHP -= params.power * 2;
+				
+				show_hp();
+				
+				break;
 				
 			case ActionTypes.TREE_HIT:
 				
@@ -236,8 +253,7 @@ package dynamics.enemies.base
 				
 			if (currentHP <= 0) {
 				
-				dead(action.type);
-				
+				dead(action.type);			
 				
 			}
 			
@@ -300,7 +316,10 @@ package dynamics.enemies.base
 				h= _view.sprite.height;
 			}
 			
-			_body = build(Vec2.get(500, 300), [Polygon.rect(0,0, w, h)/*, [5,Vec2.get(6,46)]*/], Material.wood());			
+			var m:Material = Material.wood();
+			m.dynamicFriction *= 3;
+			
+			_body = build(Vec2.get(500, 300), [Polygon.rect(0,0, w, h)/*, [5,Vec2.get(6,46)]*/], m);			
 			_body.cbTypes.add(GameCb.INTERACTIVE);
 			_body.cbTypes.add(GameCb.ZOMBIE);
 			_body.allowRotation = false;			
@@ -456,6 +475,7 @@ package dynamics.enemies.base
 		{
 			_view.idle();
 			_interval = 25 + Math.random() * 25;
+			_body.velocity.x = 0;
 			return true;
 		}
 		
@@ -485,6 +505,8 @@ package dynamics.enemies.base
 			_view.walk();		
 			_interval =  25 + Math.random() * 25;
 			
+			
+			
 			return true;
 		}
 		
@@ -493,9 +515,9 @@ package dynamics.enemies.base
 		 */
 		protected function onMove():Boolean
 		{
-			_body.velocity.x = 0;
-			_body.applyImpulse(Vec2.get(_facing * movementSpeed, 0));
-	
+			//_body.velocity.x = 0;
+			//_body.applyImpulse(Vec2.get(_facing * movementSpeed, 0));
+			_body.velocity.x = _facing * movementSpeed * 3;
 			
 			_interval--;
 			if (_interval <= 0)

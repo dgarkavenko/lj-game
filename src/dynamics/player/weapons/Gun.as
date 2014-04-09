@@ -207,7 +207,9 @@ package dynamics.player.weapons
 		
 		private function act():void 
 		{
-			cooldown_timer.reset();
+			
+			//TODO make sure we dont need restart
+			//cooldown_timer.reset();
 			cooldown_timer.start();
 			if (gundata.reload_counter <= 0) gundata.ammo_current--;
 			else GameWorld.lumberjack.hp.decrease(gundata.damage_min / 5);

@@ -385,6 +385,11 @@ package
 		{
 			dynamicsVec.push(object);
 		}
+		
+		/**
+		 * Удаляет из массива объектов у которых вызывается тик каждый кадр
+		 * @param	object
+		 */
 		static public function removeOnTick(object:DynamicWorldObject):void 
 		{
 			for (var i:int = 0; i < dynamicsVec.length; i++) 

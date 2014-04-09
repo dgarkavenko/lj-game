@@ -12,6 +12,7 @@ package dynamics.actions
 		public static const TREE_HIT:int = 2;
 		public static const PUDDLE_BURN:int = 3;
 		static public const CHAINSAW:int = 4;
+		static public const CABOOM:int = 5;
 	}
 
 }

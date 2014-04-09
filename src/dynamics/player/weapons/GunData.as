@@ -27,7 +27,8 @@ package dynamics.player.weapons
 		public var reload_counter:int = 0;
 		
 		
-		public function GunData(a:String){
+		public function GunData(a:String) {
+			
 			type = TYPE_GUN;
 			super(a);
 		}

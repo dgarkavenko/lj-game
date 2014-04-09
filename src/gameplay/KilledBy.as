@@ -14,10 +14,14 @@ package gameplay
 		public static var AUTOGUN:uint = 16;
 		public static var SNIPER:uint = 32;
 		static public const CHAINSAW:uint = 64;
+		public static var MINE:uint = 128;
+		public static var DYNAMITE:uint = 256;
 		
-		
+		public static var EXPLOSIVES:uint = DYNAMITE | MINE;
 		public static var ANY_GUN:uint = SHOTGUN | PISTOL | AUTOGUN | SNIPER;
-		public static var ANY:uint = ANY_GUN | TREE | AXE | CHAINSAW;
+		public static var ANY:uint = ANY_GUN | TREE | AXE | CHAINSAW | EXPLOSIVES;
+		
+		
 		
 	}
 

@@ -59,6 +59,8 @@ package gameplay
 				public static var QTE_RELOAD:uint = 65536 + 65536;
 			public static var SADIST:uint = QTE_RELOAD + QTE_RELOAD;
 		
+		//Штука, которая не дает подрывать себя
+		
 		static public function get strings():Dictionary 
 		{
 			if (strings_ == null) {

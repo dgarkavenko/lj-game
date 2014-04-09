@@ -9,6 +9,7 @@ package dynamics.player
 	import dynamics.interactions.PlayerInteractiveObject;
 	import dynamics.player.weapons.Carry;
 	import dynamics.player.weapons.Chainsaw;
+	import dynamics.player.weapons.ExplosiveData;
 	import dynamics.player.weapons.Explosives;
 	import dynamics.player.weapons.Gun;
 	import dynamics.player.weapons.GunData;
@@ -70,9 +71,10 @@ package dynamics.player
 		private var shotguns:Array = [/*new GunData("shotgun"), new GunData("spas")*/];
 		private var machineguns:Array = [/*new GunData("uzi"), new GunData("assault")*/];
 		private var rifles:Array = [/*new GunData("barret")*/];
+		private var bombs:Array = [new ExplosiveData("dynamite")];
 		
-		private var equip:Array = [axes, pdws, shotguns, machineguns, rifles];
-		private var lastEquipedInCategory:Array = [0,0,0,0,0];
+		private var equip:Array = [axes, pdws, shotguns, machineguns, rifles, bombs];
+		private var lastEquipedInCategory:Array = [0,0,0,0,0,0];
 		
 		public var hp:HP = new HP();
 		//private var max_hp:int = save.max_hp;
@@ -322,7 +324,7 @@ package dynamics.player
 			
 			//Changin weapons
 			var i:int = 0;
-			for each (var btn:String in ["ONE","TWO","THREE","FOUR","FIVE"]) 
+			for each (var btn:String in ["ONE","TWO","THREE","FOUR","FIVE","SIX"]) 
 			{
 				if (keyboard.justPressed(btn)){
 					
