@@ -9,6 +9,7 @@ package dynamics.player
 	import framework.input.Controls;
 	import framework.input.Keyboard;
 	import framework.input.Mouse;
+	import gui.Bars.SimpleBar;
 	import nape.dynamics.InteractionFilter;
 	import nape.geom.Ray;
 	import nape.geom.RayResult;
@@ -43,6 +44,8 @@ package dynamics.player
 		
 		public var alias:String = "pistol";
 		
+		protected var power_bar:SimpleBar = new SimpleBar(30, 5, 0xffffff, false);
+
 		
 		public function Hands() 
 		{			

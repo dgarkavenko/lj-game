@@ -17,7 +17,7 @@
     </define>
     <define append="true">
       <name>CONFIG::timeStamp</name>
-      <value>'09.04.2014'</value>
+      <value>'11.06.2014'</value>
     </define>
     <verbose-stacktraces>true</verbose-stacktraces>
     <source-path append="true">

@@ -1,6 +1,10 @@
 package gameplay 
 {
+	import com.greensock.core.SimpleTimeline;
 	import dynamics.enemies.base.Dummy;
+	import dynamics.enemies.implement.Crawler;
+	import dynamics.enemies.implement.EffectiveManager;
+	import dynamics.enemies.implement.Manager;
 	import dynamics.enemies.implement.Spitter;
 	import dynamics.enemies.implement.Stalker;
 	import dynamics.player.Lumberjack;
@@ -19,8 +23,11 @@ package gameplay
 	public class EvilGenius 
 	{
 		
-		private var spitters:SimpleCache = new SimpleCache(Spitter, 5);
+		private var spitters:SimpleCache = new SimpleCache(Spitter, 3);
 		private var stalkers:SimpleCache = new SimpleCache(Stalker, 3);
+		private var crawlers:SimpleCache = new SimpleCache(Crawler, 3);
+		private var managers:SimpleCache = new SimpleCache(Manager, 5);
+		
 		private var cache:Dictionary = new Dictionary();
 		
 		private var space:Space;
@@ -33,6 +40,7 @@ package gameplay
 		
 		private var lj_initial_x_pos:int = -10000;
 		private var distance_traveled_treshold:int = Game.SCREEN_WIDTH;
+		private const ZOMBIES:Array = ["spitter" ,"stalker", "crawler", "manager"];
 		
 		public function EvilGenius(space_:Space, container_:SpriteContainer, lumberjack_:Lumberjack) {
 			
@@ -50,36 +58,38 @@ package gameplay
 			
 			cache["spitter"] = spitters;
 			cache["stalker"] = stalkers;
+			cache["crawler"] = crawlers;
+			cache["manager"] = managers;
 			
 			
 		}
 		
 		
 		
-		private function think(e:TimerEvent):void 
-		{
-			if (lj_initial_x_pos == -10000) {
-				lj_initial_x_pos = lumbervec.x;
-				return;
-			}
-			
-			if (Math.abs(lj_initial_x_pos - lumbervec.x) > distance_traveled_treshold) {				
-				lj_initial_x_pos = -10000;	
-				trace("Prepare to die!");
-				spawnZombies(1 + Math.random() * 4 / (1 + GameWorld.zombies.length));			
-			}
-			
+		//private function think(e:TimerEvent):void 
+		//{
+			//if (lj_initial_x_pos == -10000) {
+				//lj_initial_x_pos = lumbervec.x;
+				//return;
+			//}
+			//
+			//if (Math.abs(lj_initial_x_pos - lumbervec.x) > distance_traveled_treshold) {				
+				//lj_initial_x_pos = -10000;	
+				//trace("Prepare to die!");
+				//spawnZombies(1 + Math.random() * 4 / (1 + GameWorld.zombies.length));			
+			//}
+			//
 			//TODO Link an array?
-			for each (var z:Dummy in GameWorld.zombies ) 
-			{
-				if (Vec2.distance(z.getBody().position, lumbervec) > Game.SCREEN_WIDTH * 2) {
-					trace("This one gone too far");
-					z.remove();
-					spawnZombies(1);
-					
-				}
-			}
-		}
+			//for each (var z:Dummy in GameWorld.zombies ) 
+			//{
+				//if (Vec2.distance(z.getBody().position, lumbervec) > Game.SCREEN_WIDTH * 2) {
+					//trace("This one gone too far");
+					//z.remove();
+					//spawnZombies(1);
+					//
+				//}
+			//}
+		//}
 		
 		private function spawnZombies(number:int):void 
 		{
@@ -129,11 +139,14 @@ package gameplay
 		
 		}
 		
-		public function spawnAt(mpX:Number, mpY:Number):void 
+		public function spawnAt(mpX:Number, mpY:Number, i:int):void 
 		{
-			var a:String = Math.random() > 0.4999? "spitter" : "stalker";		
+			if (i > ZOMBIES.length - 1) return;
 			
+			
+			var a:String = ZOMBIES[i];			
 			var z:Dummy = cache[a].getInstance() as Dummy;
+			
 			GameWorld.zombies.push(z);
 			z.at(mpX, mpY);
 			z.add();	

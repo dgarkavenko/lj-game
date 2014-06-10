@@ -11,11 +11,13 @@ package dynamics.enemies.base
 	import dynamics.interactions.IInteractive;
 	import dynamics.Walker;
 	import flash.utils.setTimeout;
+	import framework.FormatedTextField;
 	import framework.input.Controls;
 	import gamedata.DataSources;
 	import gameplay.EvilGenius;
 	import gui.Bars.HealthBarCache;
 	import gui.Bars.SimpleBar;
+	import gui.PopText;
 	import nape.callbacks.CbEvent;
 	import nape.callbacks.InteractionCallback;
 	import nape.callbacks.InteractionListener;
@@ -28,7 +30,7 @@ package dynamics.enemies.base
 	import nape.shape.Polygon;
 	import utils.GlobalEvents;
 	import utils.VisualAlignment;
-	import visual.z.Spitter;
+
 	/**
 	 * ...
 	 * @author DG
@@ -150,6 +152,9 @@ package dynamics.enemies.base
 				case "stalker":
 					return 2;
 				break;
+				case "crawler":
+					return 3;
+				break;
 				default: return 0;
 			}
 			
@@ -168,8 +173,15 @@ package dynamics.enemies.base
 		
 		override public function tick():void {
 			
+			
+			
 			if (stunned > 0) {
 				stunned--;
+			}
+			
+			if (pop != null) {
+				if (pop.parent != null) pop.x = _body.position.x - pop.textWidth/2;
+				else pop = null;
 			}
 			
 			if (_currentShedule != null && stunned < 1) {
@@ -205,6 +217,10 @@ package dynamics.enemies.base
 				break;
 				
 			case ActionTypes.GUNSHOT_ACTION:				
+				
+				
+					if (worried == false && pop == null) pop = PopText.at("b-b-brains", _body.position.x, _body.position.y - 30, 0xffffff, 10, 1.5);
+
 				
 					worried = true;					
 					if (params.power <= 0) return;
@@ -262,6 +278,9 @@ package dynamics.enemies.base
 			
 		}
 		
+		protected function onDeath():void{
+			
+		}
 		
 		
 		private function dead(by:int):void 
@@ -274,10 +293,14 @@ package dynamics.enemies.base
 			
 			$GLOBAL.dispatch(GlobalEvents.ZOMBIE_KILLED, {type:intType, how:by} );			
 			
+			onDeath();
+			
 			if (health_bar != null) {
 				TweenLite.killTweensOf(health_bar);
 				TweenLite.to(health_bar, .2, { alpha:0, onComplete:onHide } );
 			}	
+			
+			
 			
 			//TODO Remove collisions with everything but ground
 			//Collision.setFilter(_body, 0, 0);
@@ -294,8 +317,8 @@ package dynamics.enemies.base
 		
 		protected function setParameters(ref:Object):void 
 		{
-			_view = new BaseSpriteControl(Spitter);
 			
+			setView();	
 			
 			if ("w" in ref)
 			{
@@ -340,6 +363,13 @@ package dynamics.enemies.base
 			
 			viewRange = ref.viewRange;
 			senceRange = ref.senceRange;
+			
+		}
+		
+		protected var pop:FormatedTextField;
+		
+		protected function setView():void 
+		{
 			
 		}
 		

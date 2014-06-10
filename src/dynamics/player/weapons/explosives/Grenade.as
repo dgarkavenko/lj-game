@@ -5,12 +5,13 @@ package dynamics.player.weapons.explosives
 	import dynamics.DynamicWorldObject;
 	import dynamics.enemies.base.Dummy;
 	import flash.display.Bitmap;
+	import flash.events.Event;
 	import nape.geom.Vec2;
 	import nape.phys.Body;
 	import nape.phys.Material;
 	import nape.shape.Circle;
 	import utils.SimpleCache;
-	import visual.fx.black_explosion_mc;
+	import visual.Explosion_mc;
 	import visual.z.Goo;
 	/**
 	 * ...
@@ -77,10 +78,12 @@ package dynamics.player.weapons.explosives
 		
 		private function boom():void 
 		{
-			var explosion:black_explosion_mc = new black_explosion_mc();
-			GameWorld.container.layer2.addChild(explosion);
-			explosion.x = _body.position.x;
-			explosion.y = _body.position.y;
+			
+			
+			$VFX.addExplosion(_body.position.x, _body.position.y, GameWorld.container.layer2);
+			
+		
+			
 			
 			for each (var z:Dummy in GameWorld.zombies) 
 			{
@@ -102,6 +105,7 @@ package dynamics.player.weapons.explosives
 			destroy();
 		}
 		
+	
 		
 		override public function getBody():Body 
 		{

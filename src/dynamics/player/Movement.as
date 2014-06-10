@@ -31,7 +31,6 @@ package dynamics.player
 		private var keys:Keyboard = Controls.keys;		
 
 		private var lumberjack:Lumberjack;
-		private var locked_x:Number = NaN;
 		private var _grounded:Boolean = true;
 		public var doublejump:Boolean = false;
 
@@ -53,6 +52,7 @@ package dynamics.player
 		
 		
 		private var slick:Boolean = false;
+		private var dirt:Boolean = false;;
 	
 
 		
@@ -69,10 +69,19 @@ package dynamics.player
 			midAirListener.space = groundListener.space = _carrier.space;
 		}
 		
-		public function stuck(deep_:int):void{
+		public function stuck(deep_:int, dirt_:Boolean = false):void{
 			stuckX = _carrier.position.x;
-			deep = deep_/2;
+			deep = deep_;
+			dirt = dirt_;
 		}
+		
+		
+		public function unstuck():void{
+			stuckX = NaN;
+			deep = 0;
+			dirt = false;
+		}
+
 		
 		private function groundHandler(cb:InteractionCallback):void 
 		{
@@ -93,15 +102,8 @@ package dynamics.player
 			//_carrier.velocity.y = 0;
 		}	
 		
-		public function lock_x(dx:Number):void 
-		{
-			locked_x = dx;
-			
-		}
+	
 		
-		public function unlock_x():void {
-			locked_x = NaN;
-		}
 		
 		private function walkThisWay(dir:int):void 
 		{
@@ -187,12 +189,12 @@ package dynamics.player
 					if (deep <= 0) {
 						
 						stuckX = NaN;						
-						lumberjack.unstuck();
+						lumberjack.unstuckView();
 						
 						_carrier.applyImpulse(new Vec2(0, -jump));					
 						_grounded = false;	
 					}else {						
-						_carrier.applyImpulse(new Vec2(0, -jump/15));	
+						if(dirt) _carrier.applyImpulse(new Vec2(0, -jump/15));	
 					}
 					
 					

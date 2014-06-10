@@ -19,12 +19,15 @@ package dynamics.player.weapons
 		public var type:int;
 		public var flag:uint;
 		
-		public function WeaponData(a:String) 
+		
+		
+		public function WeaponData(a:String, preload_:Boolean = false) 
 		{
-			if (a != "") load(a);
+			alias = a;			
+			if (preload_) load(a);
 		}
 		
-		public function load(a:String):void 
+		public function load(a:String, w:Object = null):void 
 		{
 			
 		}

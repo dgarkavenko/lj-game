@@ -27,14 +27,14 @@ package dynamics.player.weapons
 		
 		
 		
-		private var power_bar:SimpleBar = new SimpleBar(30, 5, 0xffffff, false);
 		private var cd:Number = 0; //frames
 		private var prepare:Boolean = false;
 		
 		public function Tool() 
 		{
 			weaponType = WeaponData.TYPE_AXE;
-			_action = new ChopAction();			
+			_action = new ChopAction();
+
 		}
 		
 		override public function interrupt():void 
@@ -50,7 +50,6 @@ package dynamics.player.weapons
 			
 		
 			if (mouse.justPressed()) {
-				if (!carrier_view.sprite.contains(power_bar)) carrier_view.sprite.addChild(power_bar);
 				carrier_view.swing();
 				prepare = true;
 			}
@@ -158,6 +157,10 @@ package dynamics.player.weapons
 		}
 		
 		override public function init():void {
+			
+			if (!carrier_view.sprite.contains(power_bar)) carrier_view.sprite.addChild(power_bar);
+
+			
 			power_bar.scale(0);			
 			ray.maxDistance = 40;			
 			updateView();			

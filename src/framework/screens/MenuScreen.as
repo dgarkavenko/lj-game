@@ -10,6 +10,7 @@ package framework.screens {
 import flash.display.Graphics;
 import flash.display.MovieClip;
 import flash.display.Sprite;
+import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.events.TextEvent;
 import flash.text.TextField;
@@ -19,12 +20,14 @@ import framework.input.Controls;
 import framework.misc.PixelButton;
 import framework.ScreenManager;
 import framework.SharedObjectShell;
+import menu.intro;
 import visual.Shore_mc;
 
 
 public class MenuScreen extends BaseScreen {
 	
 	private var option:uint = GameScreen.NEW_GAME;
+	//private var intro_scene:intro = new intro();
 	
 	public function MenuScreen() {
 		
@@ -32,12 +35,21 @@ public class MenuScreen extends BaseScreen {
 		var bg:Sprite = new Sprite();
 		with (bg) {
 			
-			graphics.beginFill(0x171729);
+			graphics.beginFill(0x010429);
 			graphics.drawRect(0, 0, Game.SCREEN_WIDTH, Game.SCREEN_HEIGHT);
 			graphics.endFill();
 		}
 		
 		addChild(bg);	
+		
+		
+		//addChild(intro_scene);
+		//intro_scene.addEventListener("end", onIntroEnd);
+		onIntroEnd(null);
+	}
+	
+	private function onIntroEnd(e:Event):void 
+	{
 		createStartGameButton();
 	}
 	
@@ -70,6 +82,7 @@ public class MenuScreen extends BaseScreen {
 			continuegame.y = 250;
 			addChild(continuegame);
 		}*/
+		
 		
 		
 	}

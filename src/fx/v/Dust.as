@@ -1,6 +1,7 @@
 package fx.v 
 {
 	import gamedata.DataSources;
+	import idv.cjcat.emitter.CircleSource;
 	import idv.cjcat.emitter.Emitter;
 	import idv.cjcat.emitter.LineSource;
 	import idv.cjcat.emitter.PointSource;
@@ -29,11 +30,14 @@ package fx.v
 			emi.addSource(point);
 			
 		
+		
 			step.active = false;
 			emi.addSource(step);
 			step.addParticle(dirt);
 			
 		}
+		
+	
 		
 		public function shot(x:int, y:int):void {
 			point.x = x;

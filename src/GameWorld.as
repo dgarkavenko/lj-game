@@ -43,6 +43,7 @@ package
 	import framework.screens.MenuScreen;
 	import framework.SpriteContainer;
 	import gamedata.DataSources;
+	import gameplay.contracts.BaseContract;
 	import gameplay.contracts.ContractHandler;
 	import gameplay.DeathReason;
 	import gameplay.EvilGenius;
@@ -150,12 +151,12 @@ package
 		
 		private function onPuddleBegin(cb:InteractionCallback):void {
 			
-			lumberjack.interact(new PuddleBurnAction(5));
+			lumberjack.hp.dot += 5;
 		}
 		
 		private function onPuddleEnd(cb:InteractionCallback):void {
 			
-			lumberjack.interact(new PuddleBurnAction(0));
+			lumberjack.hp.dot -= 5;
 		}
 		
 		private function inHell(cb:InteractionCallback):void {
@@ -350,10 +351,29 @@ package
 				ScreenManager.inst.showScreen(MapScreen);
 			}
 			
-			if (Controls.keys.justPressed("Z")) {
-			
-				EG.spawnAt(Controls.mouse.relativeX, Controls.mouse.relativeY);
+			if (Controls.keys.pressed("Z")) {
+				
+				var f:int = 0;
+				for each (var key:String in ["ONE","TWO","THREE","FOUR","FIVE","SIX"]) 
+				{
+					if (Controls.keys.justPressed(key)) {
+						
+						EG.spawnAt(Controls.mouse.relativeX, Controls.mouse.relativeY, f);
+						break;
+					}
+					f++;
+				}	
+				
 			}			
+			
+			if (Controls.keys.justPressed("C")) {
+				for each (var c:BaseContract in contracts.current) 
+				{
+					trace(c.title);
+				}
+				
+				
+			}
 			
 			/*if (Controls.keys.justPressed("ESCAPE")) {
 				ScreenManager.inst.showScreen(MenuScreen);

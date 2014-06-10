@@ -16,7 +16,7 @@ package gameplay.contracts.imp
 			term = 0;
 			title = "If they bleed, we can kill em";
 			isAchievement = true;			
-			tasks.push(new KillZombies(ZombieTypes.SPITTER|ZombieTypes.STALKER, KilledBy.ANY, 100));
+			tasks.push(new KillZombies(ZombieTypes.ANY, KilledBy.ANY, 20));
 			
 		}
 		

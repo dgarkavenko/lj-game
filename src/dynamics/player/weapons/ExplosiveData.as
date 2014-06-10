@@ -21,7 +21,7 @@ package dynamics.player.weapons
 			super(a);
 		}
 		
-		override public function load(a:String):void 
+		override public function load(a:String, w:Object = null):void 
 		{			
 			//var weapon:Object = DataSources.instance.getReference(a);
 			alias = a;			

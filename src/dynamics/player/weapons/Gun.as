@@ -253,11 +253,11 @@ package dynamics.player.weapons
 					ray.direction = Vec2.fromPolar(ray.maxDistance, da);
 					
 					if (SkillList.isLearned(SkillList.SHORTY)) {
-						rayResultList = space.rayMultiCast(ray, false, BULLET_RAY_FILTER);
+						rayResultList = space.rayMultiCast(ray, true, BULLET_RAY_FILTER);
 					}
 					else {
 						rayResultList.clear();
-						rayResult = space.rayCast(ray, false, BULLET_RAY_FILTER);
+						rayResult = space.rayCast(ray, true, BULLET_RAY_FILTER);
 						if (rayResult != null) rayResultList.add(rayResult);
 					}
 					
@@ -295,7 +295,7 @@ package dynamics.player.weapons
 				da = a + (gundata.dispersion + recoil) * (2 * Math.random() - 1);
 				ray.direction = Vec2.fromPolar(ray.maxDistance, da);			
 				
-				rayResult = space.rayCast(ray, false, BULLET_RAY_FILTER);					
+				rayResult = space.rayCast(ray, true, BULLET_RAY_FILTER);					
 				if (rayResult) {
 					interact(ray.at(rayResult.distance), rayResult.shape.body, gundata.damage_min + (gundata.damage_max - gundata.damage_min) * Math.random());
 				}			

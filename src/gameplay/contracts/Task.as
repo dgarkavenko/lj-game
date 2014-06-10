@@ -79,7 +79,8 @@ package gameplay.contracts
 			if ((targets & type) == type) return true;
 			else return false;
 			
-		}
+		}		
+		
 		
 	}
 

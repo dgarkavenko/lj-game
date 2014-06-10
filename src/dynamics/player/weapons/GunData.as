@@ -8,6 +8,7 @@ package dynamics.player.weapons
 	public class GunData extends WeaponData
 	{
 		
+		
 			
 		public var ammo_max:int;
 		public var ammo_current:int;
@@ -27,16 +28,15 @@ package dynamics.player.weapons
 		public var reload_counter:int = 0;
 		
 		
-		public function GunData(a:String) {
+		public function GunData(a:String, preload_:Boolean = false) {
 			
-			type = TYPE_GUN;
-			super(a);
+			type = TYPE_GUN;			
+			super(a, preload_);
 		}
 		
-		override public function load(a:String):void 
+		override public function load(a:String, w:Object = null):void 
 		{
-			
-			var weapon:Object = DataSources.instance.getReference(a);
+			var weapon:Object = w == null? DataSources.instance.getReference(a) : w;
 				
 			ammo_max = ammo_current = weapon.ammo_max;
 			dispersion = weapon.dispersion;

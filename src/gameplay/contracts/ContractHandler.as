@@ -40,17 +40,25 @@ package gameplay.contracts
 		
 		private var contracts:Vector.<BaseContract> = new Vector.<BaseContract>();		
 		public var current:Vector.<BaseContract> = new Vector.<BaseContract>();	
+		
 		private var huntTasks:Vector.<Task> = new Vector.<Task>();
 		private var chopTasks:Vector.<Task> = new Vector.<Task>();		
+		private var otherTasks:Vector.<Task> = new Vector.<Task>();
+		
 		private var temporaryComplete:Array = [];		
 		
 		private function AddContract(cntrct:BaseContract, flag:uint):void {
 			for each (var t:Task in cntrct.tasks ) 
 			{
+				
+				t.contract = cntrct;
+				
 				if (t.event == GlobalEvents.ZOMBIE_KILLED) {
 					huntTasks.push(t);
 				}else if (t.event == GlobalEvents.TREE_CUT) {
 					chopTasks.push(t);
+				}else {
+					otherTasks.push(t);
 				}
 			}
 			
@@ -74,6 +82,11 @@ package gameplay.contracts
 					{
 						if (chopTasks[j] == t) chopTasks.splice(j, 1);
 					}
+				}else {
+					for (var k:int = chopTasks.length - 1; k >= 0 ; k--) 
+					{
+						if (otherTasks[k] == t) otherTasks.splice(k, 1);
+					}
 				}
 			}
 		}
@@ -85,11 +98,29 @@ package gameplay.contracts
 			
 			$GLOBAL.listenTo(GlobalEvents.ZOMBIE_KILLED, onZombieKill);
 			$GLOBAL.listenTo(GlobalEvents.TREE_CUT, onTreeCut);						
+			$GLOBAL.listenTo(GlobalEvents.PURCHASE, onPurchase);
+			
 			
 			addNewContract(IF_THEY_BLEED);			
-			addNewContract(IF_THEY_BLEED);		
+			addNewContract(DANGER_TO_GO_ALONE);
 			
-			billsSetup();
+			//billsSetup();
+		}
+		
+		private function onPurchase(e:DataEvt):void 
+		{
+			
+			for each (var task:Task in otherTasks ) 
+			{
+				if (task.isDone || task.event != GlobalEvents.PURCHASE) continue;
+				if (task.ProgressIfMatch(e.data) && task.contract.isDone) {
+					trace("Contract complete");
+					temporaryComplete.push(task.contract);
+				}
+			}
+			
+			clearAndReward();
+			
 		}
 		
 		private function billsSetup():void 
@@ -118,10 +149,10 @@ package gameplay.contracts
 				}
 			}
 			
-			reward();
+			clearAndReward();
 		}
 		
-		private function reward():void {
+		private function clearAndReward():void {
 			
 			for (var i:int = 0; i < temporaryComplete.length; i++) 
 			{
@@ -142,7 +173,7 @@ package gameplay.contracts
 				}
 			}
 			
-			reward();
+			clearAndReward();
 			
 		}
 		
@@ -193,9 +224,9 @@ package gameplay.contracts
 			
 			
 			//BILLS
-			if (bills.length < 4 && Math.random() > 0.66) {
-				AddRandomBill();
-			}
+			//if (bills.length < 4 && Math.random() > 0.66) {
+				//AddRandomBill();
+			//}
 			
 			/*
 			

@@ -74,7 +74,6 @@ package gui.popups
 			if (current_alais != "") {
 				GameWorld.lumberjack.cash -= current_price;
 				GameWorld.lumberjack.purchased(current_alais);
-				$GLOBAL.dispatch(GlobalEvents.PURCHASE, { a:current_alais } );
 				shop[current_alais].label.visible = false;
 			}
 			

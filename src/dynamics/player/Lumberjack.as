@@ -4,6 +4,7 @@ package dynamics.player
 	import dynamics.actions.ActionTypes;
 	import dynamics.actions.IAction;
 	import dynamics.Collision;
+	import dynamics.enemies.implement.Crawler;
 	import dynamics.GameCb;
 	import dynamics.interactions.IInteractive;
 	import dynamics.interactions.PlayerInteractiveObject;
@@ -18,6 +19,7 @@ package dynamics.player
 	import gameplay.SkillList;
 	import gui.PopText;
 	import utils.DataEvt;
+	import utils.GlobalDispatcher;
 	import utils.GlobalEvents;
 
 	import dynamics.player.weapons.Tool;
@@ -66,8 +68,8 @@ package dynamics.player
 		
 		private var currentCategory:int = -1;
 		
-		private var axes:Array = [new ToolData("axe_rusty")/*, new ToolData("axe_double"), new ToolData("axe_fire")*/];
-		private var pdws:Array = [new GunData("pistol")/*, new GunData("revolver")*/];
+		private var axes:Array = [new ToolData("axe_rusty", true)/*, new ToolData("axe_double"), new ToolData("axe_fire")*/];
+		private var pdws:Array = [new GunData("pistol", true)/*, new GunData("revolver")*/];
 		private var shotguns:Array = [/*new GunData("shotgun"), new GunData("spas")*/];
 		private var machineguns:Array = [/*new GunData("uzi"), new GunData("assault")*/];
 		private var rifles:Array = [/*new GunData("barret")*/];
@@ -85,7 +87,6 @@ package dynamics.player
 		
 
 		public var movement:Movement;		
-		public var disabled:Boolean = false;
 		public var quovirouk:int = 0;
 		
 		
@@ -109,14 +110,14 @@ package dynamics.player
 		private var quovirouk_cd:int = 0;
 		
 		
-		internal function stuck():void {
+		internal function stuckInTheGroundView():void {
 			if (isStuck) return;
 			isStuck = true;
 			_body.scaleShapes(1, 0.5);
 			_body.userData.graphicOffset.y = -25;
 		}
 		
-		internal function unstuck():void {
+		internal function unstuckView():void {
 			if (!isStuck) return;
 			isStuck = false;
 			_body.scaleShapes(1, 2);
@@ -209,33 +210,28 @@ package dynamics.player
 		public function purchased(a:String):void {
 			
 			PopText.at("$" + cash, _body.position.x, _body.position.y - 20, 0xffffff);
-
 			
 			if (hasGunOrTool(a)) {
 				trace("I have it already");
 				return;
 			}
 			
-			if (a == "axe_double" || a == "axe_fire" || a == "axe_rust" || a == "chainsaw") {
-				axes.push(new ToolData(a));
-				selectNew(0);
-			}else if ( a == "revolver" || a == "pistol") {
-				pdws.push(new GunData(a));	
-				selectNew(1);
-			}else if (a == "shotgun" || a == "spas") {
-				shotguns.push(new GunData(a));	
-				selectNew(2);
-			}else if (a =="uzi" || a == "assault") {
-				machineguns.push(new GunData(a));	
-				selectNew(3);
-			}else if (a == "barret") {
-				rifles.push(new GunData(a));
-				selectNew(4);
+			var weapon:Object = DataSources.instance.getReference(a);			
+			var cat:int = weapon.cat;	
+			var w:WeaponData;
+			if (cat == 0) {				
+				w = new ToolData(a);			
+			}else {
+				w = new GunData(a);				
 			}
-			else
-			{
-				trace("WRONG WEAPON ALIAS");
-			}			
+			
+			w.load(a, weapon);
+			equip[cat].push(w);
+			selectNew(cat);
+					
+			
+			$GLOBAL.dispatch(GlobalEvents.PURCHASE, { type:weapon.flag } );
+
 		}
 		
 		public function hasGunOrTool(a:String):Boolean {
@@ -448,8 +444,8 @@ package dynamics.player
 					
 					if (damage > 25) {
 						
-						movement.stuck(damage);
-						stuck();
+						movement.stuck(damage / 2, true);
+						stuckInTheGroundView();
 					
 						
 						$VFX.blood.at(params.x, params.y,0, -1, damage * 2);
@@ -491,6 +487,56 @@ package dynamics.player
 		{
 			
 		}
+		
+		public function grab(facing:int, zombie:Crawler):Boolean 
+		{
+			if (hp.immune) {
+				PopText.at("DODGED", _body.position.x, _body.position.y - 20, 0xffffff);
+				
+				return false;
+			}else if (_body.velocity.y < -20) {
+				return false;
+			}else {
+				//SLOW? but i have to draw new animation;
+				//TODO make SLOOOOOOOW
+				view.idle();
+				for (var i:int = 0; i < guysWhoHoldingMe.length; i++) 
+					if (guysWhoHoldingMe[i] == zombie)						
+						return false;					
+				
+				_body.velocity.y = 20;
+				hp.dot += 4;
+				movement.stuck(10000);				
+				if (guysWhoHoldingMe.length == 0) $GLOBAL.listenTo(GlobalEvents.ZOMBIE_HOLDING_DEAD, releaseGrab);
+				guysWhoHoldingMe.push(zombie);
+				
+			}
+			
+			return true;
+		}
+		
+		
+		
+		private function releaseGrab(e:DataEvt):void 
+		{
+			for (var i:int = 0; i < guysWhoHoldingMe.length; i++) 
+			{
+				if (guysWhoHoldingMe[i] == e.data) {					
+					guysWhoHoldingMe.splice(i, 1);
+					hp.dot -= 4;
+					break;
+				}
+			}		
+			
+			if (guysWhoHoldingMe.length == 0) {
+				movement.unstuck();
+				$GLOBAL.dontListen(GlobalEvents.ZOMBIE_HOLDING_DEAD, releaseGrab);
+			}
+			
+		}
+		
+		private var guysWhoHoldingMe:Array = [];
+		
 		
 		public function set luggage(value:PlayerInteractiveObject):void 
 		{

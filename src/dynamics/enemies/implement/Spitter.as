@@ -8,6 +8,7 @@ package dynamics.enemies.implement
 	import dynamics.enemies.base.Dummy;
 	import dynamics.enemies.implement.spitter.GooProjectile;
 	import idv.cjcat.emitter.ds.MotionData2DPool;
+	import visual.z.SpitterView;
 
 	import dynamics.GameCb;
 	import dynamics.interactions.IInteractive;
@@ -31,14 +32,17 @@ package dynamics.enemies.implement
 		
 			
 		
-		private var ite:int = 0;
 	
 		
 		
 		public function Spitter() 
 		{			
-			super("spitter");				
-					
+			super("spitter");
+							
+		}
+		
+		override protected function setView():void {		
+			_view = new BaseSpriteControl(SpitterView);	
 		}
 		
 		override protected function launchProjectile(e:Event = null):void 
@@ -67,11 +71,11 @@ package dynamics.enemies.implement
 		
 		
 		override public function tick():void {
-			;
+			
 			
 			
 			if (isDead) return;
-			
+			super.tick()
 			if (++ite >= 10) {
 				
 				getConditions();			
@@ -82,10 +86,7 @@ package dynamics.enemies.implement
 				
 				ite = 0;
 				
-			}
-			
-				
-			super.tick()
+			}			
 			
 		}
 		

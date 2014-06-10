@@ -47,11 +47,13 @@ package gamedata
 		
 		public function getReference(alias:String):Object 
 		{
+			trace("DataSources: Getting ref for " + alias);  
 			return _JSONEncoded[alias];
 		}
 		
 		public function getList(alias:String):Array
 		{
+			trace("DataSources: Getting list for " + alias);  
 			return _JSONEncoded[alias];			
 		}
 		

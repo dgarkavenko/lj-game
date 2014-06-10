@@ -3,6 +3,7 @@ package dynamics.enemies.base
 	import dynamics.enemies.ai.Schedule;
 	import dynamics.enemies.base.Dummy;
 	import flash.events.Event;
+	import framework.FormatedTextField;
 	import gameplay.DeathReason;
 	import gui.PopText;
 	import nape.geom.Vec2;
@@ -17,11 +18,13 @@ package dynamics.enemies.base
 		protected var pursuit:Schedule;	
 		
 		protected var meleeAttackRange:int = 35;		
-		protected var meleeAttackCooldownSize:int = 10;
+		protected var meleeAttackCooldownSize:int = 30;
 		protected var meleeAttackDamage:int;
 			
 		protected var meleeAttackCooldown:int = 0;
 		
+		protected var ite:int = 0;
+
 		
 		public function Standart(alias:String) 
 		{
@@ -43,40 +46,70 @@ package dynamics.enemies.base
 		}
 		
 		override public function tick():void
-		{
+		{		
+			if (isDead) return;
+			super.tick();			
+			if (++ite >= 3) {
+				
+				getConditions();			
+				if (_currentShedule != null && _currentShedule.isCompleted(_conditions))
+				{
+					selectNewSchedule();
+				}
+				
+				ite = 0;
+				
+			}
+			
+				
 			
 			
-			super.tick();
+			
+		}
+		
+		override protected function getConditions():void 
+		{			
+			_conditions.clear();	
+			
+			
+			var distance:Number = Math.abs(_body.position.x - daddy.lumbervec.x);			
+			var viewDirTowardsLj:Boolean = (_facing == 1 && _body.position.x < daddy.lumbervec.x) || (_facing == -1 && _body.position.x > daddy.lumbervec.x);
+			
+			if ( distance < meleeAttackRange && viewDirTowardsLj) {				
+				_conditions.set(CONDITION_CAN_MELEE_ATTACK);				
+				_conditions.set(CONDITION_SEE_ENEMY);
+			}
+			else if ((distance < viewRange && viewDirTowardsLj) || worried || distance < senceRange) {				
+				_conditions.set(CONDITION_SEE_ENEMY);	
+				//PopText.at("...brains..", _body.position.x, _body.position.y - 20, 0xffffff);
+
+			}			
+			_conditions.set(CONDITION_CAN_STAND);
+			_conditions.set(CONDITION_CAN_WALK);	
+			
+			
+			
+			
 		}
 		
 		protected function onInitMeleeAttack():Boolean
 		{
 			worried = true;
 			_view.melee();	
-			_view.sprite.mc.addEventListener("onAttack", onAttackAnimation);					
+			if (_view.sprite.mc != null) _view.sprite.mc.addEventListener("onAttack", onAttackAnimation);
+			else onAttackAnimation(null);
 			return true;
 		}
 		
-		private function onAttackAnimation(e:Event):void 
+		protected function onAttackAnimation(e:Event):void 
 		{
 			
 			var viewDirTowardsLj:Boolean = (_facing == 1 && _body.position.x < daddy.lumbervec.x) || (_facing == -1 && _body.position.x > daddy.lumbervec.x);
 			if (Vec2.distance(daddy.lumbervec, _body.position) <= meleeAttackRange && viewDirTowardsLj) {
-				GameWorld.lumberjack.bite(facing);
-				switch(alias) {
-					case "spitter":
-						GameWorld.lumberjack.lastDamage = DeathReason.ZOMBIE_SPITTER;
-					break;
-					
-					case "stalker":
-					GameWorld.lumberjack.lastDamage = DeathReason.ZOMBIE_STALKER;
-					break;
-				default:
-					GameWorld.lumberjack.lastDamage = DeathReason.ZOMBIE;
-				}
+				GameWorld.lumberjack.bite(facing);				
 			}
 			
-			_view.sprite.mc.removeEventListener("onAttack", onAttackAnimation);		
+			if (_view.sprite.mc) _view.sprite.mc.removeEventListener("onAttack", onAttackAnimation);		
 		}
 		
 		protected function onMeleeAttack():Boolean 
@@ -96,7 +129,10 @@ package dynamics.enemies.base
 		 */
 		protected function onInitPursuit():Boolean
 		{				
-			if(!worried) worried = true;				
+			if (!worried) {
+				worried = true;
+				if (pop == null) pop = PopText.at("br-r-rains", _body.position.x, _body.position.y - 30, 0xffffff, 10, 1.5);
+			}
 			return true;
 		}
 		
@@ -107,6 +143,7 @@ package dynamics.enemies.base
 		 */
 		protected function onPursuit():Boolean
 		{
+			
 			
 			var d:int = 1;
 			
@@ -144,8 +181,7 @@ package dynamics.enemies.base
 						}*/
 						
 						
-					}else if (_conditions.contains(CONDITION_SEE_ENEMY)) {
-						
+					}else if (_conditions.contains(CONDITION_SEE_ENEMY)) {						
 						_state = STATE_PURSUIT;
 						_currentShedule = pursuit;
 						

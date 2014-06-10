@@ -14,6 +14,7 @@ package gameplay.contracts
 		public var location:uint = 0;
 		public var read:Boolean = false;
 		public var title:String = "Contract";
+		public var dsc:String = "Do something";
 		public var reward_size:int = 0;
 		public var flag:uint = 0;
 		

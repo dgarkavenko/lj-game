@@ -16,7 +16,7 @@ package dynamics.player.weapons
 		
 		
 		
-		public function ToolData(a:String) 
+		public function ToolData(a:String, preload_:Boolean = false) 
 		{
 			if (a == "chainsaw") {
 				type = TYPE_CHAINSAW;
@@ -26,12 +26,12 @@ package dynamics.player.weapons
 				flag = KilledBy.AXE;
 			}			
 		
-			super(a);
+			super(a, preload_);
 		}
 		
-		override public function load(a:String):void 
+		override public function load(a:String, w:Object = null):void 
 		{
-			var weapon:Object = DataSources.instance.getReference(a);
+			var weapon:Object = w == null? DataSources.instance.getReference(a) : w;
 				
 			z_dmg = weapon.z_dmg;
 			t_dmg = weapon.t_dmg;
