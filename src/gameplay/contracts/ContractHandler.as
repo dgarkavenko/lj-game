@@ -102,8 +102,7 @@ package gameplay.contracts
 			
 			
 			addNewContract(IF_THEY_BLEED);			
-			addNewContract(DANGER_TO_GO_ALONE);
-			
+			addNewContract(DANGER_TO_GO_ALONE);			
 			//billsSetup();
 		}
 		
@@ -273,6 +272,8 @@ package gameplay.contracts
 		public function getBillsRef():Vector.<Bill> {
 			return bills.sort(compare);			
 		}
+		
+	
 		
 		public function addNewContract(alias:String):void 
 		{

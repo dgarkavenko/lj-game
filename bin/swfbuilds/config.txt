@@ -22,11 +22,11 @@
 	},
 	
 	"stalker":{"hp":70, "ms":16, "ms_dispersion":2, "w":10, "viewRange":50,  "senceRange":30, 
-		"meleeAttackRange":35, "meleeAttackCooldown":0.3, "meleeAttackDamage":10		
+		"meleeAttackRange":35, "meleeAttackCooldown":0.8, "meleeAttackDamage":10		
 	},
 	
 	"manager":{"hp":120, "ms":16, "ms_dispersion":2, "w":10, "viewRange":120,  "senceRange":30, 
-		"meleeAttackRange":35, "meleeAttackCooldown":0.3, "meleeAttackDamage":10		
+		"meleeAttackRange":35, "meleeAttackCooldown":2, "meleeAttackDamage":10		
 	},
 	
 	"crawler":{"hp":100, "ms":32, "ms_dispersion":1, "w":40, "h":21 , "viewRange":200,  "senceRange":30, 

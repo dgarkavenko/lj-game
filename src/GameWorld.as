@@ -137,11 +137,126 @@ package
 		private var puddle_e_listener:InteractionListener = new InteractionListener(CbEvent.END, InteractionType.SENSOR, GameCb.PUDDLE, GameCb.LEGS, onPuddleEnd);
 		private var inhell_listener:InteractionListener = new InteractionListener(CbEvent.BEGIN, InteractionType.ANY, GameCb.HELL, GameCb.LUMBERJACK, inHell);
 		
+		
+		
+		public function tick():void {		
+			
+			PhysDebug.tick();					
+			TreeHandler.inst.tick();
+			
+			mouse_sprite.x = Controls.mouse.screenX - 25 / 2;
+			mouse_sprite.y = Controls.mouse.screenY - 13 / 2;
+			
+			camera.pan_H(lumberbody.worldCOM.x);
+			lumberjack.tick();			
+			
+			$VFX.step();
+			
+			space.step(dt / 2, 10, 10);
+			space.step(dt / 2, 10, 10);
+			
+			//Graphic update
+			for (var i:int = 0; i < space.liveBodies.length; i++) {
+				
+				var body:Body = space.liveBodies.at(i);
+				
+				var graphic:DisplayObject = body.userData.graphic;
+				if (graphic == null) continue;
+				
+				var graphicOffset:Vec2 = body.userData.graphicOffset;
+                var position:Vec2 = graphicOffset == null? body.worldCOM.copy() : body.localPointToWorld(graphicOffset);
+				
+                graphic.x = position.x;
+                graphic.y = position.y;
+                graphic.rotation = (body.rotation * 180/Math.PI) % 360;
+                position.dispose();
+				
+			}
+			
+			for each (var io:PlayerInteractiveObject in playerInteractors) 
+			{
+				io.tick();
+			}
+			
+			if (Controls.keys.justPressed("L")) {		
+				
+				
+				PopText.at("DEBUG VIEW", lumberbody.position.x, lumberbody.position.y, 0xffffff);
+				
+				Mouse.hide();
+				trace("------------------ LOG ------------------");
+				trace(lumberbody.position.toString());				
+				if (PhysDebug.is_active) PhysDebug.off();
+				else PhysDebug.on();
+				
+				
+			}
+			
+			if (Controls.keys.justPressed("P")) {
+				GameScreen.POP.show(PopupManager.PERKS, false);				
+			}
+			
+			if (Controls.keys.justPressed("M")) {
+				ScreenManager.inst.showScreen(MapScreen);
+			}
+			
+			if (Controls.keys.pressed("Z")) {
+				
+				var f:int = 0;
+				for each (var key:String in ["ONE","TWO","THREE","FOUR","FIVE","SIX"]) 
+				{
+					if (Controls.keys.justPressed(key)) {
+						
+						EG.spawnAt(Controls.mouse.relativeX, Controls.mouse.relativeY, f);
+						break;
+					}
+					f++;
+				}	
+				
+			}			
+			
+			if (Controls.keys.justPressed("C")) {
+				for each (var c:BaseContract in contracts.current) 
+				{
+					trace(c.title);
+				}				
+			}else if (Controls.keys.justPressed("B")) {
+				lumberjack.growBeard();
+			}
+			
+			/*if (Controls.keys.justPressed("ESCAPE")) {
+				ScreenManager.inst.showScreen(MenuScreen);
+			}*/
+			
+			
+			var col:int = 0;			
+			for each (var z:Dummy in zombies) 
+			{
+				z.tick();
+				
+				if (Math.abs(z.x - lumberbody.position.x ) < 8 + z.width / 2) {
+					if (lumberbody.position.y + 25 > Game.SCREEN_HEIGHT - Ground.HEIGHT - z.height) {
+						col++;
+					}
+				}
+			}
+			
+			lumberjack.zombieCollision(col);
+			
+			for each (var o:DynamicWorldObject in dynamicsVec) {
+				o.tick();
+			}
+			
+			time.tick();		
+		}
+		
+		
 		private function onDayTimeChanged(e:Event):void 
 		{
 			contracts.timeUpdate(time.time);
 			locationManager.current.timeUpdate(time.time);
 			lumberjack.growBeard();
+			//ScreenManager.inst.showScreen(DayScreen, [time.getCurrentDay(), lumberjack.cash]);
 		}
 
 		
@@ -237,13 +352,13 @@ package
 			contracts = new ContractHandler();
 			
 			addChild(time.shade);
-			addChild(time.bar);
+			//addChild(time.bar);
 				
 			camera = new Camera();			
 			
 			locationManager.init(this);
 			
-			lumberjack = new Lumberjack(500, 500);			
+			lumberjack = new Lumberjack(200, 500);			
 			lumberbody = lumberjack.getBody();
 			lumberjack.setMoveCallback(onPlayerMove);
 				
@@ -270,8 +385,7 @@ package
 			lumberjack.hp.init(100);
 
 			setUpMouseSprite();
-			
-			
+			//GameScreen.HUD.update_cash(6000);
 		}		
 		
 				
@@ -290,116 +404,7 @@ package
 			
 		}
 		
-		public function tick():void {		
-			
-			PhysDebug.tick();					
-			TreeHandler.inst.tick();
-			
-			mouse_sprite.x = Controls.mouse.screenX - 25 / 2;
-			mouse_sprite.y = Controls.mouse.screenY - 13 / 2;
-			
-			camera.pan_H(lumberbody.worldCOM.x);
-			lumberjack.tick();			
-			
-			$VFX.step();
-			
-			space.step(dt / 2, 10, 10);
-			space.step(dt / 2, 10, 10);
-			
-			//Graphic update
-			for (var i:int = 0; i < space.liveBodies.length; i++) {
-				
-				var body:Body = space.liveBodies.at(i);
-				
-				var graphic:DisplayObject = body.userData.graphic;
-				if (graphic == null) continue;
-				
-				var graphicOffset:Vec2 = body.userData.graphicOffset;
-                var position:Vec2 = graphicOffset == null? body.worldCOM.copy() : body.localPointToWorld(graphicOffset);
-				
-                graphic.x = position.x;
-                graphic.y = position.y;
-                graphic.rotation = (body.rotation * 180/Math.PI) % 360;
-                position.dispose();
-				
-			}
-			
-			for each (var io:PlayerInteractiveObject in playerInteractors) 
-			{
-				io.tick();
-			}
-			
-			if (Controls.keys.justPressed("L")) {		
-				
-				
-				PopText.at("DEBUG VIEW", lumberbody.position.x, lumberbody.position.y, 0xffffff);
-				
-				Mouse.hide();
-				trace("------------------ LOG ------------------");
-				trace(lumberbody.position.toString());				
-				if (PhysDebug.is_active) PhysDebug.off();
-				else PhysDebug.on();
-				
-				
-			}
-			
-			if (Controls.keys.justPressed("P")) {
-				GameScreen.POP.show(PopupManager.PERKS, false);				
-			}
-			
-			if (Controls.keys.justPressed("M")) {
-				ScreenManager.inst.showScreen(MapScreen);
-			}
-			
-			if (Controls.keys.pressed("Z")) {
-				
-				var f:int = 0;
-				for each (var key:String in ["ONE","TWO","THREE","FOUR","FIVE","SIX"]) 
-				{
-					if (Controls.keys.justPressed(key)) {
-						
-						EG.spawnAt(Controls.mouse.relativeX, Controls.mouse.relativeY, f);
-						break;
-					}
-					f++;
-				}	
-				
-			}			
-			
-			if (Controls.keys.justPressed("C")) {
-				for each (var c:BaseContract in contracts.current) 
-				{
-					trace(c.title);
-				}
-				
-				
-			}
-			
-			/*if (Controls.keys.justPressed("ESCAPE")) {
-				ScreenManager.inst.showScreen(MenuScreen);
-			}*/
-			
-			
-			var col:int = 0;			
-			for each (var z:Dummy in zombies) 
-			{
-				z.tick();
-				
-				if (Math.abs(z.x - lumberbody.position.x ) < 8 + z.width / 2) {
-					if (lumberbody.position.y + 25 > Game.SCREEN_HEIGHT - Ground.HEIGHT - z.height) {
-						col++;
-					}
-				}
-			}
-			
-			lumberjack.zombieCollision(col);
-			
-			for each (var o:DynamicWorldObject in dynamicsVec) {
-				o.tick();
-			}
-			
-			time.tick();		
-		}
+		
 		
 		static public function regOnTick(object:DynamicWorldObject):void 
 		{

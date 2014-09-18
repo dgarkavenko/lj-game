@@ -79,6 +79,7 @@ package dynamics.player
 		private var lastEquipedInCategory:Array = [0,0,0,0,0,0];
 		
 		public var hp:HP = new HP();
+		public var beard:int = 0;
 		//private var max_hp:int = save.max_hp;
 		//private var hp:int = save.hp;
 	
@@ -485,7 +486,8 @@ package dynamics.player
 		
 		public function growBeard():void 
 		{
-			
+			$GLOBAL.dispatch(GlobalEvents.BEARDGROW, { val:++beard } );
+			view.beard(beard);
 		}
 		
 		public function grab(facing:int, zombie:Crawler):Boolean 

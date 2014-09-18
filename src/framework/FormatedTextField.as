@@ -21,7 +21,7 @@ package framework
 			
 			super();
 			embedFonts = true;			
-			defaultTextFormat = size_ == 0 ? NOKIA_WHITE : new TextFormat("nokia", size_, color_);			
+			defaultTextFormat = size_ == 0 ? NOKIA_WHITE : new TextFormat("nokia", size_, color_, null,null,null,null,null, center? "center" : null);			
 			selectable = false;
 			multiline = true;
 			wordWrap = true;

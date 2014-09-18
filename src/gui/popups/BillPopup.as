@@ -6,6 +6,7 @@ package gui.popups
 	import flash.events.MouseEvent;
 	import flash.ui.Mouse;
 	import framework.screens.GameScreen;
+	import gameplay.contracts.BaseContract;
 	import gameplay.contracts.bills.Bill;
 	import gui.ButtonHandler;
 	import gui.PopText;
@@ -30,6 +31,7 @@ package gui.popups
 		
 		private var dx:int = 0;
 		private var bills:Vector.<Bill>;
+		private var contracts:Vector.<BaseContract>;
 		
 		private var current_index:int = -1;
 		
@@ -115,7 +117,10 @@ package gui.popups
 			close_b.addEventListener(MouseEvent.MOUSE_OVER, close_over);
 			close_b.addEventListener(MouseEvent.MOUSE_OUT, close_out);
 			
-			bills = params as Vector.<Bill>;			
+			
+			
+			
+			contracts = params as Vector.<BaseContract>;			
 			CreateBill();	
 			
 			super.build(container, params);
@@ -123,7 +128,7 @@ package gui.popups
 		
 		private function CreateBill():void 
 		{
-			var totalH:int = header.height + footer.height + bills.length * 29; //такая высота у айтема
+			var totalH:int = header.height + footer.height + contracts.length * 29; //такая высота у айтема
 			var ypos:int = (Game.SCREEN_HEIGHT - totalH) / 2 - 50;
 			header.y = ypos;
 			ypos += header.height;
@@ -133,13 +138,13 @@ package gui.popups
 			
 			bill_items = new Vector.<bill_item>();
 			
-			for (var i:int = 0; i < bills.length; i++) 
+			for (var i:int = 0; i < contracts.length; i++) 
 			{				
 				var bi:bill_item = new bill_item();
 				bill_items.push(bi);
-				bi.item.text = bills[i].name;
-				bi.price.text = "$" + bills[i].getCostString();
-				bi.date.text = bills[i].getTimeLeft();
+				bi.item.text = contracts[i].title;
+				bi.price.text = "$" + contracts[i].reward_size;
+				bi.date.text = "Time Left";
 				bi.addEventListener(MouseEvent.CLICK, onBIClick);
 				bi.mouseChildren = false;
 				bi.useHandCursor = true;
@@ -200,7 +205,7 @@ package gui.popups
 		private function clearSelection():void 
 		{
 			footer.title.text = "";
-			footer.dsc.text = bills.length > 0 ? "Select one of the bills abote to pay for" : "You don't have any unpaid bills now. Come again later.";
+			footer.dsc.text = contracts.length > 0 ? "Select one of the bills abote to pay for" : "You don't have any unpaid bills now. Come again later.";
 			footer.buy_button.visible = false;
 			current_index = -1;
 			
@@ -220,10 +225,9 @@ package gui.popups
 			current_index = i;
 			
 			bill_items[i].bg.gotoAndStop(3);
-			footer.title.text = bills[current_index].name;
+			footer.title.text = contracts[current_index].title;
 			footer.dsc.text = GameWorld.lumberjack.cash >= bills[i].cost ? "Standart bill description. Will be replace soon" : "You don't have enough money to pay";
-			
-			
+						
 			footer.buy_button.visible = true;
 			pay_button.text = bills[current_index].getCostString();
 			

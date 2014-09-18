@@ -48,6 +48,7 @@ package dynamics.enemies.base
 		override public function tick():void
 		{		
 			if (isDead) return;
+			if (meleeAttackCooldown > 0) meleeAttackCooldown--;
 			super.tick();			
 			if (++ite >= 3) {
 				
@@ -57,14 +58,8 @@ package dynamics.enemies.base
 					selectNewSchedule();
 				}
 				
-				ite = 0;
-				
-			}
-			
-				
-			
-			
-			
+				ite = 0;				
+			}			
 		}
 		
 		override protected function getConditions():void 
@@ -93,7 +88,9 @@ package dynamics.enemies.base
 		}
 		
 		protected function onInitMeleeAttack():Boolean
-		{
+		{			
+			
+			
 			worried = true;
 			_view.melee();	
 			if (_view.sprite.mc != null) _view.sprite.mc.addEventListener("onAttack", onAttackAnimation);
@@ -114,11 +111,15 @@ package dynamics.enemies.base
 		
 		protected function onMeleeAttack():Boolean 
 		{
+			
 			return (_view.sprite.mc.currentFrame == _view.sprite.mc.totalFrames) ? true : false;
 		}
 		
 		protected function onEndMeleeAttack():Boolean 
 		{
+			
+			
+			
 			meleeAttackCooldown = meleeAttackCooldownSize;			
 			_view.idle();
 			return true;
@@ -159,16 +160,26 @@ package dynamics.enemies.base
 			return false;
 		}
 		
+		protected function AttackOrWaitCooldown():void {
+			if (meleeAttackCooldown > 0) {							
+				_currentShedule = stand;
+				_state = STATE_STAND;
+			}else {							
+				_state = STATE_MELEE;
+				_currentShedule = meleeAttack;
+			}
+		}
+		
 		override protected function selectNewSchedule():void 
 		{
+			
+			trace("new schedule");
+			
 			switch (_state) 
 			{
 				case STATE_STAND:
 					if (_conditions.contains(CONDITION_CAN_MELEE_ATTACK)) {
-						
-						_state = STATE_MELEE;
-						_currentShedule = meleeAttack;
-						
+						AttackOrWaitCooldown();
 					}else if (_conditions.contains(CONDITION_CAN_RANGED_ATTACK)) {
 						
 						/*if ( rangedAttackCooldown > 0) {
@@ -198,8 +209,7 @@ package dynamics.enemies.base
 					
 					if (_conditions.contains(CONDITION_CAN_MELEE_ATTACK))
 					{
-						_currentShedule = meleeAttack;
-						_state = STATE_MELEE;
+						AttackOrWaitCooldown();
 					}
 					else if (_conditions.contains(CONDITION_SEE_ENEMY)) {
 						

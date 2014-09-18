@@ -2,31 +2,67 @@
 	"guns":["pistol", "shotgun", "assault"],
 	"tools":["axe_rusty"],	
 	
-	"pistol":{"ammo_max":7, "dispersion":0, "fragments":1, "mode":0, "rate":220, "reload_time":40, "damage_min":12, "damage_max":20},
-	"revolver":{"ammo_max":6, "dispersion":0, "fragments":1, "mode":0, "rate":150, "reload_time":70, "damage_min":20, "damage_max":45},
-	"shotgun":{"ammo_max":5, "dispersion":0.066, "fragments":6, "mode":0, "rate":200, "reload_time":70, "damage_min":5, "damage_max":9},
-	"uzi":{"ammo_max":15, "dispersion":0, "fragments":1, "mode":1, "rate":75, "reload_time":80, "damage_min":10, "damage_max":16},
-	"assault":{"ammo_max":20, "dispersion":0, "fragments":1, "mode":1, "rate":100, "reload_time":100, "damage_min":15, "damage_max":17},
-	"spas":{"ammo_max":8, "dispersion":0.056, "fragments":5, "mode":1, "rate":200, "reload_time":120, "damage_min":7, "damage_max":12},
-	"barret":{"ammo_max":5, "dispersion":0, "fragments":1, "mode":0, "rate":300, "reload_time":120, "damage_min":20, "damage_max":55},
+	"pistol":{"flag":8, "cat":1, "dsc":"Let the gun do the talking", "title":"Pistol", "price":500, "ammo_max":7, "dispersion":0, "fragments":1, "mode":0, "rate":220, "reload_time":40, "damage_min":12, "damage_max":20, "force":5},
+	"revolver":{"flag":8, "cat":1, "dsc":"100% chance of losing the Russian roulette", "title":"Revolver", "price":1500, "ammo_max":6, "dispersion":0, "fragments":1, "mode":0, "rate":150, "reload_time":70, "damage_min":20, "damage_max":45, "force":30},
+	"shotgun":{"flag":2, "cat":2, "dsc":"Cheap but solid", "title":"Shotgun", "price":3500, "ammo_max":5, "dispersion":0.066, "fragments":6, "mode":0, "rate":200, "reload_time":70, "damage_min":5, "damage_max":9, "force":5},
+	"uzi":{"flag":16, "cat":3, "dsc":"It's actually an Ingram, but show me a person who actually knows what an Ingram is", "title":"Uzi", "price":3500, "ammo_max":15, "dispersion":0, "fragments":1, "mode":1, "rate":75, "reload_time":80, "damage_min":10, "damage_max":16, "force":5},
+	"assault":{"flag":16, "cat":3, "dsc":"Romanian quality and Brasillian accuracy", "title":"Assault rifle", "price":5500, "ammo_max":20, "dispersion":0, "fragments":1, "mode":1, "rate":200, "reload_time":100, "damage_min":12, "damage_max":20, "force":25, "rps":0.038, "rrpf":0.0045},
+	"spas":{"flag":2, "cat":2, "dsc":"God made all men different. SPAS-12 can deal with every of them", "title":"SPAS-12", "price":6500, "ammo_max":8, "dispersion":0.056, "fragments":5, "mode":1, "rate":200, "reload_time":120, "damage_min":7, "damage_max":12, "force":5},
+	"barret":{"flag":32, "cat":4, "dsc":".50 cal of suffering and destruction", "title":"", "price":12500, "ammo_max":5, "dispersion":0, "fragments":1, "mode":0, "rate":300, "reload_time":120, "damage_min":20, "damage_max":55, "force":30, "rps":0.08, "rrpf":0.0035},
 
-	"axe_rusty":{"inc":0.1 , "t_dmg":2.5, "z_dmg":10},
-	"axe_double":{"inc":0.15 , "t_dmg":4, "z_dmg":15},
-	"axe_fire":{"inc":0.15 , "t_dmg":3, "z_dmg":20},
+	"axe_rusty":{"flag":4, "inc":0.1, "cat":0, "dsc":"Your father's axe", "title":"Rusty axe",  "price":12500, "t_dmg":2.5, "z_dmg":10},
+	"axe_double":{"flag":4, "inc":0.15, "cat":0, "dsc":"A little too heavy, but it chops trees in mere seconds", "title":"Doubel axe", "price":12500, "t_dmg":4, "z_dmg":15},
+	"axe_fire":{"flag":4, "inc":0.15, "cat":0, "dsc":"Not as good for a tree chopping, as for killing stuff", "title":"Firefighter's axe", "price":12500, "t_dmg":3, "z_dmg":20},
+	"chainsaw":{"flag":64, "inc":0.15, "cat":0, "dsc":"Let the trees shake in fear", "title":"Chainsaw", "price":1200, "t_dmg":0.66, "z_dmg":3},
 	
 	"spitter":{
-		"hp":100, "ms":16, "ms_dispersion":15, "w":10, "viewRange":250, "senceRange":20, 
+		"hp":50, "ms":16, "ms_dispersion":2, "w":10, "viewRange":250, "senceRange":20, 
 		"meleeAttackRange":35, "meleeAttackCooldown":10, "meleeAttackDamage":10,
 		"rangedAttackRange":150, "rangedAttackCooldown":4, "ammoCount":5
 	},
 	
-	"stalker":{"hp":100, "ms":16, "ms_dispersion":15, "w":10, "viewRange":50,  "senceRange":20, 
+	"stalker":{"hp":70, "ms":16, "ms_dispersion":2, "w":10, "viewRange":50,  "senceRange":30, 
 		"meleeAttackRange":35, "meleeAttackCooldown":0.3, "meleeAttackDamage":10		
+	},
+	
+	"manager":{"hp":120, "ms":16, "ms_dispersion":2, "w":10, "viewRange":120,  "senceRange":30, 
+		"meleeAttackRange":35, "meleeAttackCooldown":0.3, "meleeAttackDamage":10		
+	},
+	
+	"crawler":{"hp":100, "ms":32, "ms_dispersion":1, "w":40, "h":21 , "viewRange":200,  "senceRange":30, 
+		"meleeAttackRange":40, "meleeAttackCooldown":0.5, "meleeAttackDamage":10		
 	},
 	
 	"lumberjack":{"ms":90, "hp":100, "jump":125, "aimDispersion":0.05},
 	"world":{"trees":45, "day_length":60},
 	
 	
-	"bg":{"count":0,"n1":"bg1.png","n2":"bg2.png","n3":"bg3.png","n4":"bg4.png", "n5":"bg5.png", "n6":"bg6.png"}
+	"bg":{"count":0,"n1":"bg1.png","n2":"bg2.png","n3":"bg3.png","n4":"bg4.png", "n5":"bg5.png", "n6":"bg6.png"},
+	
+	"contracts":[
+	
+		{"tasks":[{"type":"chop", "count":20,"targets":[1]}], 
+		"starts":1, "term":1, "reward":200, "title":"Chop Trees 1"},
+		
+		{"tasks":[{"type":"chop", "count":20,"targets":[2]}], 
+		"starts":2, "term":1, "reward":250, "title":"Chop Trees 2"},
+		
+		{"tasks":[{"type":"chop", "count":5, "targets":[2]},{"type":"chop", "count":5, "targets":[1]}], 
+		"starts":3, "term":2, "reward":600, "title":"Chop Different Trees"},
+		
+		{"tasks":[{"type":"hunt", "count":5, "targets":[1]}], "starts":3, "term":2, "reward":500, "title":"Hunt 1"}
+	],
+	
+	"achievements":[
+	
+		{"tasks":[{"type":"hunt", "count":50}],
+		"starts":1, "term":0, "title":"If it bleeds, we can kill it"},
+		
+		{"tasks":[{"type":"chop", "count":50}], 
+		"starts":1, "term":0, "title":"Cut It"},
+		
+		{"tasks":[{"type":"hunt", "count":10, "killedby":1},{"type":"chop", "count":10}], 
+		"starts":1, "term":2, "title":"Lumberjack's high school finals"}
+		
+	]
 }

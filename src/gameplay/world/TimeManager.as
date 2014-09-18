@@ -36,7 +36,7 @@ package gameplay.world
 		private const NCOLOR:String = "303050";	
 		
 		
-		public static var duration:int = 60 * 30;
+		public static var duration:int = 120 * 30;
 		
 		private static var scale:int = 2;
 		
@@ -49,7 +49,7 @@ package gameplay.world
 		private const fill:BitmapData = new BitmapData(Game.SCREEN_WIDTH / scale, Game.SCREEN_HEIGHT / scale, true, shadeColor);
 		private var container:Sprite;
 		
-		public var bar:SimpleBar = new SimpleBar(200, 10, 0xffffff);
+		//public var bar:SimpleBar = new SimpleBar(200, 10, 0xffffff);
 		
 		
 		private static var lightsToRender:Vector.<Light> = new Vector.<Light>();
@@ -79,8 +79,8 @@ package gameplay.world
 			
 			//shade.blendMode = BlendMode.OVERLAY;
 			
-			bar.x = 500
-			bar.y = 15;
+			//bar.x = 500
+			//bar.y = 15;
 			/*var bdate:BitmapData= 
 			
 			var a:int = 35;
@@ -118,8 +118,8 @@ package gameplay.world
 				change();
 			}
 			
-			if (daytime == DAY ) bar.scale((duration - ticksToChange) / duration);
-			else bar.scale(ticksToChange / duration);
+			/*if (daytime == DAY ) bar.scale((duration - ticksToChange) / duration);
+			else bar.scale(ticksToChange / duration);*/
 			
 			if (daytime == NIGHT) {				
 				render();				
@@ -138,7 +138,7 @@ package gameplay.world
 		
 		private function n2d():void {
 			//shade.alp
-			//ScreenManager.inst.showScreen(DayScreen);
+			ScreenManager.inst.showScreen(DayScreen, 512, [getCurrentDay()]);
 			
 			if (!debug) TweenLite.to(shade, 5, { alpha:0 } );
 			daytime = DAY;

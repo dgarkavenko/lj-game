@@ -16,6 +16,8 @@ package locations
 	import gameplay.TreeHandler;
 	import gameplay.world.Forest;
 	import gameplay.world.Ground;
+	import intro.ceo;
+	import intro.company;
 	import nape.geom.Vec2;
 	import nape.phys.Body;
 	import nape.phys.BodyType;
@@ -39,12 +41,11 @@ package locations
 		private static var sign:RoadSign;
 		private static var mailbox:Mailbox;
 		
-		
-		
+	
 		public function HomeLocation() 
 		{
 			location_w = 640;
-			initial_x = 439;
+			initial_x = 169;
 			initial_y = 339;
 		}
 		
@@ -122,7 +123,9 @@ package locations
 			 * Статический бэкграунд
 			 */
 			
-			bg = new Bitmap(new BitmapData(Game.SCREEN_WIDTH, Game.SCREEN_HEIGHT, false, 0xa4bab5));
+			 //eve c2afb5
+			//0xa4bab5
+			bg = new Bitmap(new BitmapData(Game.SCREEN_WIDTH, Game.SCREEN_HEIGHT, false, 0xb3beb4));
 			world.addChildAt(bg, 0);
 			
 			var source:MountainsBG = new MountainsBG();

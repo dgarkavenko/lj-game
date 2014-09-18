@@ -39,7 +39,7 @@ package dynamics.interactive
 		public function Mailbox() 
 		{
 			bitmap = new Bitmap(new HomeMailbox());
-			body = build(new Vec2(90, 314), [Polygon.rect(0, 0, bitmap.width, bitmap.height)], Material.wood());
+			body = build(new Vec2(228, 314), [Polygon.rect(0, 0, bitmap.width, bitmap.height)], Material.wood());
 			body.userData.graphic = bitmap;
 			body.align();
 			body.space = null;
@@ -81,9 +81,9 @@ package dynamics.interactive
 			
 			if (sign.parent) sign.parent.removeChild(sign);
 			
-			if (GameWorld.contracts.getBillsRef().length == 0) return;					
+			if (GameWorld.contracts.getContracts().length == 0) return;					
 			//GameScreen.POP.show(PopupManager.CONTRACT, true, getContracts());
-			GameScreen.POP.show(PopupManager.BILLS, true, GameWorld.contracts.getBillsRef());
+			GameScreen.POP.show(PopupManager.BILLS, true, GameWorld.contracts.getContracts());
 			
 			//
 			//CONTRACT

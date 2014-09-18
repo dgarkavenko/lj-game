@@ -108,6 +108,11 @@ package dynamics
 			
 		}
 		
+		public function beard(beard:int):void 
+		{
+			_sprite.body_bg.beard.gotoAndStop(beard);
+		}
+		
 		public function get sprite():MovieClip 
 		{
 			return _sprite;

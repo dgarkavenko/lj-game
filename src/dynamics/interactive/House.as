@@ -9,6 +9,7 @@ package dynamics.interactive
 	import nape.phys.Material;
 	import nape.shape.Polygon;
 	import utils.VisualAlignment;
+	import visual.VentureBMP;
 	import visuals.HomeHouse;
 	/**
 	 * ...
@@ -23,16 +24,16 @@ package dynamics.interactive
 		public function House() 
 		{
 			
-			bitmap = new Bitmap(new HomeHouse());
+			bitmap = new Bitmap(new VentureBMP());
 			//body = build(new Vec2(140, 167), [Polygon.rect(0, 0, bitmap.width, bitmap.height)], Material.wood());
-			body = build(new Vec2(140, 167), [[new Vec2(52,52), new Vec2(275,65), new Vec2(bitmap.width,115), new Vec2(bitmap.width, bitmap.height), new Vec2(0, bitmap.height), new Vec2(0, 120)]], Material.wood());
+			body = build(new Vec2(280, 167), [[new Vec2(52,52), new Vec2(275,65), new Vec2(bitmap.width,115), new Vec2(bitmap.width, bitmap.height), new Vec2(0, bitmap.height), new Vec2(0, 120)]], Material.wood());
 
 			
 			body.userData.graphic = bitmap;
 			body.space = null;			
 			
 			
-			body.userData.graphicOffset = new Vec2(-bitmap.width/2, int(-bitmap.height/2) - 52/2);				
+			body.userData.graphicOffset = new Vec2(-bitmap.width/2, int(-bitmap.height/2) - 37);				
 			
 			body.type = BodyType.STATIC;
 			VisualAlignment.apply(body);			
